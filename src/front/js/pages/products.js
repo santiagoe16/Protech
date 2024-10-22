@@ -15,10 +15,8 @@ export const Products = () => {
     const [activeTab, setActiveTab] = useState("list-tab")
     const [editProduct_Id, setEditProduct_Id] = useState(0)
 
-
-
     const getProducts = ()=>{
-        fetch("https://upgraded-funicular-wr95j4pw5xj53qrx-3001.app.github.dev/api/products",{ method: "GET"})
+        fetch( process.env.BACKEND_URL + "/api/products",{ method: "GET"})
         .then((response) => response.json())
         .then((data) => {
             setProducts(data)
@@ -28,6 +26,14 @@ export const Products = () => {
     useEffect(() => {
         getProducts();
     }, []);
+
+    const cleanFilds = () =>{
+        setName("");
+        setDescription("");
+        setPrice(0);
+        setStock(0);
+        setImage("");
+    }
 
     const handleSubmitCreate = (e)=>{
         e.preventDefault()
@@ -49,22 +55,18 @@ export const Products = () => {
             redirect: "follow"
         };
         
-        fetch("https://upgraded-funicular-wr95j4pw5xj53qrx-3001.app.github.dev/api/products", requestOptions)
+        fetch(process.env.BACKEND_URL + "/api/products", requestOptions)
         .then((response) => response.text())
         .then((result) => {
             getProducts()
             setActiveTab("list-tab");
-            setName("");
-            setDescription("");
-            setPrice(0);
-            setStock(0);
-            setImage("");
+            cleanFilds()
         })
         .catch((error) => console.error(error))
     }
 
     const deleteProduct = (product_id) => {
-        fetch(`https://upgraded-funicular-wr95j4pw5xj53qrx-3001.app.github.dev/api/products/${product_id}`, {method: "DELETE"})
+        fetch(process.env.BACKEND_URL + `/api/products/${product_id}`, {method: "DELETE"})
         .then(response => {
             if (response.ok) {
                 getProducts();
@@ -76,7 +78,7 @@ export const Products = () => {
     }
 
     const getToEdit = (product_id) => {
-        fetch(`https://upgraded-funicular-wr95j4pw5xj53qrx-3001.app.github.dev/api/products/${product_id}`,{ method: "GET"})
+        fetch(process.env.BACKEND_URL + `/api/products/${product_id}`,{ method: "GET"})
         .then((response) => response.json())
         .then((data) => {
             setActiveTab("edit-tab");
@@ -109,18 +111,26 @@ export const Products = () => {
             redirect: "follow"
         };
         
-        fetch(`https://upgraded-funicular-wr95j4pw5xj53qrx-3001.app.github.dev/api/products/${editProduct_Id}`, requestOptions)
+        fetch(process.env.BACKEND_URL + `/api/products/${editProduct_Id}`, requestOptions)
         .then((response) => response.text())
         .then((result) => {
             getProducts()
             setActiveTab("list-tab");
-            setName("");
-            setDescription("");
-            setPrice(0);
-            setStock(0);
-            setImage("");
+            cleanFilds()
         })
         .catch((error) => console.error(error))
+    }
+    const viewMore = (product_id)=>{
+        fetch(process.env.BACKEND_URL + `/api/products/${product_id}`,{ method: "GET"})
+        .then((response) => response.json())
+        .then((data) => {
+            setActiveTab("view-more-tab");
+            setName(data.name);
+            setDescription(data.description);
+            setPrice(data.price);
+            setStock(data.stock);
+            setImage(data.image);
+        })
     }
     return(
         <>
@@ -148,7 +158,8 @@ export const Products = () => {
                             role="tab"
                             aria-controls="create-tab-pane"
                             aria-selected={activeTab === "create-tab"}
-                            onClick={() => setActiveTab("create-tab")}
+                            onClick={() => {setActiveTab("create-tab")
+                                cleanFilds()}}
                         >Create</button>
                     </li>
                     <li className="nav-item" role="presentation">
@@ -160,8 +171,18 @@ export const Products = () => {
                             type="button"
                             role="tab"
                             aria-selected={activeTab === "edit-tab"}
-                            onClick={() => setActiveTab("edit-tab")}
                         >Edit</button>
+                    </li>
+                    <li className="nav-item" role="presentation">
+                        <button
+                            className={`nav-link ${activeTab === "view-more-tab" ? "active" : "d-none"}`}
+                            id="edit-tab"
+                            data-bs-toggle="tab"
+                            data-bs-target="#view-more-tab-pane"
+                            type="button"
+                            role="tab"
+                            aria-selected={activeTab === "view-more-tab"}
+                        >View More</button>
                     </li>
                 </ul>
 
@@ -184,15 +205,19 @@ export const Products = () => {
                                     (products.map((product, index) =>(
                                         <tr key={index}>
                                             <td>{index + 1}</td>
-                                            <td>
+                                            <td className="text-center">
                                                 <i className="fas fa-edit me-3"
                                                 style={{cursor:"pointer"}}
                                                 onClick={()=> getToEdit(product.id)}>
                                                 </i>
-                                                <i className="fas fa-trash"
+                                                <i className="fas fa-trash me-3"
                                                 style={{cursor:"pointer"}}
                                                 onClick={()=> deleteProduct(product.id)}>
                                                 </i>
+                                                <i style={{cursor:"pointer"}}
+                                                className="fas fa-eye"
+                                                onClick={() => viewMore(product.id)}
+                                                ></i>
                                             </td>
                                             <td>{product.name}</td>
                                             <td>{product.description}</td>
@@ -256,6 +281,29 @@ export const Products = () => {
                             </div>
                             <button type="submit" className="btn btn-primary">Save</button>
                         </form>
+                    </div>
+
+                    <div className={`tab-pane fade ${activeTab === "view-more-tab" ? "show active" : ""}`} id="view-more-tab-pane" role="tabpanel" aria-labelledby="view-more-tab" tabIndex="0">
+                    <table className="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>description</th>
+                                    <th>price</th>
+                                    <th>stock</th>
+                                    <th>image</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{name}</td>
+                                    <td>{description}</td>
+                                    <td>{price}$</td>
+                                    <td>{stock}</td>
+                                    <td>{image}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
