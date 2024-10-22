@@ -2,9 +2,11 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Products
+from api.models import db, User, Products, Comprador
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
+
+
 
 api = Blueprint('api', __name__)
 
@@ -116,4 +118,103 @@ def update_product(product_id):
     db.session.commit()
     
     return jsonify({"message":"Product successfully edited"}), 200
+
+
+
+
+
+
+
+# Endpoints de Comprador
+
+@api.route('/compradores', methods=['GET'])
+def get_compradores():
+    compradores = Comprador.query.all()  # Obtiene todos los compradores de la base de datos
+    return jsonify([comprador.serialize() for comprador in compradores]), 200  # Devuelve los compradores en formato JSON
+
+@api.route('/compradores/<int:comprador_id>', methods=['GET'])
+def get_comprador(comprador_id):
+    comprador = Comprador.query.get(comprador_id)  # Obtiene el comprador por ID
+    if not comprador:
+        return jsonify({"message": "Comprador no encontrado"}), 404  # Si no se encuentra, devuelve 404
+    return jsonify(comprador.serialize()), 200  # Devuelve el comprador en formato JSON si lo encuentra
+
+@api.route('/compradores', methods=['POST'])
+def add_comprador():
+    new_comprador_data = request.get_json()  # Obtiene los datos JSON enviados en la solicitud
+
+    if not new_comprador_data:  # Verifica que se haya enviado algún dato
+        return jsonify({"error": "No data provided"}), 400  # Si no se envía dato, devuelve error 400
+
+    # Verifica que los campos requeridos estén presentes
+    required_fields = ["name", "email", "clave", "telefono"]
+    if not all(field in new_comprador_data for field in required_fields):
+        return jsonify({"error": "Required fields are missing: " + ', '.join(required_fields)}), 400  # Si falta algún campo, devuelve error 400
+
+    # Verifica si ya existe un comprador con el mismo email
+    existing_comprador = Comprador.query.filter_by(email=new_comprador_data["email"]).first()
+    if existing_comprador:
+        return jsonify({"error": "Email is already in use"}), 400  # Si el email ya está en uso, devuelve error 400
+
+    # Crea un nuevo comprador
+    new_comprador = Comprador(
+        name=new_comprador_data["name"],
+        email=new_comprador_data["email"],
+        clave=new_comprador_data["clave"],
+        telefono=new_comprador_data["telefono"]
+    )
+
+    # Guarda el nuevo comprador en la base de datos
+    db.session.add(new_comprador)
+    db.session.commit()
+
+    return jsonify({"message": "Comprador successfully added"}), 201  # Devuelve mensaje de éxito con código 201
+
+@api.route('/compradores/<int:comprador_id>', methods=['PUT'])
+def update_comprador(comprador_id):
+    comprador = Comprador.query.get(comprador_id)  # Obtiene el comprador por ID
+
+    if comprador is None:
+        return jsonify({"error": "Comprador no encontrado"}), 404  # Si no se encuentra, devuelve error 404
+
+    data = request.get_json()  # Obtiene los datos de la solicitud
+
+    if not data:  # Verifica que los datos no estén vacíos
+        return jsonify({"error": "No data has been provided for updating"}), 400  # Si no hay datos, devuelve error 400
+
+    # Actualiza los campos solo si fueron proporcionados en la solicitud
+    if 'name' in data:
+        comprador.name = data['name']
+    if 'email' in data:
+        comprador.email = data['email']
+    if 'clave' in data:
+        comprador.clave = data['clave']
+    if 'telefono' in data:
+        comprador.telefono = data['telefono']
+
+    db.session.commit()  # Guarda los cambios en la base de datos
+
+    return jsonify({"message": "Comprador successfully updated"}), 200  # Devuelve mensaje de éxito
+
+@api.route('/compradores/<int:comprador_id>', methods=['DELETE'])
+def remove_comprador(comprador_id):
+    comprador = Comprador.query.get(comprador_id)  # Obtiene el comprador por ID
+
+    if comprador is None:
+        return {"error": "Comprador no encontrado"}, 404  # Devuelve un error 404 si no se encuentra el comprador
+
+    db.session.delete(comprador)  # Elimina el comprador de la base de datos
+    db.session.commit()  # Confirma la transacción
+
+    return {"message": "Comprador eliminado exitosamente"}, 200  # Devuelve un mensaje de éxito
+
+
+
+
+    
+
+
+
+
+
 
