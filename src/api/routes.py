@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Products, Comprador
+from api.models import db, User, Products, Seller , Comprador
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -217,5 +217,84 @@ def remove_comprador(comprador_id):
 #santiago/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+@api.route('/sellers', methods=['GET'])
+def get_sellers():
+    sellers = Seller.query.all()
+    
+    sellers = list(map(lambda seller: seller.serialize(), sellers))
+    
+    return jsonify(sellers), 200
+
+@api.route('/seller/<int:seller_id>', methods=['GET'])
+def get_seller(seller_id):
+    seller = Seller.query.get(seller_id)
+    if not seller:
+        return jsonify({"msg": "Vendedor no encontrado"}), 404
+    return jsonify(seller.serialize()), 200
 
 
+@api.route('/seller/signup', methods=['POST'])
+def signup():
+    body = request.get_json()
+
+    if not body or not body.get("email") or not body.get("password"):
+        return jsonify({"msg": "Email y contraseña son requeridos"}), 400
+
+    seller = Seller.query.filter_by(email=body["email"]).first()
+
+    if seller is not None:
+        return jsonify({"msg": "El usuario ya existe"}), 409
+
+    new_seller = Seller(
+        email=body["email"],
+        password =body["password"],
+        phone=body["phone"],
+        bank_account=body["bank_account"],
+        is_active=True)
+     
+
+    db.session.add(new_seller)
+    db.session.commit()
+
+    
+    return jsonify({"msg": "Usuario creado exitosamente"}), 200
+
+
+@api.route('/seller/<int:seller_id>', methods=['DELETE'])
+def delete_seller(seller_id):
+    seller = Seller.query.get(seller_id)
+    
+    if not seller :
+        return jsonify({"msg": "No autorizado o vendedor no encontrado"}), 403
+
+    db.session.delete(seller)
+    db.session.commit()
+    return jsonify({"msg": "Vendedor eliminado"}), 200
+
+@api.route('/seller/<int:seller_id>', methods=['PUT'])
+def update_seller(seller_id):
+
+    seller = Seller.query.get(seller_id)
+
+    if seller is None:
+        return jsonify({"error": "vendedor no existe."}), 404
+
+   
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"error": "No data has been provided for updating."}), 400
+
+   
+    if 'email' in data:
+        seller.email = data['email']
+    if 'password' in data:
+        seller.password = data['password']
+    if 'phone' in data:
+        seller.phone = data['phone']
+    if 'bank_account' in data:
+        seller.bank_account = data['bank_account']
+
+    db.session.commit()
+    
+    return jsonify({"msg":"vendedor actualizado"}), 200
