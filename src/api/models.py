@@ -56,3 +56,26 @@ class Seller(db.Model):
             "email": self.email,
             "phone" : self.phone,
         }
+    
+class Comprador(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), unique=False, nullable=False)
+    email = db.Column(db.String(120), unique=False, nullable=False)
+    clave = db.Column(db.String(80), unique=False, nullable=False)
+    telefono = db.Column(db.String(80), unique=False, nullable=False)
+        
+     
+        # Representación del objeto
+    def __repr__(self):
+        return f'<Comprador {self.name} '
+
+    # Método para serializar los datos del comprador
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "clave": self.clave,
+            "telefono": self.telefono
+        }
+
