@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User, Products, Seller , Comprador
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 
 
 api = Blueprint('api', __name__)
@@ -214,8 +214,6 @@ def remove_comprador(comprador_id):
     
 
 
-#santiago/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 @api.route('/sellers', methods=['GET'])
 def get_sellers():
@@ -298,3 +296,47 @@ def update_seller(seller_id):
     db.session.commit()
     
     return jsonify({"msg":"vendedor actualizado"}), 200
+
+
+#------------------LOGINBUYERS---------------
+
+@api.route("/buyer/signup", methods = ['POST'])
+def signupBuyer():
+    new_comprador_data = request.get_json() 
+
+    if not new_comprador_data: 
+        return jsonify({"error": "No data provided"}), 400  
+  
+    required_fields = ["name", "email", "clave", "telefono"]
+    if not all(field in new_comprador_data for field in required_fields):
+        return jsonify({"error": "Required fields are missing: " + ', '.join(required_fields)}), 400  
+
+    existing_comprador = Comprador.query.filter_by(email=new_comprador_data["email"]).first()
+    if existing_comprador:
+        return jsonify({"error": "Email is already in use"}), 400
+
+    new_comprador = Comprador(
+        name=new_comprador_data["name"],
+        email=new_comprador_data["email"],
+        clave=new_comprador_data["clave"],
+        telefono=new_comprador_data["telefono"]
+    )
+
+    db.session.add(new_comprador)
+    db.session.commit()
+
+    return jsonify({"message": "Comprador successfully added"}), 201
+
+
+@api.route("/buyer/login", methods=["POST"])
+def loginbuyer():
+    email = request.json.get("email")
+    clave = request.json.get("clave")
+    comprador = Comprador.query.filter_by(email = email, clave = clave).first()
+
+    if comprador is None or clave != comprador.clave:
+        return jsonify({"msg": "Bad email or password"}), 401
+
+    access_token = create_access_token(identity= comprador.id)
+
+    return jsonify(access_token=access_token), 200

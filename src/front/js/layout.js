@@ -10,6 +10,8 @@ import { Products } from "./pages/products";
 import { Sellers } from "./pages/sellers";
 import injectContext from "./store/appContext";
 import { Compradores } from "./pages/Compradores";
+import { LoginBuyer } from "./pages/loginbuyers";
+import { SignupBuyer } from "./pages/signupbuyer";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -23,7 +25,7 @@ const Layout = () => {
     if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/ >;
 
     return (
-        <div>
+        <div className="h-100">
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
                     <Navbar />
@@ -34,6 +36,8 @@ const Layout = () => {
                         <Route element={<Products/>} path="/products" />
                         <Route element={<Sellers/>} path="/sellers" />
                         <Route element={<Compradores/>} path="/compradores" />
+                        <Route element={<LoginBuyer/>} path="/buyer/login" />
+                        <Route element={<SignupBuyer/>} path="/buyer/signup" />
                         <Route element={<h1>Not found!</h1>} />
                         
                     </Routes>
