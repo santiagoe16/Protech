@@ -79,3 +79,15 @@ class Comprador(db.Model):
             "telefono": self.telefono
         }
 
+class ItemCart(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Integer, unique=False, nullable=False)
+
+    def __repr__(self):
+        return f'<ItemCart {self.amount}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "amount": self.amount,
+        }

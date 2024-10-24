@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Products, Seller , Comprador
+from api.models import db, User, Products, Seller , Comprador, ItemCart
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
@@ -23,6 +23,7 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
+#---------products-----------
 @api.route('/products', methods=['GET'])
 def get_products():
     products = Products.query.all()
@@ -119,14 +120,7 @@ def update_product(product_id):
     
     return jsonify({"message":"Product successfully edited"}), 200
 
-
-
-
-
-
-
-# Endpoints de Comprador
-
+#--------buyer----------------------------------------------
 @api.route('/compradores', methods=['GET'])
 def get_compradores():
     compradores = Comprador.query.all()  # Obtiene todos los compradores de la base de datos
@@ -208,13 +202,7 @@ def remove_comprador(comprador_id):
 
     return {"message": "Comprador eliminado exitosamente"}, 200  # Devuelve un mensaje de éxito
 
-
-
-
-    
-
-
-
+#-------------------seller----------------------------------------
 @api.route('/sellers', methods=['GET'])
 def get_sellers():
     sellers = Seller.query.all()
@@ -296,6 +284,84 @@ def update_seller(seller_id):
     db.session.commit()
     
     return jsonify({"msg":"vendedor actualizado"}), 200
+
+#-------------itemcart-------------------------
+
+
+@api.route('/itemscarts', methods=['GET'])
+def get_itemscarts():
+    carts = ItemCart.query.all()
+    
+    carts = list(map(lambda cart: cart.serialize(), carts))
+    
+    return jsonify(carts), 200
+
+@api.route('/itemscarts/<int:itemcart_id>', methods=['GET'])
+def get_itemcart(itemcart_id):
+    item_cart = ItemCart.query.get(itemcart_id)
+    print(item_cart)
+    if item_cart is None:
+        return jsonify({"message": "Product not found"}), 404
+    
+    return jsonify(item_cart.serialize()), 200
+
+@api.route('/itemscarts', methods=['POST'])
+def add_itemcart():
+    new_item_cart_data = request.get_json()
+
+    if not new_item_cart_data:
+        return jsonify({"error": "No data provided for the new item cart."}), 400
+    
+    
+    if "amount" not in new_item_cart_data:
+        return jsonify({"error": "you have to enter an amount"}), 400
+    
+    if not isinstance(new_item_cart_data["amount"], int) or new_item_cart_data["amount"] < 1:
+        return jsonify({"error": "The amount must be a non-negative integer."}), 400
+    
+    new_product = ItemCart(
+        amount=new_item_cart_data["amount"]
+    )
+    
+    db.session.add(new_product)
+    db.session.commit()
+    
+    return jsonify({"message":"Product successfully added"}), 201
+
+@api.route('/itemscarts/<int:itemcart_id>', methods=['DELETE'])
+def remove_itemcart(itemcart_id):
+
+    itemcart = ItemCart.query.get(itemcart_id)
+
+    if not itemcart:
+        return jsonify({"message":"itemcart no found"}), 404
+
+    db.session.delete(itemcart)
+    db.session.commit()
+    
+    return jsonify({"message": "itemcart successfully removed"}), 200
+
+@api.route('/itemscarts/<int:itemcart_id>', methods=['PUT'])
+def update_itemcart(itemcart_id):
+
+    itemcart = ItemCart.query.get(itemcart_id)
+
+    if itemcart is None:
+        return jsonify({"error": "itemcart no found."}), 404
+
+    data = request.get_json()
+
+    if not data["amount"]:
+        return jsonify({"error": "No data has been provided for updating."}), 400
+
+    if not isinstance(data["amount"], int) or data["amount"] < 1:
+        return jsonify({"message":"The amount must be a non-negative integer."}), 400
+
+    itemcart.amount = data["amount"]
+
+    db.session.commit()
+    
+    return jsonify({"message":"itemcart successfully edited"}), 200
 
 
 #------------------LOGINBUYERS---------------
