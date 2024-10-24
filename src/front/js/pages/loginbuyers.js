@@ -36,7 +36,6 @@ export const LoginBuyer = () => {
             .then((result) =>  {
                 localStorage.setItem("jwt-token", result.access_token);
                 actions.changeAuthenticatedBuyer(true)
-                console.log("logueado con exito")
                 navigate("/products");
             })
             .catch((error) => {
@@ -65,8 +64,6 @@ export const LoginBuyer = () => {
                     <p>don't have an account? <Link to="/buyer/signup">sign up buyer</Link></p>
                 </form>
             </div>
-			
-			
 		</div>
 	);
 };
