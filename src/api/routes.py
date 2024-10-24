@@ -299,7 +299,6 @@ def get_itemscarts():
 @api.route('/itemscarts/<int:itemcart_id>', methods=['GET'])
 def get_itemcart(itemcart_id):
     item_cart = ItemCart.query.get(itemcart_id)
-    print(item_cart)
     if item_cart is None:
         return jsonify({"message": "Product not found"}), 404
     

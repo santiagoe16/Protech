@@ -101,7 +101,6 @@ export const Itemscarts = () => {
         .then((data) => {
             setActiveTab("view-more-tab");
             setAmount(data.amount);
-            console.log(data.amount);
             
         })
     }
