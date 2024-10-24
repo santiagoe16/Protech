@@ -38,6 +38,16 @@ class Products(db.Model):
             "stock": self.stock,
             "image": self.image,
         }
+    
+class Categoria(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), unique=False, nullable=False)
+    
+    # Representación del objeto
+    def __repr__(self):
+        return f'<Categoria {self.name}>'
+
+    # Método para serializar los datos de la categoría
 
 class Seller(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -78,4 +88,13 @@ class Comprador(db.Model):
             "clave": self.clave,
             "telefono": self.telefono
         }
+
+
+   
+    
+        
+     
+   
+      
+        
 
