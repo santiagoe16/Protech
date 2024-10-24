@@ -229,7 +229,7 @@ export const Sellers = () => {
                                 required
                             />
                         </div>
-                        {selectedSellerId && (
+                        
                             <div className="mb-3">
                                 <label htmlFor="password" className="form-label">Contraseña</label>
                                 <input
@@ -240,7 +240,7 @@ export const Sellers = () => {
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
                             </div>
-                        )}
+                        
                         <button type="submit" className="btn btn-primary">
                             {selectedSellerId ? "Actualizar Vendedor" : "Crear Vendedor"}
                         </button>
