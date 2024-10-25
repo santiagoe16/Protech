@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Products, Seller , Comprador,Categoria, ItemCart
+from api.models import db, User, Products, Seller , Comprador,Categoria, ItemCart,Direccion
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
@@ -476,3 +476,78 @@ def loginbuyer():
     access_token = create_access_token(identity= comprador.id)
 
     return jsonify(access_token=access_token), 200
+
+#///////////////////////////Address
+
+@api.route('/direcciones', methods=['GET'])
+def get_direcciones():
+    direcciones = Address.query.all()
+    return jsonify([direccion.serialize() for direccion in direcciones]), 200
+
+@api.route('/direcciones/<int:direccion_id>', methods=['GET'])
+def get_direccion(direccion_id):
+    direccion = Address.query.get(direccion_id)
+    if not direccion:
+        return jsonify({"message": "Direccion no encontrado"}), 404
+    return jsonify(direccion.serialize()), 200
+
+@api.route('/direcciones', methods=['POST'])
+def add_direccion():
+    new_direccion_data = request.get_json()
+
+    if not new_direccion_data:
+        return jsonify({"error": "No data provided"}), 400
+
+    required_fields = ["direccion", "ciudad", "codigo_postal", "pais"]
+    if not all(field in new_direccion_data for field in required_fields):
+        return jsonify({"error": "Required fields are missing: " + ', '.join(required_fields)}), 400
+    
+    new_direccion = Address(
+        direccion=new_direccion_data["direccion"],
+        ciudad=new_direccion_data["ciudad"],
+        codigo_postal=new_direccion_data["codigo_postal"],
+        pais=new_direccion_data["pais"]
+    )
+
+    db.session.add(new_direccion)
+    db.session.commit()
+
+    return jsonify({"message": "Direccion successfully added"}), 201
+
+@api.route('/direcciones/<int:direccion_id>', methods=['PUT'])
+def update_direccion(direccion_id):
+    direccion = Address.query.get(direccion_id)
+
+    if direccion is None:
+        return jsonify({"error": "Direccion no encontrado"}), 404
+
+    data = request.get_json()
+
+    if not data:
+        return jsonify({"error": "No data has been provided for updating"}), 400
+
+    if 'direccion' in data:
+        direccion.direccion = data['direccion']
+    if 'ciudad' in data:
+        direccion.ciudad = data['ciudad']
+    if 'codigo_postal' in data:
+        direccion.codigo_postal = data['codigo_postal']
+    if 'pais' in data:
+        direccion.pais = data['pais']
+
+    db.session.commit()
+
+    return jsonify({"message": "Direccion successfully updated"}), 200
+
+@api.route('/direcciones/<int:direccion_id>', methods=['DELETE'])
+def remove_direccion(direccion_id):
+    direccion = Address.query.get(direccion_id)
+
+    if direccion is None:
+        return {"error": "Direccion no encontrado"}, 404
+
+    db.session.delete(direccion)
+    db.session.commit()
+
+    return {"message": "Direccion eliminado exitosamente"}, 200
+
