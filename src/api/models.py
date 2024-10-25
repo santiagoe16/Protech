@@ -47,6 +47,14 @@ class Categoria(db.Model):
     def __repr__(self):
         return f'<Categoria {self.name}>'
 
+    # Método para serializar el objeto
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name
+        }
+
+
     # Método para serializar los datos de la categoría
 
 class Seller(db.Model):

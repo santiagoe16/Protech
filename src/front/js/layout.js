@@ -12,6 +12,7 @@ import injectContext from "./store/appContext";
 import { Compradores } from "./pages/Compradores";
 import { LoginBuyer } from "./pages/loginbuyers";
 import { SignupBuyer } from "./pages/signupbuyer";
+import { Categorias } from "./pages/categoria";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -34,6 +35,7 @@ const Layout = () => {
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<Products/>} path="/products" />
+                        <Route element={<Categorias/>} path="/categorias" />
                         <Route element={<Sellers/>} path="/sellers" />
                         <Route element={<Compradores/>} path="/compradores" />
                         <Route element={<LoginBuyer/>} path="/buyer/login" />
