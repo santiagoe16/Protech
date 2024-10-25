@@ -663,7 +663,7 @@ def signupSeller():
         return jsonify({"msg": "El usuario ya existe"}), 409
 
     new_seller = Seller(
-         email=new_seller_data["email"],
+        email=new_seller_data["email"],
         phone=new_seller_data["phone"],
         bank_account=new_seller_data["bank_account"],
         password=new_seller_data["password"],
