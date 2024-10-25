@@ -13,9 +13,11 @@ import { Compradores } from "./pages/Compradores";
 import { LoginBuyer } from "./pages/loginbuyers";
 import { SignupBuyer } from "./pages/signupbuyer";
 import { Itemscarts } from "./pages/itemscarts";
+import { Carts } from "./pages/carts";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
+
 
 //create your first component
 const Layout = () => {
@@ -40,6 +42,7 @@ const Layout = () => {
                         <Route element={<LoginBuyer/>} path="/buyer/login" />
                         <Route element={<SignupBuyer/>} path="/buyer/signup" />
                         <Route element={<Itemscarts/>} path="/itemscarts" />
+                        <Route element={<Carts/>} path="/carts" />
                         <Route element={<h1>Not found!</h1>} />
                         
                     </Routes>

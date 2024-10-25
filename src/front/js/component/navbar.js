@@ -26,7 +26,8 @@ export const Navbar = () => {
 					</Link>
 				</div>
 				<div className="ml-auto">
-					<button className="btn btn-danger" onClick={() => logOut()}>log out</button>
+					{store.authenticatedBuyer ? (<button className="btn btn-danger" onClick={() => logOut()}>log out</button>):(<button className="btn btn-primary" onClick={() => navigate("/buyer/login")}>log in</button>)}
+					
 				</div>
 			</div>
 		</nav>

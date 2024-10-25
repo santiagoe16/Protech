@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Products, Seller , Comprador,Categoria, ItemCart
+from api.models import db, User, Products, Seller , Comprador,Categoria, ItemCart, Cart
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
@@ -433,6 +433,83 @@ def update_itemcart(itemcart_id):
     
     return jsonify({"message":"itemcart successfully edited"}), 200
 
+#------------------cart----------------------------------------
+@api.route('/carts', methods=['GET'])
+def get_carts():
+    carts = Cart.query.all()
+    carts = list(map(lambda cart: cart.serialize(), carts))
+    return jsonify(carts), 200
+
+@api.route('/carts/<int:cart_id>', methods=['GET'])
+def get_cart(cart_id):
+    cart = Cart.query.get(cart_id)
+    if cart is None:
+        return jsonify({"message": "Cart not found"}), 404
+    return jsonify(cart.serialize()), 200
+
+@api.route("/carts", methods=["POST"])
+def create_cart():
+    data = request.get_json()
+    comprador_id = data.get('comprador_id')
+    state = data.get('state')
+    
+    if Comprador.query.get(comprador_id) is None:
+        return jsonify({"message": "Comprador not found"}), 404
+
+    valid_states = {"open", "generated", "sent", "completed"}
+    if state not in valid_states:
+        return jsonify({"error": f"Invalid state. Allowed values are: {', '.join(valid_states)}"}), 400
+
+    total_price = data.get('total_price', 0)
+    if not comprador_id or not state:
+        return jsonify({"error": "Missing comprador_id or state"}), 400
+
+    new_cart = Cart(
+        comprador_id=comprador_id,
+        state=state,
+        total_price=total_price
+    )
+
+    db.session.add(new_cart)
+    db.session.commit()
+
+    return jsonify(new_cart.serialize()), 201
+
+@api.route('/carts/<int:cart_id>', methods=['DELETE'])
+def remove_cart(cart_id):
+    cart = Cart.query.get(cart_id)
+    if not cart:
+        return jsonify({"message": "Cart not found"}), 404
+
+    db.session.delete(cart)
+    db.session.commit()
+    return jsonify({"message": "Cart successfully removed"}), 200
+
+@api.route("/carts/<int:cart_id>", methods=["PUT"])
+def update_cart(cart_id):
+    cart = Cart.query.get(cart_id)
+    if cart is None:
+        return jsonify({"error": "Cart not found"}), 404
+
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided for update"}), 400
+
+    valid_states = {"open", "generated", "sent", "completed"}
+    if 'state' in data:
+        new_state = data['state']
+        if new_state not in valid_states:
+            return jsonify({"error": f"Invalid state. Allowed values are: {', '.join(valid_states)}"}), 400
+        cart.state = new_state
+
+    if 'total_price' in data:
+        new_total_price = data['total_price']
+        if not isinstance(new_total_price, int) or new_total_price < 0:
+            return jsonify({"error": "Total price must be a positive integer"}), 400
+        cart.total_price = new_total_price
+
+    db.session.commit()
+    return jsonify(cart.serialize()), 200
 
 #------------------LOGINBUYERS---------------
 
