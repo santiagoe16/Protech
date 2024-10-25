@@ -8,14 +8,11 @@ export const Sellers = () => {
     const [password, setPassword] = useState("");
     const [bankAccount, setBankAccount] = useState("");
     const [selectedSellerId, setSelectedSellerId] = useState(null);
-    const [message, setMessage] = useState("");
 
     const getSellers = () => {
         fetch(process.env.BACKEND_URL + "/api/sellers", { method: "GET" })
             .then((response) => response.json())
-            .then((data) => {
-                setSellers(data);
-            })
+            .then((data) => setSellers(data))
             .catch((error) => console.log("Error fetching sellers: ", error));
     };
 
@@ -26,78 +23,47 @@ export const Sellers = () => {
     const createSeller = () => {
         fetch(`${process.env.BACKEND_URL}/api/seller/signup`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email,
-                phone,
-                bank_account: bankAccount,
-                password,
-            }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, phone, bank_account: bankAccount, password }),
         })
             .then((response) => response.json())
-            .then((data) => {
-                console.log("Vendedor creado:", data);
-                setMessage("Vendedor creado exitosamente.");
+            .then(() => {
                 resetForm();
                 getSellers();
             })
-            .catch((error) => {
-                console.error("Error al crear el vendedor: ", error);
-                
-            });
+            .catch((error) => console.error("Error al crear el vendedor: ", error));
     };
 
     const updateSeller = () => {
         fetch(`${process.env.BACKEND_URL}/api/seller/${selectedSellerId}`, {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                email,
-                phone,
-                bank_account,
-                password , 
-            }),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, phone,bank_account: bankAccount, password }),
         })
             .then((response) => response.json())
-            .then((data) => {
-                console.log("Vendedor actualizado:", data);
-                setMessage("Vendedor actualizado exitosamente.");
+            .then(() => {
                 resetForm();
                 getSellers();
             })
-            .catch((error) => {
-                console.error("Error al actualizar el vendedor: ", error);
-                
-            });
+            .catch((error) => console.error("Error al actualizar el vendedor: ", error));
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (selectedSellerId) {
-            updateSeller(); 
+            updateSeller();
         } else {
-            createSeller(); 
+            createSeller();
         }
     };
 
     const handleDelete = (id) => {
-        if (window.confirm("¿Estás seguro de que deseas eliminar este vendedor?")) {
-            fetch(`${process.env.BACKEND_URL}/api/seller/${id}`, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            })
-                .then(() => {
-                    setSellers((prev) => prev.filter((seller) => seller.id !== id));
-                    setMessage("Vendedor eliminado exitosamente.");
-                })
-                .catch((error) => console.log("Error eliminando vendedor: ", error));
-        }
+        fetch(`${process.env.BACKEND_URL}/api/seller/${id}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+        })
+            .then(() => setSellers((prev) => prev.filter((seller) => seller.id !== id)))
+            .catch((error) => console.log("Error eliminando vendedor: ", error));
     };
 
     const resetForm = () => {
@@ -106,8 +72,7 @@ export const Sellers = () => {
         setBankAccount("");
         setPassword("");
         setSelectedSellerId(null);
-        setActiveTab("create-tab"); 
-        setMessage(""); 
+        setActiveTab("create-tab");
     };
 
     const viewSellerDetails = (seller) => {
@@ -115,13 +80,12 @@ export const Sellers = () => {
         setPhone(seller.phone);
         setBankAccount(seller.bank_account);
         setPassword(seller.password);
-        setSelectedSellerId(seller.id); 
-        setActiveTab("create-tab"); 
+        setSelectedSellerId(seller.id);
+        setActiveTab("create-tab");
     };
 
     return (
         <div className="container">
-            {message && <div className="alert alert-info">{message}</div>} 
             <ul className="nav nav-tabs" id="myTab" role="tablist">
                 <li className="nav-item" role="presentation">
                     <button
@@ -146,9 +110,9 @@ export const Sellers = () => {
                         role="tab"
                         aria-controls="create-tab-pane"
                         aria-selected={activeTab === "create-tab"}
-                        onClick={resetForm} 
+                        onClick={resetForm}
                     >
-                       Crear
+                        Crear
                     </button>
                 </li>
             </ul>
@@ -174,10 +138,7 @@ export const Sellers = () => {
                                             Eliminar
                                         </button>
                                         <button className="btn btn-primary btn-sm" onClick={() => viewSellerDetails(seller)}>
-                                            Detalle  
-                                        </button>
-                                        <button className="btn btn-secondary btn-sm" onClick={() => viewSellerDetails(seller)}>
-                                              Editar
+                                            Editar/Detalle
                                         </button>
                                     </div>
                                 </li>
@@ -229,18 +190,16 @@ export const Sellers = () => {
                                 required
                             />
                         </div>
-                        
-                            <div className="mb-3">
-                                <label htmlFor="password" className="form-label">Contraseña</label>
-                                <input
-                                    type="password"
-                                    className="form-control"
-                                    id="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                            </div>
-                        
+                        <div className="mb-3">
+                            <label htmlFor="password" className="form-label">Contraseña</label>
+                            <input
+                                type="password"
+                                className="form-control"
+                                id="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </div>
                         <button type="submit" className="btn btn-primary">
                             {selectedSellerId ? "Actualizar Vendedor" : "Crear Vendedor"}
                         </button>
