@@ -13,9 +13,12 @@ import { Compradores } from "./pages/Compradores";
 import { LoginBuyer } from "./pages/loginbuyers";
 import { SignupBuyer } from "./pages/signupbuyer";
 import { Itemscarts } from "./pages/itemscarts";
+import { Carts } from "./pages/carts";
+import { Direcciones } from "./pages/address";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
+
 
 //create your first component
 const Layout = () => {
@@ -23,7 +26,7 @@ const Layout = () => {
     // you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
     const basename = process.env.BASENAME || "";
 
-    if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/ >;
+    if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/>;
 
     return (
         <div className="h-100">
@@ -40,6 +43,7 @@ const Layout = () => {
                         <Route element={<LoginBuyer/>} path="/buyer/login" />
                         <Route element={<SignupBuyer/>} path="/buyer/signup" />
                         <Route element={<Itemscarts/>} path="/itemscarts" />
+                        <Route element={<Carts/>} path="/carts" />
                         <Route element={<Direcciones/>} path="/direcciones" />
                         <Route element={<h1>Not found!</h1>} />
                         

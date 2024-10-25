@@ -14,19 +14,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			AuthenticatedBuyer: false
+			authenticatedBuyer: false
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
 			verifyTokenBuyer: () => {
 				const token = localStorage.getItem('jwt-token');
 
 				if(token != null){
-					setStore({ authenticated: true })
+					setStore({ authenticatedBuyer: true })
 				}
 			},
 			changeAuthenticatedBuyer: (bool) => {
-				setStore({AuthenticatedBuyer: bool})
+				setStore({authenticatedBuyer: bool})
 			},
 
 			getMessage: async () => {
