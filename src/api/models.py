@@ -101,3 +101,24 @@ class ItemCart(db.Model):
             "id": self.id,
             "amount": self.amount,
         }
+
+class Direccion (db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    direccion = db.Column(db.String(120), unique=False, nullable=False)
+    ciudad= db.Column(db.String(120), unique=False, nullable=False)
+    codigo_postal = db.Column(db.String(80), unique=False, nullable=False)
+    pais = db.Column(db.String(80), unique=False, nullable=False)
+        
+     
+    def __repr__(self):
+        return f'<Address {self.name} '
+
+   
+    def serialize(self):
+        return {
+            "id": self.id,
+            "direccion": self.direccion,
+            "ciudad": self.ciudad,
+            "codigo_postal": self.codigo_postal,
+            "pais": self.pais,
+        }
