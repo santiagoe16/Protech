@@ -26,7 +26,13 @@ export const Direcciones = () => {
 
     const handleSubmitCreate = (e) => {
         e.preventDefault();
-        const newDireccion = JSON.stringify({ address, ciudad, codigoPostal, pais });
+        const newDireccion = JSON.stringify({
+            "direccion": address,
+            "ciudad": ciudad,
+            "codigo_postal": codigoPostal,
+            "pais": pais
+        });
+        
 
         fetch(process.env.BACKEND_URL + "/api/direcciones", {
             method: "POST",
