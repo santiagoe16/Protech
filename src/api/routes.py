@@ -628,3 +628,51 @@ def remove_direccion(direccion_id):
 
     return {"message": "Direccion eliminado exitosamente"}, 200
 
+
+#------------LOGIN SELLERS  ----------------------------------
+
+@api.route('/seller/login', methods=['POST'])
+def login():
+
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+
+    if not email or not password:
+        return jsonify({"msg": "Email y contraseña son requeridos"}), 400
+
+    seller = Seller.query.filter_by(email=email, password=password).first()
+
+    if seller is None or password != seller.password:
+        return jsonify({"msg": "Email o contraseña incorrectos"}), 401
+
+
+    access_token = create_access_token(identity=seller.email)
+    
+    return jsonify(access_token=access_token), 200
+
+@api.route('/seller/reg', methods=['POST'])
+def signupSeller():
+    new_seller_data = request.get_json()
+
+    if not new_seller_data or not new_seller_data.get("email") or not new_seller_data.get("password") or not new_seller_data.get("phone") or not new_seller_data.get("bank_account"):
+        return jsonify({"msg": "Email, contraseña, teléfono y cuenta bancaria son requeridos"}), 400
+    
+    seller = Seller.query.filter_by(email=new_seller_data["email"]).first()
+
+    if seller is not None:
+        return jsonify({"msg": "El usuario ya existe"}), 409
+
+    new_seller = Seller(
+         email=new_seller_data["email"],
+        phone=new_seller_data["phone"],
+        bank_account=new_seller_data["bank_account"],
+        password=new_seller_data["password"],
+        is_active=True)
+    
+
+    db.session.add(new_seller)
+    db.session.commit()
+
+    access_token = create_access_token(identity=new_seller.email)
+    
+    return jsonify({"msg": "Usuario creado exitosamente", "access_token": access_token}), 200
