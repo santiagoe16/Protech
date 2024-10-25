@@ -55,6 +55,7 @@ class Seller(db.Model):
             "id": self.id,
             "email": self.email,
             "phone" : self.phone,
+            "bank_account": self.bank_account,
         }
     
 class Comprador(db.Model):
