@@ -14,7 +14,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			authenticatedBuyer: false
+			authenticatedBuyer: false,
+			authenticatedSeller:false 
 		},
 		actions: {
 			verifyTokenBuyer: () => {
@@ -26,6 +27,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			changeAuthenticatedBuyer: (bool) => {
 				setStore({authenticatedBuyer: bool})
+			},
+			verifyTokenSeller: () => {
+				const token = localStorage.getItem('jwt-token');
+
+				if(token != null){
+					setStore({ authenticatedSeller: true })
+				}
+			},
+			changeAuthenticatedSeller: (bool) => {
+				setStore({authenticatedSeller: bool})
 			},
 
 			getMessage: async () => {
