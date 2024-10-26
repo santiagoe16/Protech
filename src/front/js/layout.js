@@ -1,4 +1,4 @@
-import React from "react";
+git import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
@@ -12,6 +12,7 @@ import injectContext from "./store/appContext";
 import { Compradores } from "./pages/Compradores";
 import { LoginBuyer } from "./pages/loginbuyers";
 import { SignupBuyer } from "./pages/signupbuyer";
+import { Categorias } from "./pages/categoria";
 import { Itemscarts } from "./pages/itemscarts";
 import { Carts } from "./pages/carts";
 import { Direcciones } from "./pages/address";
@@ -38,6 +39,7 @@ const Layout = () => {
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<Products/>} path="/products" />
+                        <Route element={<Categorias/>} path="/categorias" />
                         <Route element={<Sellers/>} path="/sellers" />
                         <Route element={<Compradores/>} path="/compradores" />
                         <Route element={<LoginBuyer/>} path="/buyer/login" />

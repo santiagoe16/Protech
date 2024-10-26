@@ -122,73 +122,61 @@ def update_product(product_id):
 
 #--------buyer----------------------------------------------
 
+@api.route('/categorias', methods=['GET'])
+def get_categorias():
+    categorias = Categoria.query.all()  # Obtiene todas las categorías
+    return jsonify([categoria.serialize() for categoria in categorias]), 200
 
-@api.route('/categoria', methods=['GET'])
-def get_categoria():
-    categorias = Categoria.query.all()  # Obtiene todas las categorías de la base de datos
-    return jsonify([categoria.serialize() for categoria in categorias]), 200  # Devuelve las categorías en formato JSON
-
-@api.route('/categoria/<int:categoria_id>', methods=['GET'])
-def get_categoria_by_id(categoria_id):
+@api.route('/categorias/<int:categoria_id>', methods=['GET'])
+def get_categoria(categoria_id):
     categoria = Categoria.query.get(categoria_id)  # Obtiene la categoría por ID
     if not categoria:
-        return jsonify({"message": "Categoría no encontrada"}), 404  # Si no se encuentra, devuelve 404
-    return jsonify(categoria.serialize()), 200  # Devuelve la categoría en formato JSON si la encuentra
+        return jsonify({"message": "Categoría no encontrada"}), 404
+    return jsonify(categoria.serialize()), 200
 
-@api.route('/categoria', methods=['POST'])
+@api.route('/categorias', methods=['POST'])
 def add_categoria():
-    new_categoria_data = request.get_json()  # Obtiene los datos JSON enviados en la solicitud
+    new_categoria_data = request.get_json()
+    if not new_categoria_data:
+        return jsonify({"error": "No se han proporcionado datos"}), 400
 
-    if not new_categoria_data:  # Verifica que se haya enviado algún dato
-        return jsonify({"error": "No se han proporcionado datos"}), 400  # Si no se envía dato, devuelve error 400
+    if "name" not in new_categoria_data:
+        return jsonify({"error": "No se ha encontrado el campo name"}), 400
 
-    # Verifica que los campos requeridos estén presentes
-    required_fields = ["name"]
-    if not all(field in new_categoria_data for field in required_fields):
-        return jsonify({"error": "Faltan campos requeridos: " + ', '.join(required_fields)}), 400  # Si falta algún campo, devuelve error 400
-
-    # Crea una nueva categoría
-    new_categoria = Categoria(
-        name=new_categoria_data["name"],
-    )
-
-    # Guarda la nueva categoría en la base de datos
+    new_categoria = Categoria(name=new_categoria_data["name"])
     db.session.add(new_categoria)
     db.session.commit()
+    
+    return jsonify({"message": "Categoría añadida exitosamente"}), 201
 
-    return jsonify({"message": "Categoría añadida exitosamente"}), 201  # Devuelve mensaje de éxito con código 201
-
-@api.route('/categoria/<int:categoria_id>', methods=['PUT'])
+@api.route('/categorias/<int:categoria_id>', methods=['PUT'])
 def update_categoria(categoria_id):
-    categoria = Categoria.query.get(categoria_id)  # Obtiene la categoría por ID
-
+    categoria = Categoria.query.get(categoria_id)
     if categoria is None:
-        return jsonify({"error": "Categoría no encontrada"}), 404  # Si no se encuentra, devuelve error 404
+        return jsonify({"error": "Categoría no encontrada"}), 404
 
-    data = request.get_json()  # Obtiene los datos de la solicitud
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No se han proporcionado datos para actualizar"}), 400
 
-    if not data:  # Verifica que los datos no estén vacíos
-        return jsonify({"error": "No se han proporcionado datos para actualizar"}), 400  # Si no hay datos, devuelve error 400
-
-    # Actualiza los campos solo si fueron proporcionados en la solicitud
     if 'name' in data:
         categoria.name = data['name']
-   
-    db.session.commit()  # Guarda los cambios en la base de datos
 
-    return jsonify({"message": "Categoría actualizada exitosamente"}), 200  # Devuelve mensaje de éxito
+    db.session.commit()
+    return jsonify({"message": "Categoría actualizada exitosamente"}), 200
 
-@api.route('/categoria/<int:categoria_id>', methods=['DELETE'])
+@api.route('/categorias/<int:categoria_id>', methods=['DELETE'])
 def remove_categoria(categoria_id):
-    categoria = Categoria.query.get(categoria_id)  # Obtiene la categoría por ID
-
+    categoria = Categoria.query.get(categoria_id)
     if categoria is None:
-        return jsonify({"error": "Categoría no encontrada"}), 404  # Devuelve un error 404 si no se encuentra la categoría
+        return jsonify({"error": "Categoría no encontrada"}), 404
 
-    db.session.delete(categoria)  # Elimina la categoría de la base de datos
-    db.session.commit()  # Confirma la transacción
+    db.session.delete(categoria)
+    db.session.commit()
+    return jsonify({"message": "Categoría eliminada exitosamente"}), 200
 
-    return jsonify({"message": "Categoría eliminada exitosamente"}), 200  # Devuelve un mensaje de éxito
+
+
 
 #----------------------------------Endpoints de Comprador-------------------------------------------
 
