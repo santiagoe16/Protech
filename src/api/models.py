@@ -27,6 +27,8 @@ class Products(db.Model):
     stock = db.Column(db.Integer, unique=False, nullable=False)
     image = db.Column(db.String(500), unique=False, nullable=False)
 
+    items_cart = db.relationship('ItemCart', back_populates='product')
+
     def __repr__(self):
         return f'<Products {self.name}>'
 
@@ -83,12 +85,12 @@ class Comprador(db.Model):
     email = db.Column(db.String(120), unique=False, nullable=False)
     clave = db.Column(db.String(80), unique=False, nullable=False)
     telefono = db.Column(db.String(80), unique=False, nullable=False)
-    carts = db.relationship('Cart', backref='comprador', lazy=True)
         
-     
+    carts = db.relationship("Cart", back_populates="comprador", lazy="dynamic")
+
         # Representación del objeto
     def __repr__(self):
-        return f'<Comprador {self.name} '
+        return f'<Comprador {self.name}>'
 
     # Método para serializar los datos del comprador
     def serialize(self):
@@ -103,8 +105,12 @@ class Comprador(db.Model):
 class ItemCart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Integer, unique=False, nullable=False)
-    cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'), nullable=False)
+
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    product = db.relationship("Products", back_populates="items_cart")
+
+    cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'), nullable=False)
+    carts = db.relationship("Cart", back_populates="items_cart")
 
     def __repr__(self):
         return f'<ItemCart {self.amount}>'
@@ -114,19 +120,23 @@ class ItemCart(db.Model):
             "id": self.id,
             "amount": self.amount,
             "cart_id": self.cart_id,
-            "product_id": self.product_id
+            "product_id": self.product_id,
+            "product": self.product.serialize()  # Aquí incluimos la serialización del producto completo
         }
 
 class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    comprador_id = db.Column(db.Integer, db.ForeignKey('comprador.id'), nullable=False)
     state = db.Column(db.String(20), unique=False, nullable=False)
     created_at = db.Column(db.Date, default=date.today, unique=False, nullable=False)
     total_price = db.Column(db.Integer, unique=False, nullable=False)
-    items = db.relationship('ItemCart', backref='cart', lazy=True)
+
+    items_cart = db.relationship("ItemCart", back_populates="carts", lazy="dynamic")
+
+    comprador_id = db.Column(db.Integer, db.ForeignKey('comprador.id'), nullable=False)
+    comprador = db.relationship("Comprador", back_populates="carts")
 
     def __repr__(self):
-        return f'<Products {self.name}>'
+        return f'<Cart {self.id}>'
 
     def serialize(self):
         return {
@@ -134,7 +144,8 @@ class Cart(db.Model):
             "state": self.state,
             "created_at": self.created_at.strftime('%Y-%m-%d'),
             "total_price": self.total_price,
-            "comprador_id": self.comprador_id
+            "comprador_id": self.comprador_id,
+            "items_cart": [item.serialize() for item in self.items_cart]
         }
     
 class Direccion (db.Model):

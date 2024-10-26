@@ -20,18 +20,15 @@ export const Navbar = () => {
 				<Link to="/">
 					<span className="navbar-brand mb-0 h1">React Boilerplate</span>
 				</Link>
+				
 				<div className="ml-auto">
-					<Link to="/demo">
-						<button className="btn btn-primary">action</button>
-					</Link>
-				</div>
-				<div className="ml-auto">
+					{(store.authenticatedBuyer || store.authenticatedSeller) ? (<Link to="/products"><button className="btn btn-primary">Products</button></Link>):<></>}
 					{(store.authenticatedBuyer || store.authenticatedSeller) ? (<button className="btn btn-danger" onClick={() => logOut()}>log out</button>):(<button className="btn btn-primary" onClick={() => navigate("/buyer/login")}>log in</button>)}
 					
-				</div>
-				{!store.authenticatedSeller && (
-   					 <button className="btn btn-primary" onClick={() => navigate("/seller/login")}>Start selling</button>
+					{!store.authenticatedSeller && (
+						<button className="btn btn-primary" onClick={() => navigate("/seller/login")}>Start selling</button>
 					)}
+				</div>
 			</div>
 		</nav>
 	);
