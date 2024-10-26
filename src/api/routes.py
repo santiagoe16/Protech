@@ -664,6 +664,7 @@ def signupSeller():
 
     new_seller = Seller(
         email=new_seller_data["email"],
+        name=new_seller_data["name"],
         phone=new_seller_data["phone"],
         bank_account=new_seller_data["bank_account"],
         password=new_seller_data["password"],
