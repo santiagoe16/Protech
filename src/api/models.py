@@ -60,6 +60,7 @@ class Categoria(db.Model):
 
 class Seller(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     phone = db.Column(db.String(80), unique=False, nullable=False)
@@ -73,6 +74,7 @@ class Seller(db.Model):
         return {
             "id": self.id,
             "email": self.email,
+            "name": self.name,
             "phone" : self.phone,
             "bank_account": self.bank_account,
         }
