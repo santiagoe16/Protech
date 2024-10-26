@@ -10,7 +10,7 @@ export const Navbar = () => {
 	const logOut = () =>{
 		localStorage.removeItem("jwt-token")
 		actions.changeAuthenticatedBuyer(false)
-
+		actions.changeAuthenticatedSeller(false)
 		navigate("/buyer/login")
 	}
 
@@ -26,9 +26,12 @@ export const Navbar = () => {
 					</Link>
 				</div>
 				<div className="ml-auto">
-					{store.authenticatedBuyer ? (<button className="btn btn-danger" onClick={() => logOut()}>log out</button>):(<button className="btn btn-primary" onClick={() => navigate("/buyer/login")}>log in</button>)}
+					{(store.authenticatedBuyer || store.authenticatedSeller) ? (<button className="btn btn-danger" onClick={() => logOut()}>log out</button>):(<button className="btn btn-primary" onClick={() => navigate("/buyer/login")}>log in</button>)}
 					
 				</div>
+				{!store.authenticatedSeller && (
+   					 <button className="btn btn-primary" onClick={() => navigate("/seller/login")}>Start selling</button>
+					)}
 			</div>
 		</nav>
 	);

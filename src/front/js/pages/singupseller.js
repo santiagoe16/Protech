@@ -31,7 +31,7 @@ export const SignupSeller = () => {
             }
             return response.json();
         })
-        //.then(() => navigate("/"))  
+        .then(() => navigate("/seller/login"))  
         .catch((error) => console.error('Fetch error:', error));
     };
 
