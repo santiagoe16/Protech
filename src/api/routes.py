@@ -377,8 +377,12 @@ def add_itemcart():
     if not isinstance(new_item_cart_data["amount"], int) or new_item_cart_data["amount"] < 1:
         return jsonify({"error": "The amount must be a non-negative integer."}), 400
     
+
+    
     new_product = ItemCart(
-        amount=new_item_cart_data["amount"]
+        amount=new_item_cart_data["amount"],
+        product_id = new_item_cart_data["product_id"],
+        cart_id= new_item_cart_data["cart_id"]
     )
     
     db.session.add(new_product)
@@ -409,13 +413,15 @@ def update_itemcart(itemcart_id):
 
     data = request.get_json()
 
-    if not data["amount"]:
+    if not data:
         return jsonify({"error": "No data has been provided for updating."}), 400
 
     if not isinstance(data["amount"], int) or data["amount"] < 1:
         return jsonify({"message":"The amount must be a non-negative integer."}), 400
 
     itemcart.amount = data["amount"]
+    itemcart.product_id = data["product_id"]
+    itemcart.cart_id = data["cart_id"]
 
     db.session.commit()
     
