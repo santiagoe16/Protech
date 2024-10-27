@@ -29,6 +29,7 @@ const injectContext = PassedComponent => {
 			 * store, instead use actions, like this:
 			 **/
 			state.actions.verifyTokenBuyer();
+			state.actions.verifyTokenSeller();
 			state.actions.getMessage(); // <---- calling this function from the flux.js actions
 		}, []);
 
