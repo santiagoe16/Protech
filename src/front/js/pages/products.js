@@ -198,6 +198,7 @@ export const Products = () => {
                                     <th>price</th>
                                     <th>stock</th>
                                     <th>image</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -226,7 +227,7 @@ export const Products = () => {
                                             <td>{product.image}</td>
                                         </tr>
                                     ))
-                                    ):(<tr><td>There are no items in the table.</td></tr>)
+                                    ):(<tr>There are no items in the table.</tr>)
                                 }
                             </tbody>
                         </table>

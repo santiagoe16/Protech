@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 675242695a9e
+Revision ID: 35dd2d73440b
 Revises: 
-Create Date: 2024-10-25 19:15:12.744122
+Create Date: 2024-10-26 20:27:49.113533
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '675242695a9e'
+revision = '35dd2d73440b'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -68,18 +68,18 @@ def upgrade():
     )
     op.create_table('cart',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('comprador_id', sa.Integer(), nullable=False),
     sa.Column('state', sa.String(length=20), nullable=False),
     sa.Column('created_at', sa.Date(), nullable=False),
     sa.Column('total_price', sa.Integer(), nullable=False),
+    sa.Column('comprador_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['comprador_id'], ['comprador.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('item_cart',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('amount', sa.Integer(), nullable=False),
-    sa.Column('cart_id', sa.Integer(), nullable=False),
     sa.Column('product_id', sa.Integer(), nullable=False),
+    sa.Column('cart_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['cart_id'], ['cart.id'], ),
     sa.ForeignKeyConstraint(['product_id'], ['products.id'], ),
     sa.PrimaryKeyConstraint('id')
