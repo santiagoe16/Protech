@@ -18,8 +18,9 @@ export const ProductsBuyers = () => {
             .then((data) => {
                 setProducts(data);
                 const initialAmounts = {};
+                console.log(data)
                 data.forEach(product => {
-                    initialAmounts[product.id] = 1; // Asignar 1 como cantidad inicial
+                    initialAmounts[product.id] = 1;
                 });
                 setAmounts(initialAmounts);
             });
@@ -44,7 +45,7 @@ export const ProductsBuyers = () => {
 
     const addToCart = (productId) => {
         const raw = JSON.stringify({
-            "amount": parseInt(amounts[productId]) || 1, // Usar 1 si la cantidad es vacía
+            "amount": parseInt(amounts[productId]) || 1,
             "product_id": parseInt(productId)
         });
 
@@ -72,10 +73,10 @@ export const ProductsBuyers = () => {
         if (value === "") {
             setAmounts({
                 ...amounts,
-                [productId]: "" // Dejar el campo vacío
+                [productId]: "" 
             });
         } else {
-            const amountValue = Math.max(1, parseInt(value)); // Asegurarse de que la cantidad no sea menor que 1
+            const amountValue = Math.max(1, parseInt(value)); 
             setAmounts({
                 ...amounts,
                 [productId]: amountValue
