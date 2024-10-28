@@ -510,12 +510,15 @@ def update_cart(cart_id):
     db.session.commit()
     return jsonify(cart.serialize()), 200
 
-@api.route("/buyer/cart/products", methods = ["GET"])
+@api.route("/buyer/cart/products", methods=["GET"])
 @jwt_required()
-def BuyerCartProducts():
+def GetBuyerCartProducts():
     buyer_id = get_jwt_identity()
 
-    cart = Cart.query.filter_by(comprador_id = buyer_id).first()
+    cart = Cart.query.filter_by(comprador_id=buyer_id).first()
+
+    if not cart:
+        return jsonify({"message": "No cart found for this buyer."}), 404
 
     cart_items = cart.items_cart.all()
 
@@ -524,11 +527,31 @@ def BuyerCartProducts():
         item_data = {
             "item_id": item.id,
             "amount": item.amount,
-            "product": item.product.serialize()  
+            "product": item.product.serialize()
         }
         items.append(item_data)
 
     return jsonify(items), 200
+
+@api.route("/buyer/cart/products/<int:item_id>", methods=["DELETE"])
+@jwt_required()
+def RemoveBuyerCartProducts(item_id):
+    buyer_id = get_jwt_identity()
+
+    cart = Cart.query.filter_by(comprador_id=buyer_id).first()
+
+    if not cart:
+        return jsonify({"error": "No cart found for this buyer."}), 404
+
+    cart_item = ItemCart.query.filter_by(cart_id=cart.id, id=item_id).first()
+
+    if not cart_item:
+        return jsonify({"error": "No item found in the cart."}), 404
+
+    db.session.delete(cart_item)
+    db.session.commit()
+
+    return jsonify({"message": "Product removed from cart"}), 200
 
 #------------------LOGINBUYERS---------------
 
