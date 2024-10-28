@@ -18,17 +18,27 @@ class User(db.Model):
             "email": self.email,
         }
     
-class Products(db.Model):
+class Products(db.Model):#products es muchos
+    
+    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
     description = db.Column(db.String(400), unique=False, nullable=False)
     price = db.Column(db.Integer, unique=False, nullable=False)
     stock = db.Column(db.Integer, unique=False, nullable=False)
     image = db.Column(db.String(500), unique=False, nullable=False)
+  
 
+<<<<<<< HEAD
     items_cart = db.relationship('ItemCart', back_populates='product')
 
     def __repr__(self):
+=======
+    category_id= db.Column(db.Integer, db.ForeignKey("categoria.id"), unique=False, nullable=False)#definir nombre en ingles y agregar clave foranea
+    categoria = db.relationship("Categoria", back_populates="products")
+
+    def __repr__(self): 
+>>>>>>> FT-28-Agregar-categoria-a-producto-CRUD
         return f'<Products {self.name}>'
 
     def serialize(self):
@@ -39,21 +49,36 @@ class Products(db.Model):
             "price": self.price,
             "stock": self.stock,
             "image": self.image,
+            "category_id": self.category_id ,#hace que pertenezca a uno a muchos(relacion uno a muchos)
+            "category": self.categoria.serialize() if self.categoria else None #Error de serializacion solucionado(linea necesaria)
         }
     
 class Categoria(db.Model):
+    #categoria es uno
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
+    products = db.relationship("Products", back_populates="categoria", lazy="dynamic") #se agrega el que es muchos (ver que es dynamic cuando lo necesites)
+    
     
     def __repr__(self):
         return f'<Categoria {self.name}>'
 
+<<<<<<< HEAD
+=======
+    
+>>>>>>> FT-28-Agregar-categoria-a-producto-CRUD
     def serialize(self):
         return {
             "id": self.id,
             "name": self.name
         }
 
+<<<<<<< HEAD
+=======
+
+    
+
+>>>>>>> FT-28-Agregar-categoria-a-producto-CRUD
 class Seller(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
@@ -162,3 +187,4 @@ class Direccion (db.Model):
             "codigo_postal": self.codigo_postal,
             "pais": self.pais,
         }
+git push
