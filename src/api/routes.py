@@ -370,30 +370,38 @@ def add_itemcart():
 
     comprador_id = get_jwt_identity()
 
-    cart = Cart.query.filter_by(comprador_id=comprador_id).order_by(desc(Cart.id)).first()
+    cart = Cart.query.filter_by(comprador_id=comprador_id, state='open').first()
+
+    if not cart:
+        cart = Cart(comprador_id=comprador_id, total_price=0, state='open')
+        db.session.add(cart)
+        db.session.commit()
 
     if not new_item_cart_data:
         return jsonify({"error": "No data provided for the new item cart."}), 400
-    
-    
-    if "amount" not in new_item_cart_data:
-        return jsonify({"error": "you have to enter an amount"}), 400
-    
-    if not isinstance(new_item_cart_data["amount"], int) or new_item_cart_data["amount"] < 1:
-        return jsonify({"error": "The amount must be a non-negative integer."}), 400
-    
 
-    
-    new_product = ItemCart(
+    if "amount" not in new_item_cart_data:
+        return jsonify({"error": "You have to enter an amount"}), 400
+
+    if not isinstance(new_item_cart_data["amount"], int) or new_item_cart_data["amount"] < 1:
+        return jsonify({"error": "The amount must be a positive integer."}), 400
+
+    product = Products.query.get(new_item_cart_data["product_id"])
+    if not product:
+        return jsonify({"error": "The product with the given ID does not exist."}), 404
+
+    new_item = ItemCart(
         amount=new_item_cart_data["amount"],
-        product_id = new_item_cart_data["product_id"],
-        cart_id= cart.id
+        product_id=new_item_cart_data["product_id"],
+        cart_id=cart.id
     )
-    
-    db.session.add(new_product)
+
+    cart.total_price += product.price * new_item_cart_data["amount"]
+
+    db.session.add(new_item)
     db.session.commit()
-    
-    return jsonify({"message":"Product successfully added"}), 201
+
+    return jsonify({"message": "Product successfully added to cart", "cart_total": cart.total_price}), 201
 
 @api.route('/itemscarts/<int:itemcart_id>', methods=['DELETE'])
 def remove_itemcart(itemcart_id):
@@ -433,6 +441,22 @@ def update_itemcart(itemcart_id):
     return jsonify({"message":"itemcart successfully edited"}), 200
 
 #------------------cart----------------------------------------
+@api.route('/cart/<int:cart_id>/generate', methods=['PUT'])
+def generate_cart(cart_id):
+
+    cart = Cart.query.get(cart_id)
+
+    if cart is None:
+        return jsonify({"error": "Carrito no encontrado"}), 404
+
+    if cart.state != 'open':
+        return jsonify({"error": "El carrito no está en estado abierto"}), 400
+
+    cart.state = 'generated'
+    db.session.commit()
+
+    return jsonify({"message": "Carrito generado exitosamente"}), 200
+
 @api.route('/carts', methods=['GET'])
 def get_carts():
     carts = Cart.query.all()
@@ -515,16 +539,19 @@ def update_cart(cart_id):
 def GetBuyerCartProducts():
     buyer_id = get_jwt_identity()
 
-    cart = Cart.query.filter_by(comprador_id=buyer_id).first()
+    cart = Cart.query.filter_by(comprador_id=buyer_id, state='open').first()
 
     if not cart:
-        return jsonify({"message": "No cart found for this buyer."}), 404
+        cart = Cart(comprador_id=buyer_id, total_price=0, state='open')
+        db.session.add(cart)
+        db.session.commit()
 
     cart_items = cart.items_cart.all()
 
     items = []
     for item in cart_items:
         item_data = {
+            "cart_id": cart.id,
             "item_id": item.id,
             "amount": item.amount,
             "product": item.product.serialize()

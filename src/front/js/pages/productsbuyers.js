@@ -1,51 +1,53 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 
-
 export const ProductsBuyers = () => {
-    const {store, actions} = useContext(Context)
+    const { store, actions } = useContext(Context);
+    const [products, setProducts] = useState([]);
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [price, setPrice] = useState(0);
+    const [stock, setStock] = useState(0);
+    const [image, setImage] = useState("");
+    const [activeTab, setActiveTab] = useState("list-tab");
+    const [amounts, setAmounts] = useState({});
 
-    const [products, setProducts] = useState([])
-
-    const [name, setName] = useState("")
-    const [description, setDescription] = useState("")
-    const [price, setPrice] = useState(0)
-    const [stock, setStock] = useState(0)
-    const [image, setImage] = useState("")
-    const [activeTab, setActiveTab] = useState("list-tab")
-    const [amount, setAmount] = useState(1)
-
-    const getProducts = ()=>{
-        fetch( process.env.BACKEND_URL + "/api/products",{ method: "GET"})
-        .then((response) => response.json())
-        .then((data) => {
-            setProducts(data)
-        })
+    const getProducts = () => {
+        fetch(process.env.BACKEND_URL + "/api/products", { method: "GET" })
+            .then((response) => response.json())
+            .then((data) => {
+                setProducts(data);
+                const initialAmounts = {};
+                data.forEach(product => {
+                    initialAmounts[product.id] = 1; // Asignar 1 como cantidad inicial
+                });
+                setAmounts(initialAmounts);
+            });
     }
 
     useEffect(() => {
         getProducts();
     }, []);
- 
-    const viewMore = (product_id)=>{
-        fetch(process.env.BACKEND_URL + `/api/products/${product_id}`,{ method: "GET"})
-        .then((response) => response.json())
-        .then((data) => {
-            setActiveTab("view-more-tab");
-            setName(data.name);
-            setDescription(data.description);
-            setPrice(data.price);
-            setStock(data.stock);
-            setImage(data.image);
-        })
+
+    const viewMore = (product_id) => {
+        fetch(process.env.BACKEND_URL + `/api/products/${product_id}`, { method: "GET" })
+            .then((response) => response.json())
+            .then((data) => {
+                setActiveTab("view-more-tab");
+                setName(data.name);
+                setDescription(data.description);
+                setPrice(data.price);
+                setStock(data.stock);
+                setImage(data.image);
+            });
     }
 
-    const addToCart = (productId) =>{
+    const addToCart = (productId) => {
         const raw = JSON.stringify({
-            "amount": parseInt(amount),
+            "amount": parseInt(amounts[productId]) || 1, // Usar 1 si la cantidad es vacía
             "product_id": parseInt(productId)
         });
-        
+
         const requestOptions = {
             method: "POST",
             headers: {
@@ -55,18 +57,33 @@ export const ProductsBuyers = () => {
             body: raw,
             redirect: "follow"
         };
-        
+
         fetch(process.env.BACKEND_URL + "/api/itemscarts", requestOptions)
-        .then((response) => response.json())
-        .then((result) => {
-            console.log(result.message);
-            getProducts()
-            setActiveTab("list-tab");
-            setAmount(1)
-        })
-        .catch((error) => console.error(error))
+            .then((response) => response.json())
+            .then((result) => {
+                console.log(result.message);
+                getProducts();
+                setActiveTab("list-tab");
+            })
+            .catch((error) => console.error(error));
     }
-    return(
+
+    const handleAmountChange = (productId, value) => {
+        if (value === "") {
+            setAmounts({
+                ...amounts,
+                [productId]: "" // Dejar el campo vacío
+            });
+        } else {
+            const amountValue = Math.max(1, parseInt(value)); // Asegurarse de que la cantidad no sea menor que 1
+            setAmounts({
+                ...amounts,
+                [productId]: amountValue
+            });
+        }
+    }
+
+    return (
         <>
             <div className="container mt-5">
                 <ul className="nav nav-tabs" id="myTab" role="tablist">
@@ -107,17 +124,18 @@ export const ProductsBuyers = () => {
                                     <th>price</th>
                                     <th>stock</th>
                                     <th>image</th>
+                                    <th>Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {products.length > 0 ?
-                                    (products.map((product, index) =>(
-                                        <tr key={index}>
+                                {products.length > 0 ? (
+                                    products.map((product, index) => (
+                                        <tr key={product.id}>
                                             <td>{index + 1}</td>
                                             <td className="text-center">
-                                                <i style={{cursor:"pointer"}}
-                                                className="fas fa-eye"
-                                                onClick={() => viewMore(product.id)}
+                                                <i style={{ cursor: "pointer" }}
+                                                    className="fas fa-eye"
+                                                    onClick={() => viewMore(product.id)}
                                                 ></i>
                                             </td>
                                             <td>{product.name}</td>
@@ -125,23 +143,32 @@ export const ProductsBuyers = () => {
                                             <td>{product.price}$</td>
                                             <td>{product.stock}</td>
                                             <td>{product.image}</td>
-                                            <td><button 
-                                            className="btn btn-primary"
-                                            onClick={() => addToCart(product.id)}
-                                            >add to cart</button></td>
                                             <td>
-                                                <input type="number" size={10} value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Amount" className="form-control" id="amount"/>
+                                                <input
+                                                    type="number"
+                                                    size={10}
+                                                    value={amounts[product.id] || ""}
+                                                    onChange={(e) => handleAmountChange(product.id, e.target.value)}
+                                                    placeholder="Amount"
+                                                    className="form-control"
+                                                    id="amount"
+                                                />
+                                                <button
+                                                    className="btn btn-primary mt-2"
+                                                    onClick={() => addToCart(product.id)}
+                                                >Add to Cart</button>
                                             </td>
                                         </tr>
                                     ))
-                                    ):(<tr><td>There are no items in the table.</td></tr>)
-                                }
+                                ) : (
+                                    <tr><td colSpan="8">There are no items in the table.</td></tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
 
                     <div className={`tab-pane fade ${activeTab === "view-more-tab" ? "show active" : ""}`} id="view-more-tab-pane" role="tabpanel" aria-labelledby="view-more-tab" tabIndex="0">
-                    <table className="table table-bordered">
+                        <table className="table table-bordered">
                             <thead>
                                 <tr>
                                     <th>Name</th>
