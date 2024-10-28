@@ -23,6 +23,7 @@ export const Products = () => {
             });
     };
 
+    //checar viewmore
     const getCategories = () => {
         fetch(`${process.env.BACKEND_URL}/api/categorias`)
             .then((response) => response.json())
