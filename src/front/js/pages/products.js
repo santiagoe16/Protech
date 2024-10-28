@@ -47,7 +47,6 @@ export const Products = () => {
 
     const handleSubmitCreate = (e) => {
         e.preventDefault();
-
         const raw = JSON.stringify({
             name,
             description,
@@ -56,7 +55,6 @@ export const Products = () => {
             image,
             category_id: categoryId,
         });
-
         fetch(`${process.env.BACKEND_URL}/api/products`, {
             method: "POST",
             headers: {
@@ -64,7 +62,6 @@ export const Products = () => {
             },
             body: raw,
         })
-            .then((response) => response.text())
             .then(() => {
                 getProducts();
                 setActiveTab("list-tab");
@@ -102,7 +99,6 @@ export const Products = () => {
 
     const handleSubmitEdit = (e) => {
         e.preventDefault();
-
         const raw = JSON.stringify({
             name,
             description,
@@ -111,7 +107,6 @@ export const Products = () => {
             image,
             category_id: categoryId,
         });
-
         fetch(`${process.env.BACKEND_URL}/api/products/${editProduct_Id}`, {
             method: "PUT",
             headers: {
@@ -119,7 +114,6 @@ export const Products = () => {
             },
             body: raw,
         })
-            .then((response) => response.text())
             .then(() => {
                 getProducts();
                 setActiveTab("list-tab");
@@ -128,79 +122,6 @@ export const Products = () => {
             .catch((error) => console.error(error));
     };
 
-<<<<<<< HEAD
-                <div className="tab-content" id="myTabContent">
-                    <div className={`tab-pane fade ${activeTab === "list-tab" ? "show active" : ""}`} id="list-tab-pane" role="tabpanel" aria-labelledby="list-tab" tabIndex="0">
-                        <table className="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <td></td>
-                                    <th>Name</th>
-                                    <th>description</th>
-                                    <th>price</th>
-                                    <th>stock</th>
-                                    <th>image</th>
-                                    
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {products.length > 0 ?
-                                    (products.map((product, index) =>(
-                                        <tr key={index}>
-                                            <td>{index + 1}</td>
-                                            <td className="text-center">
-                                                <i className="fas fa-edit me-3"
-                                                style={{cursor:"pointer"}}
-                                                onClick={()=> getToEdit(product.id)}>
-                                                </i>
-                                                <i className="fas fa-trash me-3"
-                                                style={{cursor:"pointer"}}
-                                                onClick={()=> deleteProduct(product.id)}>
-                                                </i>
-                                                <i style={{cursor:"pointer"}}
-                                                className="fas fa-eye"
-                                                onClick={() => viewMore(product.id)}
-                                                ></i>
-                                            </td>
-                                            <td>{product.name}</td>
-                                            <td>{product.description}</td>
-                                            <td>{product.price}$</td>
-                                            <td>{product.stock}</td>
-                                            <td>{product.image}</td>
-                                        </tr>
-                                    ))
-                                    ):(<tr><td>There are no items in the table.</td></tr>)
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                    <div className={`tab-pane fade ${activeTab === "create-tab" ? "show active" : ""}`} id="create-tab-pane" role="tabpanel" aria-labelledby="create-tab" tabIndex="0">
-                        <form className="mt-4 ms-5" onSubmit={handleSubmitCreate}>
-                            <div className="mb-3">
-                                <label htmlFor="name" className="form-label">Name</label>
-                                <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="form-control" id="name"/>
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="description" className="form-label">Description</label>
-                                <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} className="form-control" id="description"/>
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="price" className="form-label">Price</label>
-                                <input type="text" value={price} onChange={(e) => setPrice(e.target.value)} className="form-control" id="price"/>
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="stock" className="form-label">Stock</label>
-                                <input type="text" value={stock} onChange={(e) => setStock(e.target.value)} className="form-control" id="stock"/>
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="image" className="form-label">Image</label>
-                                <input type="text"  value={image} onChange={(e) => setImage(e.target.value)} className="form-control" id="image"/>
-                            </div>
-                            <button type="submit" className="btn btn-primary">Save</button>
-                        </form>
-                    </div>
-=======
     const viewMore = (product_id) => {
         fetch(`${process.env.BACKEND_URL}/api/products/${product_id}`, { method: "GET" })
             .then((response) => response.json())
@@ -214,7 +135,6 @@ export const Products = () => {
                 setCategoryId(data.category.id);
             });
     };
->>>>>>> FT-28-Agregar-categoria-a-producto-CRUD
 
     return (
         <div className="container mt-5">
@@ -341,19 +261,19 @@ export const Products = () => {
                             <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} className="form-control" id="stock" />
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="image" className="form-label">Image</label>
+                            <label htmlFor="image" className="form-label">Image URL</label>
                             <input type="text" value={image} onChange={(e) => setImage(e.target.value)} className="form-control" id="image" />
                         </div>
                         <div className="mb-3">
                             <label htmlFor="category" className="form-label">Category</label>
                             <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="form-select" id="category">
-                                <option value="">Seleccione una categoría</option>
-                                {categories.map(category => (
+                                <option value="0">Select a category</option>
+                                {categories.map((category) => (
                                     <option key={category.id} value={category.id}>{category.name}</option>
                                 ))}
                             </select>
                         </div>
-                        <button type="submit" className="btn btn-primary">Save</button>
+                        <button type="submit" className="btn btn-primary">Create Product</button>
                     </form>
                 </div>
 
@@ -376,48 +296,57 @@ export const Products = () => {
                             <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} className="form-control" id="stock" />
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="image" className="form-label">Image</label>
+                            <label htmlFor="image" className="form-label">Image URL</label>
                             <input type="text" value={image} onChange={(e) => setImage(e.target.value)} className="form-control" id="image" />
                         </div>
                         <div className="mb-3">
                             <label htmlFor="category" className="form-label">Category</label>
                             <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="form-select" id="category">
-                                <option value="">Seleccione una categoría</option>
-                                {categories.map(category => (
+                                <option value="0">Select a category</option>
+                                {categories.map((category) => (
                                     <option key={category.id} value={category.id}>{category.name}</option>
                                 ))}
                             </select>
                         </div>
-                        <button type="submit" className="btn btn-primary">Save</button>
+                        <button type="submit" className="btn btn-primary">Edit Product</button>
                     </form>
                 </div>
-
                 <div className={`tab-pane fade ${activeTab === "view-more-tab" ? "show active" : ""}`} id="view-more-tab-pane" role="tabpanel" aria-labelledby="view-more-tab" tabIndex="0">
-                    <table className="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Price</th>
-                                <th>Stock</th>
-                                <th>Image</th>
-                                <th>Category</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>{name}</td>
-                                <td>{description}</td>
-                                <td>{price}$</td>
-                                <td>{stock}</td>
-                                <td>{image}</td>
-                                <td>{categoryId ? categories.find(category => category.id === categoryId)?.name : 'N/A'}</td>
-                                
-                            </tr>
-                        </tbody>
-                    </table>
+                <form className="mt-4 ms-5" onSubmit={handleSubmitEdit}>
+                        <div className="mb-3">
+                            <label htmlFor="name" className="form-label">Name</label>
+                            <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="form-control" id="name" />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="description" className="form-label">Description</label>
+                            <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} className="form-control" id="description" />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="price" className="form-label">Price</label>
+                            <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="form-control" id="price" />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="stock" className="form-label">Stock</label>
+                            <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} className="form-control" id="stock" />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="image" className="form-label">Image URL</label>
+                            <input type="text" value={image} onChange={(e) => setImage(e.target.value)} className="form-control" id="image" />
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="category" className="form-label">Category</label>
+                            <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="form-select" id="category">
+                                <option value="0">Select a category</option>
+                                {categories.map((category) => (
+                                    <option key={category.id} value={category.id}>{category.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <button type="submit" className="btn btn-primary">Edit Product</button>
+                    </form>
                 </div>
+               </div>  
             </div>
-        </div>
+        
     );
 };
