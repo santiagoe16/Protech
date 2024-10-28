@@ -135,7 +135,7 @@ class ItemCart(db.Model):
 
 class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    state = db.Column(db.String(20), unique=False, nullable=False)
+    state = db.Column(db.String(20), default="open", nullable=False)
     created_at = db.Column(db.Date, default=date.today, unique=False, nullable=False)
     total_price = db.Column(db.Integer, unique=False, nullable=False)
 

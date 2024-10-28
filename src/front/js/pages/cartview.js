@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
+import { useNavigate } from "react-router-dom";
 
 export const CartView = () => {
   const { store, actions } = useContext(Context);
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [cartId, setCartId] = useState(null);
+  const navigate = useNavigate()
 
   const getCartItems = () => {
     const token = actions.verifyTokenBuyer(); 
@@ -24,6 +27,10 @@ export const CartView = () => {
         setCartItems(data);
         const total = data.reduce((acc, item) => acc + (item.product.price * item.amount), 0);
         setTotalPrice(total);
+
+        if (data.length > 0) {
+          setCartId(data[0].cart_id)
+        }
       })
       .catch((error) => {
         console.error("Error fetching cart items:", error);
@@ -58,6 +65,32 @@ export const CartView = () => {
         console.error("Error removing item from cart:", error);
       });
   }
+
+  const generateOrder = () =>{
+
+    const token = actions.verifyTokenBuyer(); 
+    
+    fetch(process.env.BACKEND_URL + `/api/cart/${cartId}/generate`, {
+      method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+    .then((response) => {
+      if (!response.ok) {
+        // Lanza un error si la respuesta no es ok
+        throw new Error("Error generating order: " + response.statusText);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Order generated successfully:", data);
+      navigate("/productsbuyers")
+    })
+    .catch((error) => {
+      console.error("Error:", error.message);
+    });
+  } 
 
   return (
     <div className="container mt-5">
@@ -95,6 +128,7 @@ export const CartView = () => {
         </tbody>
       </table>
       <h3>Total price: ${totalPrice.toFixed(2)}</h3>
+      <button className="btn btn-primary" onClick={() => generateOrder()}>generate order</button>
     </div>
   );
 }
