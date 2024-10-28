@@ -7,6 +7,8 @@ export const Itemscarts = () => {
 
     const [itemsCarts, setItemsCarts] = useState([])
     const [amount, setAmount] = useState(0)
+    const [product_id, setProduct_id] = useState(0)
+    const [cart_id, setCart_id] = useState(0)
     const [activeTab, setActiveTab] = useState("list-tab")
     const [editItemCart_id, setEditItemCarts_id] = useState(0)
 
@@ -26,7 +28,9 @@ export const Itemscarts = () => {
         e.preventDefault()
 
         const raw = JSON.stringify({
-            "amount": parseInt(amount) 
+            "amount": parseInt(amount),
+            "product_id": parseInt(product_id),
+            "cart_id": parseInt(cart_id)
         });
         
         const requestOptions = {
@@ -39,8 +43,10 @@ export const Itemscarts = () => {
         };
         
         fetch(process.env.BACKEND_URL + "/api/itemscarts", requestOptions)
-        .then((response) => response.text())
+        .then((response) => response.json())
         .then((result) => {
+            console.log(result.message);
+            
             getItemsCarts()
             setActiveTab("list-tab");
             setAmount(0)
@@ -66,6 +72,8 @@ export const Itemscarts = () => {
         .then((data) => {
             setActiveTab("edit-tab");
             setAmount(data.amount);
+            setCart_id(data.cart_id)
+            setProduct_id(data.product_id)
             setEditItemCarts_id(itemcart_id);
         })
     }
@@ -75,6 +83,8 @@ export const Itemscarts = () => {
 
         const raw = JSON.stringify({
             "amount": parseInt(amount),
+            "product_id": parseInt(product_id),
+            "cart_id": parseInt(cart_id)
         });
         
         const requestOptions = {
@@ -92,6 +102,8 @@ export const Itemscarts = () => {
             getItemsCarts()
             setActiveTab("list-tab");
             setAmount(0)
+            setCart_id(0)
+            setProduct_id(0)
         })
         .catch((error) => console.error(error))
     }
@@ -101,7 +113,8 @@ export const Itemscarts = () => {
         .then((data) => {
             setActiveTab("view-more-tab");
             setAmount(data.amount);
-            
+            setCart_id(data.cart_id)
+            setProduct_id(data.product_id)
         })
     }
     return(
@@ -165,6 +178,8 @@ export const Itemscarts = () => {
                                 <tr>
                                     <th>#</th>
                                     <td></td>
+                                    <th>product id</th>
+                                    <th>cart id</th>
                                     <th>amount</th>
                                 </tr>
                             </thead>
@@ -187,6 +202,8 @@ export const Itemscarts = () => {
                                                 onClick={() => viewMore(itemCart.id)}
                                                 ></i>
                                             </td>
+                                            <td>{itemCart.product_id}</td>
+                                            <td>{itemCart.cart_id}</td>
                                             <td>{itemCart.amount}</td>
                                         </tr>
                                     ))
@@ -198,8 +215,16 @@ export const Itemscarts = () => {
                     <div className={`tab-pane fade ${activeTab === "create-tab" ? "show active" : ""}`} id="create-tab-pane" role="tabpanel" aria-labelledby="create-tab" tabIndex="0">
                         <form className="mt-4 ms-5" onSubmit={handleSubmitCreate}>
                             <div className="mb-3">
+                                <label htmlFor="product_id" className="form-label">product id</label>
+                                <input type="number" value={product_id} onChange={(e) => setProduct_id(e.target.value)} className="form-control" id="product_id"/>
+                            </div>
+                            <div className="mb-3">
+                                <label htmlFor="cart_id" className="form-label">cart id</label>
+                                <input type="number" value={cart_id} onChange={(e) => setCart_id(e.target.value)} className="form-control" id="cart_id"/>
+                            </div>
+                            <div className="mb-3">
                                 <label htmlFor="amount" className="form-label">Amount</label>
-                                <input type="text" value={amount} onChange={(e) => setAmount(e.target.value)} className="form-control" id="amount"/>
+                                <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} className="form-control" id="amount"/>
                             </div>
                             <button type="submit" className="btn btn-primary">Save</button>
                         </form>
@@ -207,8 +232,16 @@ export const Itemscarts = () => {
                     <div className={`tab-pane fade ${activeTab === "edit-tab" ? "show active" : ""}`} id="edit-tab-pane" role="tabpanel" aria-labelledby="edit-tab" tabIndex="0">
                         <form className="mt-4 ms-5" onSubmit={handleSubmitEdit}>
                             <div className="mb-3">
-                                <label htmlFor="amount" className="form-label">Name</label>
-                                <input type="text" value={amount} onChange={(e) => setAmount(e.target.value)} className="form-control" id="amount"/>
+                                <label htmlFor="amount" className="form-label">amount</label>
+                                <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} className="form-control" id="amount"/>
+                            </div>
+                            <div className="mb-3">
+                                <label htmlFor="product_id" className="form-label">product id</label>
+                                <input type="number" value={product_id} onChange={(e) => setProduct_id(e.target.value)} className="form-control" id="product_id"/>
+                            </div>
+                            <div className="mb-3">
+                                <label htmlFor="cart_id" className="form-label">cart id</label>
+                                <input type="number" value={cart_id} onChange={(e) => setCart_id(e.target.value)} className="form-control" id="cart_id"/>
                             </div>
                             <button type="submit" className="btn btn-primary">Save</button>
                         </form>
@@ -219,11 +252,15 @@ export const Itemscarts = () => {
                             <thead>
                                 <tr>
                                     <th>Amount</th>
+                                    <th>Produc id</th>
+                                    <th>Cart id</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td>{amount}</td>
+                                    <td>{product_id}</td>
+                                    <td>{cart_id}</td>
                                 </tr>
                             </tbody>
                         </table>

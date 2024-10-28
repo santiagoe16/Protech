@@ -24,7 +24,7 @@ export const LoginBuyer = () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(raw)
         };
-   
+    
         fetch(process.env.BACKEND_URL + "/api/buyer/login", requestOptions)
             .then((response) => {
                 if (!response.ok) {
@@ -36,7 +36,7 @@ export const LoginBuyer = () => {
             .then((result) =>  {
                 localStorage.setItem("jwt-token", result.access_token);
                 actions.changeAuthenticatedBuyer(true)
-                navigate("/products");
+                navigate("/productsbuyers");
             })
             .catch((error) => {
                 console.error('Fetch error:', error)

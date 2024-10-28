@@ -227,7 +227,7 @@ export const Products = () => {
                                             <td>{product.image}</td>
                                         </tr>
                                     ))
-                                    ):(<tr>There are no items in the table.</tr>)
+                                    ):(<tr><td>There are no items in the table.</td></tr>)
                                 }
                             </tbody>
                         </table>

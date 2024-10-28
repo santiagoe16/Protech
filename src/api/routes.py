@@ -6,7 +6,7 @@ from api.models import db, User, Products, Seller , Comprador,Categoria, ItemCar
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
-
+from sqlalchemy import desc
 
 api = Blueprint('api', __name__)
 
@@ -364,8 +364,13 @@ def get_itemcart(itemcart_id):
     return jsonify(item_cart.serialize()), 200
 
 @api.route('/itemscarts', methods=['POST'])
+@jwt_required()
 def add_itemcart():
     new_item_cart_data = request.get_json()
+
+    comprador_id = get_jwt_identity()
+
+    cart = Cart.query.filter_by(comprador_id=comprador_id).order_by(desc(Cart.id)).first()
 
     if not new_item_cart_data:
         return jsonify({"error": "No data provided for the new item cart."}), 400
@@ -382,7 +387,7 @@ def add_itemcart():
     new_product = ItemCart(
         amount=new_item_cart_data["amount"],
         product_id = new_item_cart_data["product_id"],
-        cart_id= new_item_cart_data["cart_id"]
+        cart_id= cart.id
     )
     
     db.session.add(new_product)
