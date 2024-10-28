@@ -19,15 +19,21 @@ class User(db.Model):
             # do not serialize the password, its a security breach
         }
     
-class Products(db.Model):
+class Products(db.Model):#products es muchos
+    
+    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
     description = db.Column(db.String(400), unique=False, nullable=False)
     price = db.Column(db.Integer, unique=False, nullable=False)
     stock = db.Column(db.Integer, unique=False, nullable=False)
     image = db.Column(db.String(500), unique=False, nullable=False)
+  
 
-    def __repr__(self):
+    category_id= db.Column(db.Integer, db.ForeignKey("categoria.id"), unique=False, nullable=False)#definir nombre en ingles y agregar clave foranea
+    categoria = db.relationship("Categoria", back_populates="products")
+
+    def __repr__(self): 
         return f'<Products {self.name}>'
 
     def serialize(self):
@@ -38,17 +44,21 @@ class Products(db.Model):
             "price": self.price,
             "stock": self.stock,
             "image": self.image,
+            "category_id": self.category_id ,#hace que pertenezca a uno a muchos(relacion uno a muchos)
+            "category": self.categoria.serialize() if self.categoria else None #Error de serializacion solucionado(linea necesaria)
         }
     
 class Categoria(db.Model):
+    #categoria es uno
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
+    products = db.relationship("Products", back_populates="categoria", lazy="dynamic") #se agrega el que es muchos (ver que es dynamic cuando lo necesites)
     
-    # Representación del objeto
+    
     def __repr__(self):
         return f'<Categoria {self.name}>'
 
-    # Método para serializar el objeto
+    
     def serialize(self):
         return {
             "id": self.id,
@@ -56,7 +66,7 @@ class Categoria(db.Model):
         }
 
 
-    # Método para serializar los datos de la categoría
+    
 
 class Seller(db.Model):
     id = db.Column(db.Integer, primary_key=True)
