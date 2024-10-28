@@ -13,7 +13,7 @@ export const ProductsBuyers = () => {
     const [stock, setStock] = useState(0)
     const [image, setImage] = useState("")
     const [activeTab, setActiveTab] = useState("list-tab")
-    const [Product_Id, setProduct_Id] = useState(0)
+    const [amount, setAmount] = useState(1)
 
     const getProducts = ()=>{
         fetch( process.env.BACKEND_URL + "/api/products",{ method: "GET"})
@@ -37,8 +37,34 @@ export const ProductsBuyers = () => {
             setPrice(data.price);
             setStock(data.stock);
             setImage(data.image);
-            setProduct_Id(product_id);
         })
+    }
+
+    const addToCart = (productId) =>{
+        const raw = JSON.stringify({
+            "amount": parseInt(amount),
+            "product_id": parseInt(productId)
+        });
+        
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("jwt-token")}`,
+            },
+            body: raw,
+            redirect: "follow"
+        };
+        
+        fetch(process.env.BACKEND_URL + "/api/itemscarts", requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+            console.log(result.message);
+            getProducts()
+            setActiveTab("list-tab");
+            setAmount(1)
+        })
+        .catch((error) => console.error(error))
     }
     return(
         <>
@@ -99,9 +125,16 @@ export const ProductsBuyers = () => {
                                             <td>{product.price}$</td>
                                             <td>{product.stock}</td>
                                             <td>{product.image}</td>
+                                            <td><button 
+                                            className="btn btn-primary"
+                                            onClick={() => addToCart(product.id)}
+                                            >add to cart</button></td>
+                                            <td>
+                                                <input type="number" size={10} value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Amount" className="form-control" id="amount"/>
+                                            </td>
                                         </tr>
                                     ))
-                                    ):(<tr>There are no items in the table.</tr>)
+                                    ):(<tr><td>There are no items in the table.</td></tr>)
                                 }
                             </tbody>
                         </table>
