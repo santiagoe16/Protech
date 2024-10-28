@@ -510,6 +510,26 @@ def update_cart(cart_id):
     db.session.commit()
     return jsonify(cart.serialize()), 200
 
+@api.route("/buyer/cart/products", methods = ["GET"])
+@jwt_required()
+def BuyerCartProducts():
+    buyer_id = get_jwt_identity()
+
+    cart = Cart.query.filter_by(comprador_id = buyer_id).first()
+
+    cart_items = cart.items_cart.all()
+
+    items = []
+    for item in cart_items:
+        item_data = {
+            "item_id": item.id,
+            "amount": item.amount,
+            "product": item.product.serialize()  
+        }
+        items.append(item_data)
+
+    return jsonify(items), 200
+
 #------------------LOGINBUYERS---------------
 
 @api.route("/buyer/signup", methods = ['POST'])
@@ -676,3 +696,4 @@ def signupSeller():
     access_token = create_access_token(identity=new_seller.email)
     
     return jsonify({"msg": "Usuario creado exitosamente", "access_token": access_token}), 200
+

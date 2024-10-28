@@ -20,6 +20,7 @@ import { SignupSeller } from "./pages/singupseller";
 import { LoginSeller } from "./pages/loginseller";
 import { CardProduct } from "./component/cardproduct";
 import { ProductsBuyers } from "./pages/productsbuyers";
+import { CartView } from "./pages/cartview";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -55,6 +56,7 @@ const Layout = () => {
                         <Route element={<LoginSeller/>} path="/seller/login" />
                         <Route element={<CardProduct/>} path="/cardproduct" />
                         <Route element={<ProductsBuyers/>} path="/productsbuyers" />
+                        <Route element={<CartView/>} path="/cartview" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     {/* <Footer /> */}

@@ -16,7 +16,6 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
-            # do not serialize the password, its a security breach
         }
     
 class Products(db.Model):
@@ -46,19 +45,14 @@ class Categoria(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
     
-    # Representación del objeto
     def __repr__(self):
         return f'<Categoria {self.name}>'
 
-    # Método para serializar el objeto
     def serialize(self):
         return {
             "id": self.id,
             "name": self.name
         }
-
-
-    # Método para serializar los datos de la categoría
 
 class Seller(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -90,11 +84,9 @@ class Comprador(db.Model):
         
     carts = db.relationship("Cart", back_populates="comprador", lazy="dynamic")
 
-        # Representación del objeto
     def __repr__(self):
         return f'<Comprador {self.name}>'
 
-    # Método para serializar los datos del comprador
     def serialize(self):
         return {
             "id": self.id,
@@ -123,7 +115,7 @@ class ItemCart(db.Model):
             "amount": self.amount,
             "cart_id": self.cart_id,
             "product_id": self.product_id,
-            "product": self.product.serialize()  # Aquí incluimos la serialización del producto completo
+            "product": self.product.serialize()
         }
 
 class Cart(db.Model):
