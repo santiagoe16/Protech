@@ -49,7 +49,7 @@ if (!filter && minPrice === "" && maxPrice === "") {
         const inPriceRange = 
             (minPrice === "" || price >= parseFloat(minPrice)) && 
             (maxPrice === "" || price <= parseFloat(maxPrice));
-
+        //el return esta usando or
         return (matchesName || matchesCategory) && inPriceRange;
     });
 }
