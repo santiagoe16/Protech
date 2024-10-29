@@ -15,6 +15,10 @@ export const Products = () => {
     const [categoryId, setCategoryId] = useState(0);
     const [editProduct_Id, setEditProduct_Id] = useState(0);
 
+
+    
+
+
     const getProducts = () => {
         fetch(`${process.env.BACKEND_URL}/api/products`, { method: "GET" })
             .then((response) => response.json())
