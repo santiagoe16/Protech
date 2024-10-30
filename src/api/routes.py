@@ -66,7 +66,8 @@ def add_product():
         price=new_product_data["price"],
         stock=new_product_data["stock"],
         image=new_product_data["image"],
-        category_id=new_product_data["category_id"]
+        category_id=new_product_data["category_id"],
+        seller_id=new_product_data["seller_id"]
     )
 
     db.session.add(new_product)

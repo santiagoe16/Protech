@@ -11,6 +11,54 @@ export const ProductsBuyers = () => {
     const [image, setImage] = useState("");
     const [activeTab, setActiveTab] = useState("list-tab");
     const [amounts, setAmounts] = useState({});
+    const [filter, setFilter] = useState("")
+    const [category, setCategory] = useState("");
+    const [minPrice, setMinPrice] = useState("");
+    const [maxPrice, setMaxPrice] = useState("");
+
+
+
+    const getFilter = async () => {
+        const response = await fetch("https://solitary-spooky-spider-g457xp464g6phwjwj-3000.app.github.dev/products");
+        const data = await response.json();
+        console.log(data);
+    }
+
+    const handleMinPriceChange = (e) => {
+        setMinPrice(e.target.value);
+    };
+    
+    const handleMaxPriceChange = (e) => {
+        setMaxPrice(e.target.value);
+    };
+
+
+    const filtering = (e) => {
+        setFilter(e.target.value);
+    };
+    
+    let results = [];
+if (!filter && minPrice === "" && maxPrice === "") {
+    results = products; 
+} else {
+    results = products.filter((product) => {
+        const matchesName = product.name && product.name.toLowerCase().includes(filter.toLowerCase());
+        const matchesCategory = product.category && product.category.name.toLowerCase().includes(filter.toLowerCase());
+        //esto no funciona si no lo mapeas al momento de mostrarlo
+        const price = product.price;
+        const inPriceRange = 
+            (minPrice === "" || price >= parseFloat(minPrice)) && 
+            (maxPrice === "" || price <= parseFloat(maxPrice));
+
+        return (matchesName || matchesCategory) && inPriceRange;
+    });
+}
+    console.log("Products:", products);
+   
+
+
+    
+
 
     const getProducts = () => {
         fetch(process.env.BACKEND_URL + "/api/products", { method: "GET" })
@@ -40,6 +88,7 @@ export const ProductsBuyers = () => {
                 setPrice(data.price);
                 setStock(data.stock);
                 setImage(data.image);
+                setCategory(data.category ? data.category.name : "");
             });
     }
 
@@ -86,6 +135,13 @@ export const ProductsBuyers = () => {
 
     return (
         <>
+            <div>
+                <input value={filter} onChange={filtering} type="text" placeholder="search" className="form-control" ></input>
+                <input value={minPrice} onChange={handleMinPriceChange} type="number" placeholder="Min Price"    />
+                <input value={maxPrice} onChange={handleMaxPriceChange} type="number" placeholder="Max Price"  />
+            </div>
+            
+            
             <div className="container mt-5">
                 <ul className="nav nav-tabs" id="myTab" role="tablist">
                     <li className="nav-item" role="presentation">
@@ -130,7 +186,7 @@ export const ProductsBuyers = () => {
                             </thead>
                             <tbody>
                                 {products.length > 0 ? (
-                                    products.map((product, index) => (
+                                    results.map((product, index) => (
                                         <tr key={product.id}>
                                             <td>{index + 1}</td>
                                             <td className="text-center">
@@ -177,6 +233,7 @@ export const ProductsBuyers = () => {
                                     <th>price</th>
                                     <th>stock</th>
                                     <th>image</th>
+                                    <th>category</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -186,6 +243,8 @@ export const ProductsBuyers = () => {
                                     <td>{price}$</td>
                                     <td>{stock}</td>
                                     <td>{image}</td>
+                                    <td>{category}</td>
+
                                 </tr>
                             </tbody>
                         </table>
