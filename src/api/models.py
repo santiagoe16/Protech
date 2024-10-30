@@ -50,7 +50,8 @@ class Products(db.Model):#products es muchos
             "image": self.image,
             "category_id": self.category_id ,#hace que pertenezca a uno a muchos(relacion uno a muchos)
             "category": self.categoria.serialize() if self.categoria else None, #Error de serializacion solucionado(linea necesaria)
-            "seller_id": self.seller_id
+            "seller_id": self.seller_id,
+            "seller": self.seller.serialize() if self.seller else None
         }
     
 class Categoria(db.Model):
