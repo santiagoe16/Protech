@@ -6,6 +6,7 @@ export const Products = () => {
 
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [sellers, setSellers] = useState([]);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState(0);
@@ -37,10 +38,22 @@ export const Products = () => {
             });
     };
 
+    const getSellers = () => {
+        fetch(`${process.env.BACKEND_URL}/api/sellers`)
+            .then((response) => response.json())
+            .then((data) => {
+                setSellers(data);
+            });
+    };
+
     useEffect(() => {
         getProducts();
         getCategories();
+        getSellers();
     }, []);
+
+
+
 
     const cleanFields = () => {
         setName("");
@@ -48,7 +61,7 @@ export const Products = () => {
         setPrice(0);
         setStock(0);
         setImage("");
-        
+        setSellerId(0);
         setCategoryId(0);
     };
 
@@ -286,6 +299,15 @@ export const Products = () => {
                                 ))}
                             </select>
                         </div>
+                        <div className="mb-3">
+                            <label htmlFor="seller" className="form-label">Seller</label>
+                            <select value={sellerId} onChange={(e) => setSellerId(e.target.value)} className="form-select" id="seller">
+                                <option value="0">Choose the seller</option>
+                                {sellers.map((seller) => (
+                                    <option key={seller.id} value={seller.id}>{seller.name}</option>
+                                ))}
+                            </select>
+                        </div>
                         <button type="submit" className="btn btn-primary">Create Product</button>
                     </form>
                 </div>
@@ -321,6 +343,15 @@ export const Products = () => {
                                 ))}
                             </select>
                         </div>
+                        <div className="mb-3">
+                            <label htmlFor="seller" className="form-label">Seller</label>
+                            <select value={sellerId} onChange={(e) => setSellerId(e.target.value)} className="form-select" id="seller">
+                                <option value="0">Choose the seller</option>
+                                {sellers.map((seller) => (
+                                    <option key={seller.id} value={seller.id}>{seller.name}</option>
+                                ))}
+                            </select>
+                        </div>
                         <button type="submit" className="btn btn-primary">Edit Product</button>
                     </form>
                 </div>
@@ -352,6 +383,15 @@ export const Products = () => {
                                 <option value="0">Select a category</option>
                                 {categories.map((category) => (
                                     <option key={category.id} value={category.id}>{category.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="seller" className="form-label">Seller</label>
+                            <select value={sellerId} onChange={(e) => setSellerId(e.target.value)} className="form-select" id="seller">
+                                <option value="0">Choose the seller</option>
+                                {sellers.map((seller) => (
+                                    <option key={seller.id} value={seller.id}>{seller.name}</option>
                                 ))}
                             </select>
                         </div>
