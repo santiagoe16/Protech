@@ -81,6 +81,7 @@ class Seller(db.Model):
     phone = db.Column(db.String(80), unique=False, nullable=False)
     bank_account = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    
     products = db.relationship("Products", back_populates="seller") 
     
     def __repr__(self):
