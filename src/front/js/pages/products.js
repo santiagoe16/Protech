@@ -13,6 +13,7 @@ export const Products = () => {
     const [image, setImage] = useState("");
     const [activeTab, setActiveTab] = useState("list-tab");
     const [categoryId, setCategoryId] = useState(0);
+    const [sellerId, setSellerId] = useState(0);
     const [editProduct_Id, setEditProduct_Id] = useState(0);
 
 
@@ -47,6 +48,7 @@ export const Products = () => {
         setPrice(0);
         setStock(0);
         setImage("");
+        
         setCategoryId(0);
     };
 
@@ -59,6 +61,7 @@ export const Products = () => {
             stock: parseInt(stock),
             image,
             category_id: categoryId,
+            seller_id: sellerId,
         });
         fetch(`${process.env.BACKEND_URL}/api/products`, {
             method: "POST",
@@ -99,6 +102,7 @@ export const Products = () => {
                 setImage(data.image);
                 setEditProduct_Id(product_id);
                 setCategoryId(data.category.id);
+                setSellerId(data.seller.id);
             });
     };
 
@@ -111,6 +115,7 @@ export const Products = () => {
             stock: parseInt(stock),
             image,
             category_id: categoryId,
+            seller_id: sellerId,
         });
         fetch(`${process.env.BACKEND_URL}/api/products/${editProduct_Id}`, {
             method: "PUT",
@@ -138,6 +143,7 @@ export const Products = () => {
                 setStock(data.stock);
                 setImage(data.image);
                 setCategoryId(data.category.id);
+                setSellerId(data.seller.id);
             });
     };
 
@@ -218,6 +224,7 @@ export const Products = () => {
                                 <th>Stock</th>
                                 <th>Image</th>
                                 <th>Category</th>
+                                <th>Seller</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -236,6 +243,7 @@ export const Products = () => {
                                         <td>{product.stock}</td>
                                         <td>{product.image}</td>
                                         <td>{product.category ? product.category.name : 'N/A'}</td>
+                                        <td>{product.seller.name}</td>
                                     </tr>
                                 ))
                             ) : (

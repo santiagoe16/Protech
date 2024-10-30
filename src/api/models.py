@@ -32,6 +32,8 @@ class Products(db.Model):#products es muchos
     categoria = db.relationship("Categoria", back_populates="products")
     items_cart = db.relationship('ItemCart', back_populates='product')
 
+    seller_id= db.Column(db.Integer, db.ForeignKey("seller.id"), unique=False, nullable=False)
+    seller = db.relationship("Seller", back_populates="products")
  
     
 
@@ -47,7 +49,9 @@ class Products(db.Model):#products es muchos
             "stock": self.stock,
             "image": self.image,
             "category_id": self.category_id ,#hace que pertenezca a uno a muchos(relacion uno a muchos)
-            "category": self.categoria.serialize() if self.categoria else None #Error de serializacion solucionado(linea necesaria)
+            "category": self.categoria.serialize() if self.categoria else None, #Error de serializacion solucionado(linea necesaria)
+            "seller_id": self.seller_id,
+            "seller": self.seller.serialize() if self.seller else None
         }
     
 class Categoria(db.Model):
@@ -77,7 +81,8 @@ class Seller(db.Model):
     phone = db.Column(db.String(80), unique=False, nullable=False)
     bank_account = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-
+    products = db.relationship("Products", back_populates="seller") 
+    
     def __repr__(self):
         return f'<Seller {self.email}>'
 
