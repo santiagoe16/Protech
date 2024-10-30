@@ -16,12 +16,9 @@ export const ProductsBuyers = () => {
     const [minPrice, setMinPrice] = useState("");
     const [maxPrice, setMaxPrice] = useState("");
 
-
-
     const getFilter = async () => {
         const response = await fetch("https://solitary-spooky-spider-g457xp464g6phwjwj-3000.app.github.dev/products");
         const data = await response.json();
-        console.log(data);
     }
 
     const handleMinPriceChange = (e) => {
@@ -53,20 +50,12 @@ if (!filter && minPrice === "" && maxPrice === "") {
         return (matchesName || matchesCategory) && inPriceRange;
     });
 }
-    console.log("Products:", products);
-   
-
-
-    
-
-
     const getProducts = () => {
         fetch(process.env.BACKEND_URL + "/api/products", { method: "GET" })
             .then((response) => response.json())
             .then((data) => {
                 setProducts(data);
                 const initialAmounts = {};
-                console.log(data)
                 data.forEach(product => {
                     initialAmounts[product.id] = 1;
                 });
@@ -111,7 +100,6 @@ if (!filter && minPrice === "" && maxPrice === "") {
         fetch(process.env.BACKEND_URL + "/api/itemscarts", requestOptions)
             .then((response) => response.json())
             .then((result) => {
-                console.log(result.message);
                 getProducts();
                 setActiveTab("list-tab");
             })

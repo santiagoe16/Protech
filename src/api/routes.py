@@ -28,9 +28,11 @@ def handle_hello():
 def get_products():
     try:
         products = Products.query.all()
-        return jsonify([product.serialize() for product in products]), 200
+        if not products:
+            return jsonify({"message": "No products available"}), 404
+        return jsonify(list(map(lambda product: product.serialize(), products))), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "An error occurred while fetching products"}), 500
 
 @api.route('/products/<int:product_id>', methods=['GET'])
 def get_product(product_id):
@@ -175,9 +177,6 @@ def remove_categoria(categoria_id):
     db.session.delete(categoria)
     db.session.commit()
     return jsonify({"message": "Categoría eliminada exitosamente"}), 200
-
-
-
 
 #----------------------------------Endpoints de Comprador-------------------------------------------
 
