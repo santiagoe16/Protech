@@ -756,7 +756,6 @@ def get_products_by_seller(seller_id):
         
         carts = Cart.query.all()
 
-       
         filtered_carts = []
         for cart in carts:
             
@@ -764,7 +763,6 @@ def get_products_by_seller(seller_id):
                 item for item in cart.items_cart if item.product.seller_id == seller_id
             ]
 
-            
             if filtered_items:
                 cart_data = cart.serialize()
                 
