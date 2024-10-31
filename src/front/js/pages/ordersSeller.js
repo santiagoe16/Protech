@@ -26,9 +26,12 @@ export const Orders = () => {
                 }
                 return response.json(); 
             })
-            .then((data) => console.log(data))
+            .then((data) => {
+                setOrders(data);
+                console.log(data);
+            })
             .catch((error) => console.error("Error:", error));
-        };
+    };
 
     useEffect(() => {
         getOrders();
@@ -37,7 +40,20 @@ export const Orders = () => {
     return (
         <div className="container mt-5">
             <h2>Orders</h2>
-            
+            <ul>
+                {orders.map((order, index) => (
+                    <li key={index}>
+                        <h4>Cart ID: {order.id}</h4>
+                        <ul>
+                            {order.items_cart.map((item, i) => (
+                                <li key={i}>
+                                    Product: {item.product.name}, Amount: {item.amount}
+                                </li>
+                            ))}
+                        </ul>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 };
