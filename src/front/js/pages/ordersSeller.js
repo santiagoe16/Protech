@@ -39,21 +39,29 @@ export const Orders = () => {
 
     return (
         <div className="container mt-5">
-            <h2>Orders</h2>
-            <ul>
-                {orders.map((order, index) => (
-                    <li key={index}>
-                        <h4>Cart ID: {order.id}</h4>
-                        <ul>
-                            {order.items_cart.map((item, i) => (
-                                <li key={i}>
-                                    Product: {item.product.name}, Amount: {item.amount}
-                                </li>
-                            ))}
-                        </ul>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <h2>Orders</h2>
+        <table className="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID Carrito</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Estatus</th>
+                </tr>
+            </thead>
+            <tbody>
+                {orders.map((order) =>
+                    order.items_cart.map((item, index) => (
+                        <tr key={index}>
+                            <td>{order.id}</td>
+                            <td>{item.product.name}</td>
+                            <td>{item.amount}</td>
+                            <td>{order.state}</td>
+                        </tr>
+                    ))
+                )}
+            </tbody>
+        </table>
+    </div>
     );
 };
