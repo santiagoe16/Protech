@@ -802,4 +802,31 @@ def get_products_by_seller(seller_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-   
+@api.route('/api/carts/<int:cart_id>/status', methods=["PUT"])
+@jwt_required()
+def change_status(cart_id):
+
+        new_status = request.json.get("state")
+        valid_transitions = {
+            "generated": "sent",
+            "sent": "delivered"
+        }
+
+        if new_status not in valid_transitions.values():
+            return jsonify({"error": "Invalid status"}), 400
+
+        cart = Cart.query.get(cart_id)
+        if cart is None:
+            return jsonify({"error": "Cart not found"}), 404
+
+        if valid_transitions.get(cart.state) == new_status:
+            cart.state = new_status
+        elif cart.state == new_status:
+            return jsonify({"message": "Order is already in this status"}), 400
+        else:
+            return jsonify({"error": "Invalid status transition"}), 400
+
+        db.session.commit()
+        return jsonify({"message": "Order status updated successfully", "cart": cart.serialize()}), 200
+
+

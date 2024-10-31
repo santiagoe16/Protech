@@ -21,6 +21,8 @@ import { LoginSeller } from "./pages/loginseller";
 import { CardProduct } from "./component/cardproduct";
 import { ProductsBuyers } from "./pages/productsbuyers";
 import { CartView } from "./pages/cartview";
+import { Orders } from "./pages/ordersSeller";
+import { OrdersPlaced } from "./pages/ordersplaced";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
@@ -57,6 +59,8 @@ const Layout = () => {
                         <Route element={<CardProduct/>} path="/cardproduct" />
                         <Route element={<ProductsBuyers/>} path="/productsbuyers" />
                         <Route element={<CartView/>} path="/cartview" />
+                        <Route element={<Orders/>} path="/orders" />
+                        <Route element={<OrdersPlaced/>} path="/ordersplaced" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     {/* <Footer /> */}
