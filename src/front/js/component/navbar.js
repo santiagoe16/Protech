@@ -29,6 +29,7 @@ export const Navbar = () => {
 					:<></>}
 					{(store.authenticatedBuyer || store.authenticatedSeller) ? (<button className="btn btn-danger" onClick={() => logOut()}>log out</button>):(<button className="btn btn-primary" onClick={() => navigate("/buyer/login")}>log in</button>)}
 					
+					{(store.authenticatedSeller) ? (<Link to="/orders"><button className="btn btn-primary">Orders</button></Link>):<></>}
 					{!store.authenticatedSeller && (
 						<button className="btn btn-primary" onClick={() => navigate("/seller/login")}>Start selling</button>
 					)}
