@@ -15,7 +15,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			],
 			authenticatedBuyer: false,
-			authenticatedSeller:false 
+			authenticatedSeller:false,
+			sellerId: null,
 		},
 		actions: {
 			verifyTokenBuyer: () => {
@@ -34,7 +35,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				if(token != null){
 					setStore({ authenticatedSeller: true })
+					const sellerId = 
+					setStore({ sellerId });
 				}
+			},
+			getSellerId: () => {
+				const store = getStore();
+				return store.sellerId; 
 			},
 			changeAuthenticatedSeller: (bool) => {
 				setStore({authenticatedSeller: bool})
