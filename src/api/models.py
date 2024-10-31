@@ -163,23 +163,21 @@ class Cart(db.Model):
             "items_cart": [item.serialize() for item in self.items_cart]
         }
     
-class Direccion (db.Model):
+class Address(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    direccion = db.Column(db.String(120), unique=False, nullable=False)
-    ciudad= db.Column(db.String(120), unique=False, nullable=False)
-    codigo_postal = db.Column(db.String(80), unique=False, nullable=False)
-    pais = db.Column(db.String(80), unique=False, nullable=False)
+    address = db.Column(db.String(120), unique=False, nullable=False)
+    city = db.Column(db.String(120), unique=False, nullable=False)
+    postal_code = db.Column(db.String(80), unique=False, nullable=False)
+    country = db.Column(db.String(80), unique=False, nullable=False)
         
-     
     def __repr__(self):
-        return f'<Address {self.name} '
+        return f'<Address {self.name}>'
 
-   
     def serialize(self):
         return {
             "id": self.id,
-            "direccion": self.direccion,
-            "ciudad": self.ciudad,
-            "codigo_postal": self.codigo_postal,
-            "pais": self.pais,
+            "address": self.address,
+            "city": self.city,
+            "postal_code": self.postal_code,
+            "country": self.country,
         }
