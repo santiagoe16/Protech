@@ -848,13 +848,12 @@ def get_address_seller():
 
 
 #--------Orders------------------------------------------------------
-
-@api.route('/carts/seller/<int:seller_id>', methods=['GET'])
+@api.route('/carts/seller', methods=['GET']) 
 @jwt_required()
-def get_products_by_seller(seller_id):
+def get_products_by_seller():
     try:
-        
-        carts = Cart.query.all()
+        seller_id = get_jwt_identity()  
+        carts = Cart.query.all()  
 
         filtered_carts = []
         for cart in carts:
@@ -865,14 +864,14 @@ def get_products_by_seller(seller_id):
 
             if filtered_items:
                 cart_data = cart.serialize()
-                
+              
                 cart_data["items_cart"] = [item.serialize() for item in filtered_items]
                 filtered_carts.append(cart_data)
 
-        return jsonify(filtered_carts), 200
+        return jsonify(filtered_carts), 200  
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500  
     
 @api.route('/api/carts/<int:cart_id>', methods=["PUT"])
 @jwt_required()  

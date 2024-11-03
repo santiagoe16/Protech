@@ -38,10 +38,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					
 				}
 			},
-			setSellerId: (id) => {
-				setStore({ sellerId: id });
-				console.log("Seller ID set in store:", id);
-			},
+			
 			
 			changeAuthenticatedSeller: (bool) => {
 				setStore({authenticatedSeller: bool})

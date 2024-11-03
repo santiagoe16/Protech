@@ -3,23 +3,28 @@ import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 
 export const Orders = () => {
-    const { store, actions } = useContext(Context);
+    const { store } = useContext(Context);
     const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    const getOrders = (sellerId) => {
+    const getOrders = () => {
         const token = localStorage.getItem("jwt-token"); 
+        if (!token) {
+            navigate('/login');
+            return;
+        }
 
         const myHeaders = new Headers();
         myHeaders.append("Authorization", `Bearer ${token}`); 
-    
+
         const requestOptions = {
             method: "GET",
             headers: myHeaders,
             redirect: "follow"
         };
-    
-        fetch( `${process.env.BACKEND_URL}/api/carts/seller/${sellerId}`, requestOptions)
+
+        fetch(`${process.env.BACKEND_URL}/api/carts/seller`, requestOptions)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Failed to fetch orders");
@@ -30,7 +35,13 @@ export const Orders = () => {
                 setOrders(data);
                 console.log(data);
             })
-            .catch((error) => console.error("Error:", error));
+            .catch((error) => {
+                console.error("Error:", error);
+                alert("There was an error fetching orders. Please try again later.");
+            })
+            .finally(() => {
+                setLoading(false); // Finaliza el estado de carga
+            });
     };
 
     const changeStatus = (cartId, newState) => {
@@ -39,10 +50,7 @@ export const Orders = () => {
             console.error("No valid token found. User might need to log in.");
             return;
         }
-        console.log(`Attempting to update status for cart ${cartId} with new state ${newState}`);
-        console.log(`Token used: ${token}`);
 
-    
         fetch(`${process.env.BACKEND_URL}/api/carts/${cartId}`, {
             method: "PUT",
             headers: {
@@ -59,67 +67,63 @@ export const Orders = () => {
         })
         .then(data => {
             console.log(data);
-            const sellerId = store.sellerId || localStorage.getItem("sellerId");
-            if (sellerId) {
-                getOrders(sellerId);
-            }
+            getOrders();
         })
-        
         .catch(error => console.error("Error updating order status:", error));
     };
-    
 
     useEffect(() => {
-        if (store.sellerId) {
-            getOrders(store.sellerId);
-            console.log(store.sellerId)
-        }
-    }, [store.sellerId]);
+        getOrders();
+    }, []);
     
     return (
         <div className="container mt-5">
             <h2>Orders</h2>
-            <table className="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID Carrito</th>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Estatus</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {orders.map((order) =>
-                        order.items_cart.map((item, index) => (
-                            <tr key={index}>
-                                <td>{order.id}</td>
-                                <td>{item.product.name}</td>
-                                <td>{item.amount}</td>
-                                <td>{order.state}</td>
-                                <td>
-                                    {order.state === "generated" && (
-                                        <button
-                                            className="btn btn-warning"
-                                            onClick={() => changeStatus(order.id, "sent")}
-                                        >
-                                            Mark as sent
-                                        </button>
-                                    )}
-                                    {order.state === "sent" && (
-                                        <button
-                                            className="btn btn-success"
-                                            onClick={() => changeStatus(order.id, "completed")}
-                                        >
-                                            Mark as completed
-                                        </button>
-                                    )}
-                                </td>
-                            </tr>
-                        ))
-                    )}
-                </tbody>
-            </table>
+            {loading ? (
+                <div>Loading...</div>
+            ) : (
+                <table className="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID Carrito</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Estatus</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {orders.map((order) =>
+                            order.items_cart.map((item) => (
+                                <tr key={`${order.id}-${item.product.id}`}>
+                                    <td>{order.id}</td>
+                                    <td>{item.product.name}</td>
+                                    <td>{item.amount}</td>
+                                    <td>{order.state}</td>
+                                    <td>
+                                        {order.state === "generated" && (
+                                            <button
+                                                className="btn btn-warning"
+                                                onClick={() => changeStatus(order.id, "sent")}
+                                            >
+                                                Mark as sent
+                                            </button>
+                                        )}
+                                        {order.state === "sent" && (
+                                            <button
+                                                className="btn btn-success"
+                                                onClick={() => changeStatus(order.id, "completed")}
+                                            >
+                                                Mark as completed
+                                            </button>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            )}
         </div>
     );
 };
