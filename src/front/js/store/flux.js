@@ -20,7 +20,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		},
 		actions: {
 			verifyTokenBuyer: () => {
-				const token = localStorage.getItem('jwt-token');
+				const token = localStorage.getItem('jwt-token-buyer');
 
 				if(token != null){
 					setStore({ authenticatedBuyer: true })

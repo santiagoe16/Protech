@@ -505,6 +505,33 @@ def get_carts_items():
 
     return jsonify(carts_data), 200
 
+@api.route('/buyer/cart/products/<int:item_id>', methods=['PUT'])
+@jwt_required()
+def update_item_quantity(item_id):
+    body = request.get_json()
+
+    # Verificar que se haya pasado la cantidad en el cuerpo de la solicitud
+    if "amount" not in body:
+        return jsonify({"msg": "Amount is required"}), 400
+
+    new_amount = body["amount"]
+
+    # Verificar que la cantidad sea válida (mayor a 0)
+    if new_amount <= 0:
+        new_amount = 1
+
+    # Buscar el item en el carrito por su ID
+    item_cart = ItemCart.query.get(item_id)
+    
+    if not item_cart:
+        return jsonify({"msg": "Item not found"}), 404
+
+    # Actualizar la cantidad del producto en el carrito
+    item_cart.amount = new_amount
+    db.session.commit()
+
+    return jsonify({"msg": "Quantity updated successfully", "item": item_cart.serialize()}), 200
+
 @api.route('/carts', methods=['GET'])
 def get_carts():
     carts = Cart.query.all()
@@ -744,7 +771,7 @@ def login():
         return jsonify({"msg": "Email o contraseña incorrectos"}), 401
 
 
-    access_token = create_access_token(identity=seller.email)
+    access_token = create_access_token(identity=seller.id)
     
     return jsonify(access_token=access_token, seller_id=seller.id), 200
 
@@ -775,6 +802,50 @@ def signupSeller():
     access_token = create_access_token(identity=new_seller.email)
     
     return jsonify({"msg": "Usuario creado exitosamente", "access_token": access_token}), 200
+
+#---------------------google api--------------------------
+@api.route('/address/seller', methods=['PUT'])
+@jwt_required()
+def add_address_seller():
+    seller_id = get_jwt_identity()
+    seller = Seller.query.get_or_404(seller_id)
+
+    data = request.get_json()
+
+    # Agregar validación de datos
+    address = data.get("address")
+    lat = data.get("lat")
+    lon = data.get("lon")
+
+    if not isinstance(address, str) or not isinstance(lat, str) or not isinstance(lon, str):
+        return jsonify({"error": "Invalid data types"}), 400
+
+    seller.address = address
+    seller.lat = lat
+    seller.lon = lon
+
+    db.session.commit()
+
+    return jsonify({"message": "address updated"}), 200
+
+@api.route('/address/seller', methods=['GET'])
+@jwt_required()
+def get_address_seller():
+    # Obtener el ID del vendedor desde el JWT
+    seller_id = get_jwt_identity()
+    
+    # Intentar obtener el vendedor desde la base de datos
+    seller = Seller.query.get_or_404(seller_id)
+
+    # Preparar la respuesta con la dirección del vendedor
+    seller_address = {
+        "address": seller.address or "No address assigned",  # Opcional: manejar si no hay dirección
+        "lat": seller.lat or "No latitude available",
+        "lon": seller.lon or "No longitude available"
+    }
+
+    return jsonify(seller_address), 200
+
 
 #--------Orders------------------------------------------------------
 

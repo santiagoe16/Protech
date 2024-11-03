@@ -81,6 +81,9 @@ class Seller(db.Model):
     phone = db.Column(db.String(80), unique=False, nullable=False)
     bank_account = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    address = db.Column(db.String(100), unique=False, nullable=True)
+    lat = db.Column(db.String(100), unique=False, nullable=True)
+    lon = db.Column(db.String(100), unique=False, nullable=True)
     
     products = db.relationship("Products", back_populates="seller") 
     
@@ -94,6 +97,9 @@ class Seller(db.Model):
             "name": self.name,
             "phone" : self.phone,
             "bank_account": self.bank_account,
+            "address": self.address,
+            "lat": self.lat,
+            "lon": self.lon,
         }
     
 class Comprador(db.Model):

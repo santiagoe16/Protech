@@ -24,6 +24,8 @@ import { CartView } from "./pages/cartview";
 import { Orders } from "./pages/ordersSeller";
 import { OrdersPlaced } from "./pages/ordersplaced";
 
+import { SellerAddress } from "./pages/selleraddress";
+
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 
@@ -61,6 +63,8 @@ const Layout = () => {
                         <Route element={<CartView/>} path="/cartview" />
                         <Route element={<Orders/>} path="/orders" />
                         <Route element={<OrdersPlaced/>} path="/ordersplaced" />
+                        
+                        <Route element={<SellerAddress/>} path="/selleraddress" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     {/* <Footer /> */}

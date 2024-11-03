@@ -8,7 +8,8 @@ export const Navbar = () => {
 	const navigate = useNavigate();
 	
 	const logOut = () =>{
-		localStorage.removeItem("jwt-token")
+		localStorage.removeItem("jwt-token-seller")
+		localStorage.removeItem("jwt-token-buyer")
 		actions.changeAuthenticatedBuyer(false)
 		actions.changeAuthenticatedSeller(false)
 		navigate("/buyer/login")
@@ -33,6 +34,9 @@ export const Navbar = () => {
 					{!store.authenticatedSeller && (
 						<button className="btn btn-primary" onClick={() => navigate("/seller/login")}>Start selling</button>
 					)}
+					{store.authenticatedSeller == true ? (
+						<button className="btn btn-primary" onClick={() => navigate("/selleraddress")}>update address</button>
+					):(<></>)}
 				</div>
 			</div>
 		</nav>
