@@ -19,7 +19,7 @@ export const Orders = () => {
             redirect: "follow"
         };
     
-        fetch("https://unhallowed-troll-pjqpxrg7xwjfrp6j-3001.app.github.dev/api/carts/seller/2", requestOptions)
+        fetch(process.env.BACKEND_URL + "/api/carts/seller/2", requestOptions)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Failed to fetch orders");

@@ -34,7 +34,7 @@ export const LoginBuyer = () => {
                 return response.json(); 
             })
             .then((result) =>  {
-                localStorage.setItem("jwt-token", result.access_token);
+                localStorage.setItem("jwt-token-buyer", result.access_token);
                 actions.changeAuthenticatedBuyer(true)
                 navigate("/productsbuyers");
             })
