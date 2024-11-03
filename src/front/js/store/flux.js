@@ -19,7 +19,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		},
 		actions: {
 			verifyTokenBuyer: () => {
-				const token = localStorage.getItem('jwt-token');
+				const token = localStorage.getItem('jwt-token-buyer');
 
 				if(token != null){
 					setStore({ authenticatedBuyer: true })
@@ -30,10 +30,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({authenticatedBuyer: bool})
 			},
 			verifyTokenSeller: () => {
-				const token = localStorage.getItem('jwt-token');
+				const token = localStorage.getItem('jwt-token-seller');
 
 				if(token != null){
 					setStore({ authenticatedSeller: true })
+					return(token)
 				}
 			},
 			changeAuthenticatedSeller: (bool) => {
