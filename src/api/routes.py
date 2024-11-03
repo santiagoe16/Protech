@@ -847,3 +847,30 @@ def get_address_seller():
     return jsonify(seller_address), 200
 
 
+#--------Orders------------------------------------------------------
+@api.route('/carts/seller/<int:seller_id>', methods=['GET'])
+@jwt_required()
+def get_products_by_seller(seller_id):
+    try:
+        
+        carts = Cart.query.all()
+
+        filtered_carts = []
+        for cart in carts:
+            
+            filtered_items = [
+                item for item in cart.items_cart if item.product.seller_id == seller_id
+            ]
+
+            if filtered_items:
+                cart_data = cart.serialize()
+                
+                cart_data["items_cart"] = [item.serialize() for item in filtered_items]
+                filtered_carts.append(cart_data)
+
+        return jsonify(filtered_carts), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+   
