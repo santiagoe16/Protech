@@ -39,8 +39,11 @@ export const Orders = () => {
             console.error("No valid token found. User might need to log in.");
             return;
         }
+        console.log(`Attempting to update status for cart ${cartId} with new state ${newState}`);
+        console.log(`Token used: ${token}`);
+
     
-        fetch(`${process.env.BACKEND_URL}/api/carts/${cartId}/status`, {
+        fetch(`${process.env.BACKEND_URL}/api/carts/${cartId}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -106,9 +109,9 @@ export const Orders = () => {
                                     {order.state === "sent" && (
                                         <button
                                             className="btn btn-success"
-                                            onClick={() => changeStatus(order.id, "delivered")}
+                                            onClick={() => changeStatus(order.id, "completed")}
                                         >
-                                            Mark as delivered
+                                            Mark as completed
                                         </button>
                                     )}
                                 </td>

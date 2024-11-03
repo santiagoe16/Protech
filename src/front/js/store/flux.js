@@ -35,9 +35,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			
 				if (token != null) {
 					setStore({ authenticatedSeller: true });
-					const sellerId = /* lógica para obtener el ID del vendedor del token o la API */
-					setStore({ sellerId });
-					console.log("Seller ID:", sellerId); // Verifica si se imprime el ID
+					
 				}
 			},
 			setSellerId: (id) => {
