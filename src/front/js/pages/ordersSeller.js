@@ -7,7 +7,7 @@ export const Orders = () => {
     const [orders, setOrders] = useState([]);
     const navigate = useNavigate();
 
-    const getOrders = () => {
+    const getOrders = (sellerId) => {
         const token = localStorage.getItem("jwt-token"); 
 
         const myHeaders = new Headers();
@@ -19,7 +19,7 @@ export const Orders = () => {
             redirect: "follow"
         };
     
-        fetch("https://unhallowed-troll-pjqpxrg7xwjfrp6j-3001.app.github.dev/api/carts/seller/2", requestOptions)
+        fetch( `${process.env.BACKEND_URL}/api/carts/seller/${sellerId}`, requestOptions)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Failed to fetch orders");
@@ -34,8 +34,12 @@ export const Orders = () => {
     };
 
     const changeStatus = (cartId, newState) => {
-        const token = localStorage.getItem("jwt-token"); 
-
+        const token = localStorage.getItem("jwt-token");
+        if (!token) {
+            console.error("No valid token found. User might need to log in.");
+            return;
+        }
+    
         fetch(`${process.env.BACKEND_URL}/api/carts/${cartId}/status`, {
             method: "PUT",
             headers: {
@@ -44,18 +48,31 @@ export const Orders = () => {
             },
             body: JSON.stringify({ state: newState }) 
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to update order status");
+            }
+            return response.json();
+        })
         .then(data => {
             console.log(data);
-            getOrders(); 
+            const sellerId = store.sellerId || localStorage.getItem("sellerId");
+            if (sellerId) {
+                getOrders(sellerId);
+            }
         })
+        
         .catch(error => console.error("Error updating order status:", error));
     };
+    
 
     useEffect(() => {
-        getOrders();
-    }, []);
-
+        if (store.sellerId) {
+            getOrders(store.sellerId);
+            console.log(store.sellerId)
+        }
+    }, [store.sellerId]);
+    
     return (
         <div className="container mt-5">
             <h2>Orders</h2>

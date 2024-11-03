@@ -746,7 +746,7 @@ def login():
 
     access_token = create_access_token(identity=seller.email)
     
-    return jsonify(access_token=access_token), 200
+    return jsonify(access_token=access_token, seller_id=seller.id), 200
 
 @api.route('/seller/reg', methods=['POST'])
 def signupSeller():
@@ -777,6 +777,7 @@ def signupSeller():
     return jsonify({"msg": "Usuario creado exitosamente", "access_token": access_token}), 200
 
 #--------Orders------------------------------------------------------
+
 @api.route('/carts/seller/<int:seller_id>', methods=['GET'])
 @jwt_required()
 def get_products_by_seller(seller_id):
@@ -805,7 +806,7 @@ def get_products_by_seller(seller_id):
 @api.route('/api/carts/<int:cart_id>/status', methods=["PUT"])
 @jwt_required()
 def change_status(cart_id):
-
+        
         new_status = request.json.get("state")
         valid_transitions = {
             "generated": "sent",

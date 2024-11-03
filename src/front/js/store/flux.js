@@ -32,17 +32,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			verifyTokenSeller: () => {
 				const token = localStorage.getItem('jwt-token');
-
-				if(token != null){
-					setStore({ authenticatedSeller: true })
-					const sellerId = 
+			
+				if (token != null) {
+					setStore({ authenticatedSeller: true });
+					const sellerId = /* lógica para obtener el ID del vendedor del token o la API */
 					setStore({ sellerId });
+					console.log("Seller ID:", sellerId); // Verifica si se imprime el ID
 				}
 			},
-			getSellerId: () => {
-				const store = getStore();
-				return store.sellerId; 
+			setSellerId: (id) => {
+				setStore({ sellerId: id });
+				console.log("Seller ID set in store:", id);
 			},
+			
 			changeAuthenticatedSeller: (bool) => {
 				setStore({authenticatedSeller: bool})
 			},
