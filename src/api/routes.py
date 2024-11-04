@@ -842,6 +842,56 @@ def get_address_seller():
 
     return jsonify(seller_address), 200
 
+@api.route('/address/buyer', methods=['POST'])
+@jwt_required()
+def add_address_buyer():
+    buyer_id = get_jwt_identity()
+
+    data = request.get_json()
+
+    address = data.get("address")
+    lat = data.get("lat")
+    lon = data.get("lon")
+
+    if lat is None or lon is None or address is None:
+        return jsonify({"error": "Address, Latitude and Longitude are required"}), 400
+    
+    if not isinstance(lat, float) or not isinstance(lon, float):
+        return jsonify({"error": "Latitude and Longitude must be a float numbers"}), 400
+
+    
+    new_address_buyer = Address(address=address, lat= float(lat), lon=float(lon), comprador_id=buyer_id)
+
+    db.session.add(new_address_buyer)
+    db.session.commit()
+
+    return jsonify({"message": "address added successfully"}), 200
+
+@api.route('/address/buyer', methods=['GET'])
+@jwt_required()
+def get_address_buyer():
+    buyer_id = get_jwt_identity()
+    
+    get_buyer_address = Address.query.filter_by(comprador_id=buyer_id).all()
+
+    if not get_buyer_address:
+        return jsonify({"error": "No address assigned to this seller"}), 404
+
+    buyer_address = list(map(lambda address: address.serialize(),get_buyer_address))
+
+    return jsonify(buyer_address), 200
+
+@api.route('/address/buyer/<int:address_id>', methods=['DELETE'])
+@jwt_required()
+def delete_address_buyer(address_id):
+
+    address = Address.query.get_or_404(address_id)
+    db.session.delete(address)
+    db.session.commit()
+
+    return jsonify({"message": "Address deleted successfully"}), 200
+
+
 #--------Orders------------------------------------------------------
 @api.route('/carts/seller', methods=['GET']) 
 @jwt_required()
