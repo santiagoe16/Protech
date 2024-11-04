@@ -763,7 +763,7 @@ def login():
 
     access_token = create_access_token(identity=seller.id)
     
-    return jsonify(access_token=access_token), 200
+    return jsonify(access_token=access_token, seller_id=seller.id), 200
 
 @api.route('/seller/reg', methods=['POST'])
 def signupSeller():
@@ -843,12 +843,12 @@ def get_address_seller():
     return jsonify(seller_address), 200
 
 #--------Orders------------------------------------------------------
-@api.route('/carts/seller/<int:seller_id>', methods=['GET'])
+@api.route('/carts/seller', methods=['GET']) 
 @jwt_required()
-def get_products_by_seller(seller_id):
+def get_products_by_seller():
     try:
-        
-        carts = Cart.query.all()
+        seller_id = get_jwt_identity()  
+        carts = Cart.query.all()  
 
         filtered_carts = []
         for cart in carts:
@@ -859,13 +859,41 @@ def get_products_by_seller(seller_id):
 
             if filtered_items:
                 cart_data = cart.serialize()
-                
+              
                 cart_data["items_cart"] = [item.serialize() for item in filtered_items]
                 filtered_carts.append(cart_data)
 
-        return jsonify(filtered_carts), 200
+        return jsonify(filtered_carts), 200  
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 500  
     
-   
+@api.route('/api/carts/<int:cart_id>', methods=["PUT"])
+@jwt_required()  
+def change_status(cart_id):
+    new_status = request.json.get("state")
+    valid_transitions = {
+        "generated": "sent",
+        "sent": "completed"
+    }
+
+    if new_status not in valid_transitions.values():
+        return jsonify({"error": "Invalid status"}), 400
+
+    cart = Cart.query.get(cart_id)
+    if cart is None:
+        return jsonify({"error": "Cart not found"}), 404
+
+    if valid_transitions.get(cart.state) == new_status:
+        cart.state = new_status
+    elif cart.state == new_status:
+        return jsonify({"message": "Order is already in this status"}), 400
+    else:
+        return jsonify({"error": "Invalid status transition"}), 400
+
+    db.session.commit()
+    return jsonify({"message": "Order status updated successfully", "cart": cart.serialize()}), 200
+
+
+
+

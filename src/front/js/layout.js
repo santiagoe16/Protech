@@ -21,7 +21,9 @@ import { LoginSeller } from "./pages/loginseller";
 import { CardProduct } from "./component/cardproduct";
 import { ProductsBuyers } from "./pages/productsbuyers";
 import { CartView } from "./pages/cartview";
+import { Orders } from "./pages/ordersSeller";
 import { OrdersPlaced } from "./pages/ordersplaced";
+
 import { SellerAddress } from "./pages/selleraddress";
 
 import { Navbar } from "./component/navbar";
@@ -59,7 +61,9 @@ const Layout = () => {
                         <Route element={<CardProduct/>} path="/cardproduct" />
                         <Route element={<ProductsBuyers/>} path="/productsbuyers" />
                         <Route element={<CartView/>} path="/cartview" />
+                        <Route element={<Orders/>} path="/orders" />
                         <Route element={<OrdersPlaced/>} path="/ordersplaced" />
+                        
                         <Route element={<SellerAddress/>} path="/selleraddress" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
