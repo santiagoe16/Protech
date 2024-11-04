@@ -32,18 +32,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			verifyTokenSeller: () => {
 				const token = localStorage.getItem('jwt-token-seller');
-
-				if(token != null){
-					setStore({ authenticatedSeller: true })
-					const sellerId = 
-					setStore({ sellerId });
+			
+				if (token != null) {
+					setStore({ authenticatedSeller: true });
 					return(token)
 				}
 			},
-			getSellerId: () => {
-				const store = getStore();
-				return store.sellerId; 
-			},
+			
+			
 			changeAuthenticatedSeller: (bool) => {
 				setStore({authenticatedSeller: bool})
 			},
