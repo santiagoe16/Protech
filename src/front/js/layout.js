@@ -15,7 +15,7 @@ import { SignupBuyer } from "./pages/signupbuyer";
 import { Categorias } from "./pages/categoria";
 import { Itemscarts } from "./pages/itemscarts";
 import { Carts } from "./pages/carts";
-import { Addresses } from "./pages/address";
+import { Address } from "./pages/address";
 import { SignupSeller } from "./pages/singupseller";
 import { LoginSeller } from "./pages/loginseller";
 import { CardProduct } from "./component/cardproduct";
@@ -53,7 +53,7 @@ const Layout = () => {
                         <Route element={<SignupBuyer/>} path="/buyer/signup" />
                         <Route element={<Itemscarts/>} path="/itemscarts" />
                         <Route element={<Carts/>} path="/carts" />
-                        <Route element={<Addresses/>} path="/addresses" />
+                        <Route element={<Address/>} path="/address" />
                         <Route element={<SignupSeller/>} path="/seller/signup" />
                         <Route element={<LoginSeller/>} path="/seller/login" />
                         <Route element={<CardProduct/>} path="/cardproduct" />

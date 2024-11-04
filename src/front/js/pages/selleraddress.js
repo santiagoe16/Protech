@@ -16,12 +16,12 @@ export const SellerAddress = () => {
 
     const [sellerAddress, setSellerAddress] = useState({
         address: "",
-        lat: "",
-        lon: "",
+        lat: 0,
+        lon: 0,
     });
 
     useEffect(() => {
-        getCurrentAddress(); // Cargar la dirección actual solo una vez al montar el componente
+        getCurrentAddress();
     }, []);
 
     useEffect(() => {
@@ -44,13 +44,15 @@ export const SellerAddress = () => {
                 setMarkerPosition({
                     lat: parseFloat(data.lat),
                     lng: parseFloat(data.lon),
-                });
+                })
             });
     };
 
     const updateSellerAddress = () => {
         const token = actions.verifyTokenSeller()
+        
         if (sellerAddress.address) {
+            
             const raw = JSON.stringify({
                 address: sellerAddress.address,
                 lat: sellerAddress.lat,
@@ -58,7 +60,7 @@ export const SellerAddress = () => {
             });
 
             fetch(`${process.env.BACKEND_URL}/api/address/seller`, {
-                method: "PUT",
+                method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "application/json",
@@ -109,8 +111,8 @@ export const SellerAddress = () => {
 
             setSellerAddress({
                 address: place.formatted_address,
-                lat: location.lat().toString(),
-                lon: location.lng().toString(),
+                lat: parseFloat(location.lat()),
+                lon: parseFloat(location.lng()),
             });
 
             map.panTo(location);
@@ -133,12 +135,11 @@ export const SellerAddress = () => {
                 .then((data) => {
                     if (data.status === "OK" && data.results[0]) {
                         const newAddress = data.results[0].formatted_address;
-
                         setSellerAddress({
                             address: newAddress,
-                            lat: clickedLocation.lat().toString(),
-                            lon: clickedLocation.lng().toString(),
-                        });
+                            lat: parseFloat(clickedLocation.lat()),
+                            lon: parseFloat(clickedLocation.lng()),
+                        })
 
                         setSelectedPlace({
                             name: "Selected Location",
@@ -164,6 +165,7 @@ export const SellerAddress = () => {
                         <input
                             id="pac-input"
                             ref={inputRef}
+                            defaultValue={currentAddress}
                             type="text"
                             placeholder="Enter a location"
                             style={{ width: "400px", padding: "8px", marginBottom: "10px" }}

@@ -18,8 +18,7 @@ class User(db.Model):
             "email": self.email,
         }
     
-class Products(db.Model):#products es muchos
-    
+class Products(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
@@ -28,14 +27,13 @@ class Products(db.Model):#products es muchos
     stock = db.Column(db.Integer, unique=False, nullable=False)
     image = db.Column(db.String(500), unique=False, nullable=False)
   
-    category_id= db.Column(db.Integer, db.ForeignKey("categoria.id"), unique=False, nullable=False)#definir nombre en ingles y agregar clave foranea
+    category_id= db.Column(db.Integer, db.ForeignKey("categoria.id"), unique=False, nullable=False)
     categoria = db.relationship("Categoria", back_populates="products")
     items_cart = db.relationship('ItemCart', back_populates='product')
 
     seller_id= db.Column(db.Integer, db.ForeignKey("seller.id"), unique=False, nullable=False)
     seller = db.relationship("Seller", back_populates="products")
  
-    
 
     def __repr__(self): 
         return f'<Products {self.name}>'
@@ -48,17 +46,16 @@ class Products(db.Model):#products es muchos
             "price": self.price,
             "stock": self.stock,
             "image": self.image,
-            "category_id": self.category_id ,#hace que pertenezca a uno a muchos(relacion uno a muchos)
-            "category": self.categoria.serialize() if self.categoria else None, #Error de serializacion solucionado(linea necesaria)
+            "category_id": self.category_id ,
+            "category": self.categoria.serialize() if self.categoria else None, 
             "seller_id": self.seller_id,
             "seller": self.seller.serialize() if self.seller else None
         }
     
 class Categoria(db.Model):
-    #categoria es uno
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
-    products = db.relationship("Products", back_populates="categoria", lazy="dynamic") #se agrega el que es muchos (ver que es dynamic cuando lo necesites)
+    products = db.relationship("Products", back_populates="categoria", lazy="dynamic")
     
     
     def __repr__(self):
@@ -70,9 +67,6 @@ class Categoria(db.Model):
             "name": self.name
         }
 
-
-    
-
 class Seller(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
@@ -81,10 +75,9 @@ class Seller(db.Model):
     phone = db.Column(db.String(80), unique=False, nullable=False)
     bank_account = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-    address = db.Column(db.String(100), unique=False, nullable=True)
-    lat = db.Column(db.String(100), unique=False, nullable=True)
-    lon = db.Column(db.String(100), unique=False, nullable=True)
-    
+
+    address = db.relationship('Address', back_populates='seller', uselist=True)
+
     products = db.relationship("Products", back_populates="seller") 
     
     def __repr__(self):
@@ -97,9 +90,6 @@ class Seller(db.Model):
             "name": self.name,
             "phone" : self.phone,
             "bank_account": self.bank_account,
-            "address": self.address,
-            "lat": self.lat,
-            "lon": self.lon,
         }
     
 class Comprador(db.Model):
@@ -108,8 +98,9 @@ class Comprador(db.Model):
     email = db.Column(db.String(120), unique=False, nullable=False)
     clave = db.Column(db.String(80), unique=False, nullable=False)
     telefono = db.Column(db.String(80), unique=False, nullable=False)
-        
+
     carts = db.relationship("Cart", back_populates="comprador", lazy="dynamic")
+    addresses = db.relationship('Address', back_populates='comprador', lazy="dynamic")
 
     def __repr__(self):
         return f'<Comprador {self.name}>'
@@ -119,7 +110,6 @@ class Comprador(db.Model):
             "id": self.id,
             "name": self.name,
             "email": self.email,
-            "clave": self.clave,
             "telefono": self.telefono
         }
 
@@ -172,18 +162,26 @@ class Cart(db.Model):
 class Address(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     address = db.Column(db.String(120), unique=False, nullable=False)
-    city = db.Column(db.String(120), unique=False, nullable=False)
-    postal_code = db.Column(db.String(80), unique=False, nullable=False)
-    country = db.Column(db.String(80), unique=False, nullable=False)
-        
+    lat = db.Column(db.Float, unique=False, nullable=False) 
+    lon = db.Column(db.Float, unique=False, nullable=False)  
+
+    comprador_id = db.Column(db.Integer, db.ForeignKey('comprador.id'), nullable=True)
+    comprador = db.relationship('Comprador', back_populates='addresses')
+
+    seller_id = db.Column(db.Integer, db.ForeignKey('seller.id'), unique=True, nullable=True)
+    seller = db.relationship('Seller', back_populates='address', uselist=False)
+
     def __repr__(self):
-        return f'<Address {self.name}>'
+        return f'<Address {self.address}>'
 
     def serialize(self):
         return {
             "id": self.id,
             "address": self.address,
-            "city": self.city,
-            "postal_code": self.postal_code,
-            "country": self.country,
+            "lat": self.lat,
+            "lon": self.lon,
+            "seller_id": self.seller_id if self.seller_id else None,
+            "comprador_id": self.comprador_id if self.comprador_id else None,
+            "seller": self.seller.name if self.seller else None,
+            "comprador": self.comprador.name if self.comprador else None
         }
