@@ -31,11 +31,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({authenticatedBuyer: bool})
 			},
 			verifyTokenSeller: () => {
-				const token = localStorage.getItem('jwt-token');
+				const token = localStorage.getItem('jwt-token-seller');
 			
 				if (token != null) {
 					setStore({ authenticatedSeller: true });
-					
+					return(token)
 				}
 			},
 			
