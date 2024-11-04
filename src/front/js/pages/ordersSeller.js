@@ -3,13 +3,13 @@ import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 
 export const Orders = () => {
-    const { store } = useContext(Context);
+    const { store, actions } = useContext(Context);
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     const getOrders = () => {
-        const token = localStorage.getItem("jwt-token"); 
+        const token = actions.verifyTokenSeller(); 
         if (!token) {
             navigate('/login');
             return;
@@ -45,7 +45,7 @@ export const Orders = () => {
     };
 
     const changeStatus = (cartId, newState) => {
-        const token = localStorage.getItem("jwt-token");
+        const token = actions.verifyTokenSeller();
         if (!token) {
             console.error("No valid token found. User might need to log in.");
             return;
