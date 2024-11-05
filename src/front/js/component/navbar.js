@@ -8,7 +8,8 @@ export const Navbar = () => {
 	const navigate = useNavigate();
 	
 	const logOut = () =>{
-		localStorage.removeItem("jwt-token")
+		localStorage.removeItem("jwt-token-seller")
+		localStorage.removeItem("jwt-token-buyer")
 		actions.changeAuthenticatedBuyer(false)
 		actions.changeAuthenticatedSeller(false)
 		navigate("/buyer/login")
@@ -23,12 +24,19 @@ export const Navbar = () => {
 				
 				<div className="ml-auto">
 					{(store.authenticatedBuyer) ? (<Link to="/cartview"><button className="btn btn-primary">Cart</button></Link>):<></>}
-					{(store.authenticatedBuyer) ? (<Link to="/productsbuyers"><button className="btn btn-primary">Products</button></Link>):<></>}
+					{(store.authenticatedBuyer) ? (<>
+						<Link to="/productsbuyers"><button className="btn btn-primary">Products</button></Link>
+						<Link to="/ordersplaced"><button className="btn btn-primary">orders placed</button></Link></>)
+					:<></>}
 					{(store.authenticatedBuyer || store.authenticatedSeller) ? (<button className="btn btn-danger" onClick={() => logOut()}>log out</button>):(<button className="btn btn-primary" onClick={() => navigate("/buyer/login")}>log in</button>)}
 					
+					{(store.authenticatedSeller) ? (<Link to="/orders"><button className="btn btn-primary">Orders</button></Link>):<></>}
 					{!store.authenticatedSeller && (
 						<button className="btn btn-primary" onClick={() => navigate("/seller/login")}>Start selling</button>
 					)}
+					{store.authenticatedSeller == true ? (
+						<button className="btn btn-primary" onClick={() => navigate("/selleraddress")}>update address</button>
+					):(<></>)}
 				</div>
 			</div>
 		</nav>

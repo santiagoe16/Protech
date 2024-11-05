@@ -6,6 +6,7 @@ export const Products = () => {
 
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [sellers, setSellers] = useState([]);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState(0);
@@ -13,12 +14,9 @@ export const Products = () => {
     const [image, setImage] = useState("");
     const [activeTab, setActiveTab] = useState("list-tab");
     const [categoryId, setCategoryId] = useState(0);
+    const [sellerId, setSellerId] = useState(0);
     const [editProduct_Id, setEditProduct_Id] = useState(0);
-
-
     
-
-
     const getProducts = () => {
         fetch(`${process.env.BACKEND_URL}/api/products`, { method: "GET" })
             .then((response) => response.json())
@@ -36,10 +34,22 @@ export const Products = () => {
             });
     };
 
+    const getSellers = () => {
+        fetch(`${process.env.BACKEND_URL}/api/sellers`)
+            .then((response) => response.json())
+            .then((data) => {
+                setSellers(data);
+            });
+    };
+
     useEffect(() => {
         getProducts();
         getCategories();
+        getSellers();
     }, []);
+
+
+
 
     const cleanFields = () => {
         setName("");
@@ -47,6 +57,7 @@ export const Products = () => {
         setPrice(0);
         setStock(0);
         setImage("");
+        setSellerId(0);
         setCategoryId(0);
     };
 
@@ -59,6 +70,7 @@ export const Products = () => {
             stock: parseInt(stock),
             image,
             category_id: categoryId,
+            seller_id: sellerId,
         });
         fetch(`${process.env.BACKEND_URL}/api/products`, {
             method: "POST",
@@ -99,6 +111,7 @@ export const Products = () => {
                 setImage(data.image);
                 setEditProduct_Id(product_id);
                 setCategoryId(data.category.id);
+                setSellerId(data.seller.id);
             });
     };
 
@@ -111,6 +124,7 @@ export const Products = () => {
             stock: parseInt(stock),
             image,
             category_id: categoryId,
+            seller_id: sellerId,
         });
         fetch(`${process.env.BACKEND_URL}/api/products/${editProduct_Id}`, {
             method: "PUT",
@@ -138,6 +152,7 @@ export const Products = () => {
                 setStock(data.stock);
                 setImage(data.image);
                 setCategoryId(data.category.id);
+                setSellerId(data.seller.id);
             });
     };
 
@@ -218,6 +233,7 @@ export const Products = () => {
                                 <th>Stock</th>
                                 <th>Image</th>
                                 <th>Category</th>
+                                <th>Seller</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -236,6 +252,7 @@ export const Products = () => {
                                         <td>{product.stock}</td>
                                         <td>{product.image}</td>
                                         <td>{product.category ? product.category.name : 'N/A'}</td>
+                                        <td>{product.seller.name}</td>
                                     </tr>
                                 ))
                             ) : (
@@ -278,6 +295,15 @@ export const Products = () => {
                                 ))}
                             </select>
                         </div>
+                        <div className="mb-3">
+                            <label htmlFor="seller" className="form-label">Seller</label>
+                            <select value={sellerId} onChange={(e) => setSellerId(e.target.value)} className="form-select" id="seller">
+                                <option value="0">Choose the seller</option>
+                                {sellers.map((seller) => (
+                                    <option key={seller.id} value={seller.id}>{seller.name}</option>
+                                ))}
+                            </select>
+                        </div>
                         <button type="submit" className="btn btn-primary">Create Product</button>
                     </form>
                 </div>
@@ -313,6 +339,15 @@ export const Products = () => {
                                 ))}
                             </select>
                         </div>
+                        <div className="mb-3">
+                            <label htmlFor="seller" className="form-label">Seller</label>
+                            <select value={sellerId} onChange={(e) => setSellerId(e.target.value)} className="form-select" id="seller">
+                                <option value="0">Choose the seller</option>
+                                {sellers.map((seller) => (
+                                    <option key={seller.id} value={seller.id}>{seller.name}</option>
+                                ))}
+                            </select>
+                        </div>
                         <button type="submit" className="btn btn-primary">Edit Product</button>
                     </form>
                 </div>
@@ -344,6 +379,15 @@ export const Products = () => {
                                 <option value="0">Select a category</option>
                                 {categories.map((category) => (
                                     <option key={category.id} value={category.id}>{category.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="mb-3">
+                            <label htmlFor="seller" className="form-label">Seller</label>
+                            <select value={sellerId} onChange={(e) => setSellerId(e.target.value)} className="form-select" id="seller">
+                                <option value="0">Choose the seller</option>
+                                {sellers.map((seller) => (
+                                    <option key={seller.id} value={seller.id}>{seller.name}</option>
                                 ))}
                             </select>
                         </div>

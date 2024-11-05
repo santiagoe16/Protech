@@ -15,11 +15,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			],
 			authenticatedBuyer: false,
-			authenticatedSeller:false 
+			authenticatedSeller:false,
+			sellerId: null,
 		},
 		actions: {
 			verifyTokenBuyer: () => {
-				const token = localStorage.getItem('jwt-token');
+				const token = localStorage.getItem('jwt-token-buyer');
 
 				if(token != null){
 					setStore({ authenticatedBuyer: true })
@@ -30,12 +31,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({authenticatedBuyer: bool})
 			},
 			verifyTokenSeller: () => {
-				const token = localStorage.getItem('jwt-token');
-
-				if(token != null){
-					setStore({ authenticatedSeller: true })
+				const token = localStorage.getItem('jwt-token-seller');
+			
+				if (token != null) {
+					setStore({ authenticatedSeller: true });
+					return(token)
 				}
 			},
+			
+			
 			changeAuthenticatedSeller: (bool) => {
 				setStore({authenticatedSeller: bool})
 			},

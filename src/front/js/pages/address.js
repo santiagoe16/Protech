@@ -1,50 +1,65 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 
-export const Direcciones = () => {
+export const Address = () => {
     const { store, actions } = useContext(Context);
 
-    const [direcciones, setDirecciones] = useState([]);
+    const [addresses, setAddresses] = useState([]);
     const [address, setAddress] = useState("");
-    const [ciudad, setCiudad] = useState("");
-    const [codigoPostal, setCodigoPostal] = useState("");
-    const [pais, setPais] = useState("");
+    const [lat, setLat] = useState("");
+    const [lon, setLon] = useState("");
     const [activeTab, setActiveTab] = useState("home-tab");
-    const [editDireccionId, setEditDireccionId] = useState(null); // Estado para el ID de la dirección a editar
-    const [selectedDireccion, setSelectedDireccion] = useState(null); // Estado para la dirección seleccionada
+    const [editAddressId, setEditAddressId] = useState(null);
+    const [selectedAddress, setSelectedAddress] = useState(null);
+    const [sellers,setSellers] = useState([])
+    const [buyers,setBuyers] = useState([])
+    const [buyerId, setBuyerId] = useState(0)
+    const [sellerId, setSellerId] = useState(0)
 
-    const getDirecciones = () => {
-        fetch(process.env.BACKEND_URL + "/api/direcciones/", { method: "GET" })
+    const getInfo = () => {
+        fetch(process.env.BACKEND_URL + "/api/addresses", { method: "GET" })
             .then((response) => response.json())
-            .then((data) => setDirecciones(data))
-            .catch((error) => console.error("Error fetching direcciones:", error));
+            .then((data) => setAddresses(data))
+            .catch((error) => console.error("Error fetching addresses:", error));
+
+        fetch(process.env.BACKEND_URL + "/api/compradores", { method: "GET" })
+            .then((response) => response.json())
+            .then((data) => setBuyers(data))
+            
+            .catch((error) => console.error("Error fetching addresses:", error));
+
+        fetch(process.env.BACKEND_URL + "/api/sellers", { method: "GET" })
+            .then((response) => response.json())
+            .then((data) => setSellers(data))
+            .catch((error) => console.error("Error fetching addresses:", error));
+
     };
 
     useEffect(() => {
-        getDirecciones();
+        getInfo();
     }, []);
 
     const handleSubmitCreate = (e) => {
         e.preventDefault();
-        const newDireccion = JSON.stringify({
-            "direccion": address,
-            "ciudad": ciudad,
-            "codigo_postal": codigoPostal,
-            "pais": pais
+        console.log(buyerId)
+        const newAddress = JSON.stringify({
+            "address": address,
+            "lat": parseFloat(lat),
+            "lon": parseFloat(lon),
+            ...(buyerId ? { comprador_id: buyerId } : { seller_id: sellerId })
         });
-        
 
-        fetch(process.env.BACKEND_URL + "/api/direcciones", {
+        fetch(process.env.BACKEND_URL + "/api/address", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: newDireccion,
+            body: newAddress,
         })
             .then((response) => {
                 if (response.ok) {
-                    getDirecciones();
+                    getInfo();
                     resetForm();
                 } else {
-                    console.error("Error adding direccion:", response.statusText);
+                    console.error("Error adding address:", response.statusText);
                 }
             })
             .catch((error) => console.error("Network error:", error));
@@ -54,56 +69,55 @@ export const Direcciones = () => {
         setActiveTab(tab);
     };
 
-    const getToEditDireccion = async (direccion_id) => {
+    const getToEditAddress = async (address_id) => {
         try {
-            const response = await fetch(`${process.env.BACKEND_URL}/api/direcciones/${direccion_id}`, { method: "GET" });
+            const response = await fetch(`${process.env.BACKEND_URL}/api/address/${address_id}`, { method: "GET" });
 
-            if (!response.ok) throw new Error("Error fetching direccion details");
+            if (!response.ok) throw new Error("Error fetching address details");
 
             const data = await response.json();
-            setActiveTab("edit-tab"); // Cambia a la pestaña de edición
+            setActiveTab("edit-tab"); 
             setAddress(data.address);
-            setCiudad(data.ciudad);
-            setCodigoPostal(data.codigoPostal);
-            setPais(data.pais);
-            setEditDireccionId(direccion_id); // Establece el ID de la dirección a editar
+            setLat(data.lat);
+            setLon(data.lon);
+            setEditAddressId(address_id);
         } catch (error) {
-            console.error("Error fetching direccion to edit:", error);
+            console.error("Error fetching address to edit:", error);
         }
     };
 
-    const showDireccionDetails = (direccion) => {
-        setSelectedDireccion(direccion);
-        setActiveTab("details-tab"); // Cambia a la pestaña de detalles
+    const showAddressDetails = (address) => {
+        setSelectedAddress(address);
+        setActiveTab("details-tab");
     };
 
-    const handleSubmitEditDireccion = async (e) => {
+    const handleSubmitEditAddress = async (e) => {
         e.preventDefault();
-        const updatedDireccion = { address, ciudad, codigoPostal, pais };
+        const updatedAddress = { address: address, lat: lat, lon: lon };
 
         try {
-            const response = await fetch(`${process.env.BACKEND_URL}/api/direcciones/${editDireccionId}`, {
+            const response = await fetch(`${process.env.BACKEND_URL}/api/address/${editAddressId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(updatedDireccion),
+                body: JSON.stringify(updatedAddress),
             });
 
-            if (!response.ok) throw new Error("Error updating direccion");
+            if (!response.ok) throw new Error("Error updating address");
 
-            await getDirecciones();
+            getInfo();
             resetForm();
         } catch (error) {
-            console.error("Error updating direccion:", error);
+            console.error("Error updating address:", error);
         }
     };
 
-    const deleteDireccion = (direccion_id) => {
-        if (window.confirm("¿Estás seguro de que deseas eliminar esta dirección?")) {
-            fetch(`${process.env.BACKEND_URL}/api/direcciones/${direccion_id}`, { method: "DELETE" })
+    const deleteAddress = (address_id) => {
+        if (window.confirm("Are you sure you want to delete this address?")) {
+            fetch(`${process.env.BACKEND_URL}/api/address/${address_id}`, { method: "DELETE" })
                 .then(response => {
                     if (response.ok) {
-                        getDirecciones(); // Recarga la lista de direcciones
-                        alert("Dirección eliminada exitosamente.");
+                        getInfo(); 
+                        alert("Address successfully deleted.");
                     } else {
                         throw new Error(`Error: ${response.statusText}`);
                     }
@@ -115,11 +129,12 @@ export const Direcciones = () => {
     const resetForm = () => {
         setActiveTab("home-tab");
         setAddress("");
-        setCiudad("");
-        setCodigoPostal("");
-        setPais("");
-        setEditDireccionId(null); // Resetear el ID de la dirección a editar
-        setSelectedDireccion(null); // Resetear la dirección seleccionada
+        setLat("");
+        setLon("");
+        setEditAddressId(null);
+        setSelectedAddress(null); 
+        setBuyerId(0)
+        setSellerId(0)
     };
 
     return (
@@ -128,115 +143,118 @@ export const Direcciones = () => {
                 <li className="nav-item" role="presentation">
                     <button
                         className={`nav-link ${activeTab === "home-tab" ? "active" : ""}`}
-                        id="home-tab"
                         onClick={() => handleTabChange("home-tab")}
-                        type="button"
-                        role="tab"
-                        aria-controls="home-tab-pane"
-                        aria-selected={activeTab === "home-tab"}
                     >
-                        Mostrar
+                        Show
                     </button>
                 </li>
                 <li className="nav-item" role="presentation">
                     <button
                         className={`nav-link ${activeTab === "profile-tab" ? "active" : ""}`}
-                        id="profile-tab"
                         onClick={() => handleTabChange("profile-tab")}
-                        type="button"
-                        role="tab"
-                        aria-controls="profile-tab-pane"
-                        aria-selected={activeTab === "profile-tab"}
                     >
-                        Crear
+                        Create
+                    </button>
+                </li>
+                <li className="nav-item" role="presentation">
+                    <button
+                        className={`nav-link ${activeTab === "edit-tab" ? "active" : ""}`}
+                        onClick={() => handleTabChange("edit-tab")}
+                    >
+                        Edit
                     </button>
                 </li>
                 <li className="nav-item" role="presentation">
                     <button
                         className={`nav-link ${activeTab === "details-tab" ? "active" : ""}`}
-                        id="details-tab"
                         onClick={() => handleTabChange("details-tab")}
-                        type="button"
-                        role="tab"
-                        aria-controls="details-tab-pane"
-                        aria-selected={activeTab === "details-tab"}
                     >
-                        Detalles
+                        Details
                     </button>
                 </li>
             </ul>
 
-            <div className="tab-content" id="myTabContent">
-                <div className={`tab-pane fade ${activeTab === "home-tab" ? "show active" : ""}`} id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabIndex="0">
-                    <h3>Lista de Direcciones</h3>
+            <div className="tab-content">
+                <div className={`tab-pane fade ${activeTab === "home-tab" ? "show active" : ""}`}>
+                    <h3>Address List</h3>
                     <ul>
-                        {direcciones.map((direccion) => (
-                            <li key={direccion.id}>
-                                {direccion.address}, {direccion.ciudad} - {direccion.codigoPostal}, {direccion.pais}
-                                <button onClick={() => getToEditDireccion(direccion.id)} className="btn btn-warning btn-sm mx-2">Editar</button>
-                                <button onClick={() => deleteDireccion(direccion.id)} className="btn btn-danger btn-sm">Eliminar</button>
-                                <button onClick={() => showDireccionDetails(direccion)} className="btn btn-info btn-sm mx-2">Mostrar Detalles</button>
+                        {addresses.map((address) => (
+                            <li key={address.id}>
+                                <p>{address.comprador ? "buyer:": "seller:"} {address.seller ? address.seller : address.comprador} Address: {address.address}, Lat: {address.lat}, Lon: {address.lon}</p>
+                                <button onClick={() => getToEditAddress(address.id)} className="btn btn-warning btn-sm mx-2">Edit</button>
+                                <button onClick={() => deleteAddress(address.id)} className="btn btn-danger btn-sm">Delete</button>
+                                <button onClick={() => showAddressDetails(address)} className="btn btn-info btn-sm mx-2">Show Details</button>
                             </li>
                         ))}
                     </ul>
                 </div>
-                <div className={`tab-pane fade ${activeTab === "profile-tab" ? "show active" : ""}`} id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabIndex="0">
-                    <h3>Crear Dirección</h3>
+                <div className={`tab-pane fade ${activeTab === "profile-tab" ? "show active" : ""}`}>
+                    <h3>Create Address</h3>
                     <form onSubmit={handleSubmitCreate}>
                         <div className="mb-3">
-                            <label htmlFor="address" className="form-label">Dirección</label>
-                            <input type="text" className="form-control" id="address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Ingresa la dirección" required />
+                            <label className="form-label">Address</label>
+                            <input type="text" className="form-control" value={address} onChange={(e) => setAddress(e.target.value)} required />
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="ciudad" className="form-label">Ciudad</label>
-                            <input type="text" className="form-control" id="ciudad" value={ciudad} onChange={(e) => setCiudad(e.target.value)} placeholder="Ingresa la ciudad" required />
+                            <label className="form-label">Latitude</label>
+                            <input type="number" className="form-control" value={lat} onChange={(e) => setLat(e.target.value)} required />
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="codigoPostal" className="form-label">Código Postal</label>
-                            <input type="text" className="form-control" id="codigoPostal" value={codigoPostal} onChange={(e) => setCodigoPostal(e.target.value)} placeholder="Ingresa el código postal" required />
+                            <label className="form-label">Longitude</label>
+                            <input type="number" className="form-control" value={lon} onChange={(e) => setLon(e.target.value)} required />
                         </div>
                         <div className="mb-3">
-                            <label htmlFor="pais" className="form-label">País</label>
-                            <input type="text" className="form-control" id="pais" value={pais} onChange={(e) => setPais(e.target.value)} placeholder="Ingresa el país" required />
+                            <label htmlFor="buyer" className="form-label">buyers</label>
+                            <select value={buyerId} onChange={(e) => setBuyerId(e.target.value)} className="form-select" id="buyer">
+                                <option value="0">Select a buyer</option>
+                                {buyers.map((buyer) => (
+                                    <option  key={buyer.id} value={buyer.id}>{buyer.name}</option>
+                                ))}
+                            </select>
                         </div>
-                        <button type="submit" className="btn btn-primary">Crear</button>
+                        <div className="mb-3">
+                            <label htmlFor="seller" className="form-label">sellers</label>
+                            <select value={sellerId} onChange={(e) => setSellerId(e.target.value)} className="form-select" id="seller">
+                                <option className="``" value="0">Select a seller</option>
+                                {sellers.map((seller) => (
+                                    <option key={seller.id} value={seller.id}>{seller.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <button type="submit" className="btn btn-primary">Create</button>
                     </form>
                 </div>
-                <div className={`tab-pane fade ${activeTab === "details-tab" ? "show active" : ""}`} id="details-tab-pane" role="tabpanel" aria-labelledby="details-tab" tabIndex="0">
-                    <h3>Detalles de la Dirección</h3>
-                    {selectedDireccion ? (
+                <div className={`tab-pane fade ${activeTab === "edit-tab" ? "show active" : ""}`}>
+                    <h3>Edit Address</h3>
+                    <form onSubmit={handleSubmitEditAddress}>
+                        <div className="mb-3">
+                            <label className="form-label">Address</label>
+                            <input type="text" className="form-control" value={address} onChange={(e) => setAddress(e.target.value)} required />
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Latitude</label>
+                            <input type="number" className="form-control" value={lat} onChange={(e) => setLat(e.target.value)} required />
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Longitude</label>
+                            <input type="number" className="form-control" value={lon} onChange={(e) => setLon(e.target.value)} required />
+                        </div>
+                        <button type="submit" className="btn btn-primary">Update</button>
+                        <button type="button" onClick={resetForm} className="btn btn-secondary mx-2">Cancel</button>
+                    </form>
+                </div>
+                <div className={`tab-pane fade ${activeTab === "details-tab" ? "show active" : ""}`}>
+                    <h3>Address Details</h3>
+                    {selectedAddress ? (
                         <div>
-                            <p><strong>Dirección:</strong> {selectedDireccion.address}</p>
-                            <p><strong>Ciudad:</strong> {selectedDireccion.ciudad}</p>
-                            <p><strong>Código Postal:</strong> {selectedDireccion.codigoPostal}</p>
-                            <p><strong>País:</strong> {selectedDireccion.pais}</p>
-                            <button onClick={() => setSelectedDireccion(null)} className="btn btn-secondary">Volver</button>
+                            <p><strong>Address:</strong> {selectedAddress.address}</p>
+                            <p><strong>Latitude:</strong> {selectedAddress.lat}</p>
+                            <p><strong>Longitude:</strong> {selectedAddress.lon}</p>
+                            <button onClick={() => setSelectedAddress(null)} className="btn btn-secondary">Back</button>
                         </div>
                     ) : (
-                        <p>No se ha seleccionado ninguna dirección.</p>
+                        <p>No address selected.</p>
                     )}
-                </div>
-                <div className={`tab-pane fade ${activeTab === "edit-tab" ? "show active" : ""}`} id="edit-tab-pane" role="tabpanel" aria-labelledby="edit-tab" tabIndex="0">
-                    <h3>Editar Dirección</h3>
-                    <form onSubmit={handleSubmitEditDireccion}>
-                        <div className="mb-3">
-                            <label htmlFor="edit-address" className="form-label">Dirección</label>
-                            <input type="text" className="form-control" id="edit-address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Ingresa la nueva dirección" required />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="edit-ciudad" className="form-label">Ciudad</label>
-                            <input type="text" className="form-control" id="edit-ciudad" value={ciudad} onChange={(e) => setCiudad(e.target.value)} placeholder="Ingresa la nueva ciudad" required />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="edit-codigoPostal" className="form-label">Código Postal</label>
-                            <input type="text" className="form-control" id="edit-codigoPostal" value={codigoPostal} onChange={(e) => setCodigoPostal(e.target.value)} placeholder="Ingresa el nuevo código postal" required />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="edit-pais" className="form-label">País</label>
-                            <input type="text" className="form-control" id="edit-pais" value={pais} onChange={(e) => setPais(e.target.value)} placeholder="Ingresa el nuevo país" required />
-                        </div>
-                        <button type="submit" className="btn btn-success">Guardar Cambios</button>
-                    </form>
                 </div>
             </div>
         </div>

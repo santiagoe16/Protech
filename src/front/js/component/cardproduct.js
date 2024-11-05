@@ -1,15 +1,15 @@
 import React from "react";
 
 export const CardProduct = () => (
-    <div className="card" style={{width: "14rem", maxHeight: ""}}>
+    <div className="card" style={{width: "12rem", maxHeight: ""}}>
         <img 
-            src="https://placehold.co/200x330" 
-            style={{width: "14rem", height: "190px", objectFit: "cover"}} 
+            src="https://placehold.co/700x530" 
+            style={{width: "12rem", height: "170px", objectFit: "cover"}} 
             alt="..." 
         />
-        <div className="card-body">
-            <h6 className="card-title">Card title</h6>
-            <p className="card-text">Some quick example text to build on </p>
+        <div>
+            <p className="m-0">Card title</p>
+            <p className="m-0">Some quick example text to build on </p>
         </div>
     </div>
 )

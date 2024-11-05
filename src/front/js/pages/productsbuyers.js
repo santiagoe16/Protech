@@ -16,12 +16,9 @@ export const ProductsBuyers = () => {
     const [minPrice, setMinPrice] = useState("");
     const [maxPrice, setMaxPrice] = useState("");
 
-
-
     const getFilter = async () => {
-        const response = await fetch("https://solitary-spooky-spider-g457xp464g6phwjwj-3000.app.github.dev/products");
+        const response = await fetch(process.env.BACKEND_URL + "/products");
         const data = await response.json();
-        console.log(data);
     }
 
     const handleMinPriceChange = (e) => {
@@ -66,7 +63,6 @@ if (!filter && minPrice === "" && maxPrice === "") {
             .then((data) => {
                 setProducts(data);
                 const initialAmounts = {};
-                console.log(data)
                 data.forEach(product => {
                     initialAmounts[product.id] = 1;
                 });
@@ -93,6 +89,8 @@ if (!filter && minPrice === "" && maxPrice === "") {
     }
 
     const addToCart = (productId) => {
+        const token = actions.verifyTokenBuyer()
+
         const raw = JSON.stringify({
             "amount": parseInt(amounts[productId]) || 1,
             "product_id": parseInt(productId)
@@ -102,7 +100,7 @@ if (!filter && minPrice === "" && maxPrice === "") {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem("jwt-token")}`,
+                "Authorization": `Bearer ${token}`,
             },
             body: raw,
             redirect: "follow"
@@ -111,7 +109,6 @@ if (!filter && minPrice === "" && maxPrice === "") {
         fetch(process.env.BACKEND_URL + "/api/itemscarts", requestOptions)
             .then((response) => response.json())
             .then((result) => {
-                console.log(result.message);
                 getProducts();
                 setActiveTab("list-tab");
             })

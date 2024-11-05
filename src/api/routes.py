@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Products, Seller , Comprador,Categoria, ItemCart, Cart,Direccion
+from api.models import db, User, Products, Seller , Comprador,Categoria, ItemCart, Cart, Address
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
@@ -10,7 +10,6 @@ from sqlalchemy import desc
 
 api = Blueprint('api', __name__)
 
-# Allow CORS requests to this API
 CORS(api)
 
 
@@ -28,9 +27,11 @@ def handle_hello():
 def get_products():
     try:
         products = Products.query.all()
-        return jsonify([product.serialize() for product in products]), 200
+        if not products:
+            return jsonify({"message": "No products available"}), 404
+        return jsonify(list(map(lambda product: product.serialize(), products))), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "An error occurred while fetching products"}), 500
 
 @api.route('/products/<int:product_id>', methods=['GET'])
 def get_product(product_id):
@@ -49,7 +50,6 @@ def add_product():
     if not all(field in new_product_data for field in required_fields):
         return jsonify({"error": "Required fields are missing: " + ', '.join(required_fields)}), 400
 
-    # aqui le movi(Martin)
     category = Categoria.query.get(new_product_data["category_id"])
     if not category:
         return jsonify({"error": "Category not found"}), 404
@@ -66,7 +66,8 @@ def add_product():
         price=new_product_data["price"],
         stock=new_product_data["stock"],
         image=new_product_data["image"],
-        category_id=new_product_data["category_id"]
+        category_id=new_product_data["category_id"],
+        seller_id=new_product_data["seller_id"]
     )
 
     db.session.add(new_product)
@@ -84,7 +85,6 @@ def update_product(product_id):
         return jsonify({"error": "No data has been provided for updating."}), 400
 
     if 'category_id' in data:
-       #aqui le movi(martin)
         category = Categoria.query.get(data['category_id'])
         if not category:
             return jsonify({"error": "Category not found"}), 404
@@ -124,12 +124,12 @@ def remove_product(product_id):
 
 @api.route('/categorias', methods=['GET'])
 def get_categorias():
-    categorias = Categoria.query.all()  # Obtiene todas las categorías
+    categorias = Categoria.query.all()  
     return jsonify([categoria.serialize() for categoria in categorias]), 200
 
 @api.route('/categorias/<int:categoria_id>', methods=['GET'])
 def get_categoria(categoria_id):
-    categoria = Categoria.query.get(categoria_id)  # Obtiene la categoría por ID
+    categoria = Categoria.query.get(categoria_id)  
     if not categoria:
         return jsonify({"message": "Categoría no encontrada"}), 404
     return jsonify(categoria.serialize()), 200
@@ -175,41 +175,35 @@ def remove_categoria(categoria_id):
     db.session.commit()
     return jsonify({"message": "Categoría eliminada exitosamente"}), 200
 
-
-
-
 #----------------------------------Endpoints de Comprador-------------------------------------------
 
 @api.route('/compradores', methods=['GET'])
 def get_compradores():
-    compradores = Comprador.query.all()  # Obtiene todos los compradores de la base de datos
-    return jsonify([comprador.serialize() for comprador in compradores]), 200  # Devuelve los compradores en formato JSON
+    compradores = Comprador.query.all()  
+    return jsonify([comprador.serialize() for comprador in compradores]), 200  
 
 @api.route('/compradores/<int:comprador_id>', methods=['GET'])
 def get_comprador(comprador_id):
-    comprador = Comprador.query.get(comprador_id)  # Obtiene el comprador por ID
+    comprador = Comprador.query.get(comprador_id)
     if not comprador:
-        return jsonify({"message": "Comprador no encontrado"}), 404  # Si no se encuentra, devuelve 404
-    return jsonify(comprador.serialize()), 200  # Devuelve el comprador en formato JSON si lo encuentra
+        return jsonify({"message": "Comprador no encontrado"}), 404  
+    return jsonify(comprador.serialize()), 200  
 
 @api.route('/compradores', methods=['POST'])
 def add_comprador():
-    new_comprador_data = request.get_json()  # Obtiene los datos JSON enviados en la solicitud
+    new_comprador_data = request.get_json() 
 
-    if not new_comprador_data:  # Verifica que se haya enviado algún dato
-        return jsonify({"error": "No data provided"}), 400  # Si no se envía dato, devuelve error 400
+    if not new_comprador_data: 
+        return jsonify({"error": "No data provided"}), 400  
 
-    # Verifica que los campos requeridos estén presentes
     required_fields = ["name", "email", "clave", "telefono"]
     if not all(field in new_comprador_data for field in required_fields):
-        return jsonify({"error": "Required fields are missing: " + ', '.join(required_fields)}), 400  # Si falta algún campo, devuelve error 400
+        return jsonify({"error": "Required fields are missing: " + ', '.join(required_fields)}), 400 
 
-    # Verifica si ya existe un comprador con el mismo email
     existing_comprador = Comprador.query.filter_by(email=new_comprador_data["email"]).first()
     if existing_comprador:
-        return jsonify({"error": "Email is already in use"}), 400  # Si el email ya está en uso, devuelve error 400
+        return jsonify({"error": "Email is already in use"}), 400 
 
-    # Crea un nuevo comprador
     new_comprador = Comprador(
         name=new_comprador_data["name"],
         email=new_comprador_data["email"],
@@ -217,25 +211,23 @@ def add_comprador():
         telefono=new_comprador_data["telefono"]
     )
 
-    # Guarda el nuevo comprador en la base de datos
     db.session.add(new_comprador)
     db.session.commit()
 
-    return jsonify({"message": "Comprador successfully added"}), 201  # Devuelve mensaje de éxito con código 201
+    return jsonify({"message": "Comprador successfully added"}), 201  
 
 @api.route('/compradores/<int:comprador_id>', methods=['PUT'])
 def update_comprador(comprador_id):
-    comprador = Comprador.query.get(comprador_id)  # Obtiene el comprador por ID
+    comprador = Comprador.query.get(comprador_id)  
 
     if comprador is None:
-        return jsonify({"error": "Comprador no encontrado"}), 404  # Si no se encuentra, devuelve error 404
+        return jsonify({"error": "Comprador no encontrado"}), 404 
 
-    data = request.get_json()  # Obtiene los datos de la solicitud
+    data = request.get_json()
 
-    if not data:  # Verifica que los datos no estén vacíos
-        return jsonify({"error": "No data has been provided for updating"}), 400  # Si no hay datos, devuelve error 400
+    if not data: 
+        return jsonify({"error": "No data has been provided for updating"}), 400
 
-    # Actualiza los campos solo si fueron proporcionados en la solicitud
     if 'name' in data:
         comprador.name = data['name']
     if 'email' in data:
@@ -245,21 +237,21 @@ def update_comprador(comprador_id):
     if 'telefono' in data:
         comprador.telefono = data['telefono']
 
-    db.session.commit()  # Guarda los cambios en la base de datos
+    db.session.commit() 
 
-    return jsonify({"message": "Comprador successfully updated"}), 200  # Devuelve mensaje de éxito
+    return jsonify({"message": "Comprador successfully updated"}), 200  
 
 @api.route('/compradores/<int:comprador_id>', methods=['DELETE'])
 def remove_comprador(comprador_id):
-    comprador = Comprador.query.get(comprador_id)  # Obtiene el comprador por ID
+    comprador = Comprador.query.get(comprador_id) 
 
     if comprador is None:
-        return {"error": "Comprador no encontrado"}, 404  # Devuelve un error 404 si no se encuentra el comprador
+        return {"error": "Comprador no encontrado"}, 404 
 
-    db.session.delete(comprador)  # Elimina el comprador de la base de datos
-    db.session.commit()  # Confirma la transacción
+    db.session.delete(comprador) 
+    db.session.commit()  
 
-    return {"message": "Comprador eliminado exitosamente"}, 200  # Devuelve un mensaje de éxito
+    return {"message": "Comprador eliminado exitosamente"}, 200  
 
 #-------------------seller----------------------------------------
 @api.route('/sellers', methods=['GET'])
@@ -366,7 +358,7 @@ def get_itemcart(itemcart_id):
 @api.route('/itemscarts', methods=['POST'])
 @jwt_required()
 def add_itemcart():
-    new_item_cart_data = request.get_json()
+    new_item_cart = request.get_json()
 
     comprador_id = get_jwt_identity()
 
@@ -377,28 +369,35 @@ def add_itemcart():
         db.session.add(cart)
         db.session.commit()
 
-    if not new_item_cart_data:
+    if not new_item_cart:
         return jsonify({"error": "No data provided for the new item cart."}), 400
 
-    if "amount" not in new_item_cart_data:
+    if "amount" not in new_item_cart:
         return jsonify({"error": "You have to enter an amount"}), 400
 
-    if not isinstance(new_item_cart_data["amount"], int) or new_item_cart_data["amount"] < 1:
+    if not isinstance(new_item_cart["amount"], int) or new_item_cart["amount"] < 1:
         return jsonify({"error": "The amount must be a positive integer."}), 400
 
-    product = Products.query.get(new_item_cart_data["product_id"])
+    product = Products.query.get(new_item_cart["product_id"])
     if not product:
         return jsonify({"error": "The product with the given ID does not exist."}), 404
+    
+    item_exist = ItemCart.query.filter_by(cart_id = cart.id, product_id = product.id).first()
 
-    new_item = ItemCart(
-        amount=new_item_cart_data["amount"],
-        product_id=new_item_cart_data["product_id"],
-        cart_id=cart.id
-    )
+    if item_exist:
+        item_exist.amount += new_item_cart["amount"]
+        cart.total_price += product.price * new_item_cart["amount"]
 
-    cart.total_price += product.price * new_item_cart_data["amount"]
+    else:
+        new_item = ItemCart(
+            amount=new_item_cart["amount"],
+            product_id=new_item_cart["product_id"],
+            cart_id=cart.id
+        )
 
-    db.session.add(new_item)
+        cart.total_price += product.price * new_item_cart["amount"]
+
+        db.session.add(new_item)
     db.session.commit()
 
     return jsonify({"message": "Product successfully added to cart", "cart_total": cart.total_price}), 201
@@ -447,15 +446,79 @@ def generate_cart(cart_id):
     cart = Cart.query.get(cart_id)
 
     if cart is None:
-        return jsonify({"error": "Carrito no encontrado"}), 404
+        return jsonify({"error": "Cart not found"}), 404
 
     if cart.state != 'open':
-        return jsonify({"error": "El carrito no está en estado abierto"}), 400
+        return jsonify({"error": "The cart is not in an open state"}), 400
+
+    itemscart = ItemCart.query.filter_by(cart_id=cart.id).all()
+
+    if not itemscart or len(itemscart) == 0:
+        return jsonify({"error": "The cart is empty"}), 400
 
     cart.state = 'generated'
     db.session.commit()
 
-    return jsonify({"message": "Carrito generado exitosamente"}), 200
+    return jsonify({"message": "Cart successfully generated"}), 200
+
+@api.route('/carts/itemscart', methods=['GET'])
+@jwt_required()
+def get_carts_items():
+    buyer_id = get_jwt_identity()
+
+    carts = Cart.query.filter(Cart.comprador_id == buyer_id, Cart.state.in_(['generated', 'sent', 'finalized'])).all()
+    
+    if not carts:
+        return jsonify({"message": "No carts found for the buyer."}), 404
+
+    carts_data = []
+
+    for cart in carts:
+        cart_items = cart.items_cart.all()
+
+        items = []
+
+        for item in cart_items:
+            item_data = {
+                "item_id": item.id,
+                "amount": item.amount,
+                "product": item.product.serialize()
+            }
+            items.append(item_data)
+        
+        cart_data = {
+            "cart_id": cart.id,
+            "state": cart.state,
+            "created_at": cart.created_at,
+            "total_price": cart.total_price,
+            "items": items
+        }
+        carts_data.append(cart_data)
+
+    return jsonify(carts_data), 200
+
+@api.route('/buyer/cart/products/<int:item_id>', methods=['PUT'])
+@jwt_required()
+def update_item_quantity(item_id):
+    body = request.get_json()
+
+    if "amount" not in body:
+        return jsonify({"msg": "Amount is required"}), 400
+
+    new_amount = body["amount"]
+
+    if new_amount <= 0:
+        new_amount = 1
+
+    item_cart = ItemCart.query.get(item_id)
+    
+    if not item_cart:
+        return jsonify({"msg": "Item not found"}), 404
+
+    item_cart.amount = new_amount
+    db.session.commit()
+
+    return jsonify({"msg": "Quantity updated successfully", "item": item_cart.serialize()}), 200
 
 @api.route('/carts', methods=['GET'])
 def get_carts():
@@ -565,7 +628,7 @@ def GetBuyerCartProducts():
 def RemoveBuyerCartProducts(item_id):
     buyer_id = get_jwt_identity()
 
-    cart = Cart.query.filter_by(comprador_id=buyer_id).first()
+    cart = Cart.query.filter_by(comprador_id=buyer_id, state = "open").first()
 
     if not cart:
         return jsonify({"error": "No cart found for this buyer."}), 404
@@ -624,79 +687,62 @@ def loginbuyer():
     return jsonify(access_token=access_token), 200
 
 #--------------direccion-----------------------------
-
-@api.route('/direcciones', methods=['GET'])
-def get_direcciones():
-    direcciones = Direccion.query.all()
-    return jsonify([direccion.serialize() for direccion in direcciones]), 200
-
-@api.route('/direcciones/<int:direccion_id>', methods=['GET'])
-def get_direccion(direccion_id):
-    direccion = Direccion.query.get(direccion_id)
-    if not direccion:
-        return jsonify({"message": "Direccion no encontrado"}), 404
-    return jsonify(direccion.serialize()), 200
-
-@api.route('/direcciones', methods=['POST'])
-def add_direccion():
-    new_direccion_data = request.get_json()
-
-    if not new_direccion_data:
-        return jsonify({"error": "No data provided"}), 400
-
-    required_fields = ["direccion", "ciudad", "codigo_postal", "pais"]
-    if not all(field in new_direccion_data for field in required_fields):
-        return jsonify({"error": "Required fields are missing: " + ', '.join(required_fields)}), 400
-    
-    new_direccion = Direccion(
-        direccion=new_direccion_data["direccion"],
-        ciudad=new_direccion_data["ciudad"],
-        codigo_postal=new_direccion_data["codigo_postal"],
-        pais=new_direccion_data["pais"]
-    )
-
-    db.session.add(new_direccion)
-    db.session.commit()
-
-    return jsonify({"message": "Direccion successfully added"}), 201
-
-@api.route('/direcciones/<int:direccion_id>', methods=['PUT'])
-def update_direccion(direccion_id):
-    direccion = Direccion.query.get(direccion_id)
-
-    if direccion is None:
-        return jsonify({"error": "Direccion no encontrado"}), 404
-
+@api.route('/address', methods=['POST'])
+def create_address():
     data = request.get_json()
 
-    if not data:
-        return jsonify({"error": "No data has been provided for updating"}), 400
+    required_fields = ['address', 'lat', 'lon']
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"'{field}' is required"}), 400
 
-    if 'direccion' in data:
-        direccion.direccion = data['direccion']
-    if 'ciudad' in data:
-        direccion.ciudad = data['ciudad']
-    if 'codigo_postal' in data:
-        direccion.codigo_postal = data['codigo_postal']
-    if 'pais' in data:
-        direccion.pais = data['pais']
+    if data.get('comprador_id') and data.get('seller_id'):
+        return jsonify({"error": "Address cannot belong to both a buyer and a seller."}), 400
 
+    new_address = Address(
+        address=data['address'],
+        lat=data['lat'],
+        lon=data['lon'],
+        comprador_id=data.get('comprador_id'), 
+        seller_id=data.get('seller_id')         
+    )
+    
+    db.session.add(new_address)
     db.session.commit()
 
-    return jsonify({"message": "Direccion successfully updated"}), 200
+    return jsonify(new_address.serialize()), 201
 
-@api.route('/direcciones/<int:direccion_id>', methods=['DELETE'])
-def remove_direccion(direccion_id):
-    direccion = Direccion.query.get(direccion_id)
+@api.route('/addresses', methods=['GET'])
+def get_addresses():
+    addresses = Address.query.all()
 
-    if direccion is None:
-        return {"error": "Direccion no encontrado"}, 404
+    return jsonify([address.serialize() for address in addresses]), 200
 
-    db.session.delete(direccion)
+@api.route('/address/<int:id>', methods=['GET'])
+def get_address(id):
+    address = Address.query.get_or_404(id)
+    return jsonify(address.serialize()), 200
+
+@api.route('/address/<int:id>', methods=['PUT'])
+def update_address(id):
+    data = request.get_json()
+    address = Address.query.get_or_404(id)
+
+    address.address = data.get('address', address.address)
+    address.lat = float(data.get('lat'))
+    address.lon = float(data.get('lon'))
+    
     db.session.commit()
 
-    return {"message": "Direccion eliminado exitosamente"}, 200
+    return jsonify(address.serialize()), 200
 
+@api.route('/address/<int:id>', methods=['DELETE'])
+def delete_address(id):
+    address = Address.query.get_or_404(id)
+    db.session.delete(address)
+    db.session.commit()
+
+    return jsonify({"message": "Address deleted successfully"}), 200
 
 #------------LOGIN SELLERS  ----------------------------------
 
@@ -715,9 +761,9 @@ def login():
         return jsonify({"msg": "Email o contraseña incorrectos"}), 401
 
 
-    access_token = create_access_token(identity=seller.email)
+    access_token = create_access_token(identity=seller.id)
     
-    return jsonify(access_token=access_token), 200
+    return jsonify(access_token=access_token, seller_id=seller.id), 200
 
 @api.route('/seller/reg', methods=['POST'])
 def signupSeller():
@@ -746,4 +792,158 @@ def signupSeller():
     access_token = create_access_token(identity=new_seller.email)
     
     return jsonify({"msg": "Usuario creado exitosamente", "access_token": access_token}), 200
+
+#---------------------google api--------------------------
+@api.route('/address/seller', methods=['POST'])
+@jwt_required()
+def add_address_seller():
+    seller_id = get_jwt_identity()
+
+    address_seller = Address.query.filter_by(seller_id=seller_id).first()
+    data = request.get_json()
+
+    address = data.get("address")
+    lat = data.get("lat")
+    lon = data.get("lon")
+
+    if lat is None or lon is None or address is None:
+        return jsonify({"error": "Address, Latitude and Longitude are required"}), 400
+    
+    if not isinstance(lat, float) or not isinstance(lon, float):
+        return jsonify({"error": "Latitude and Longitude must be a float numbers"}), 400
+
+    if not address_seller:
+        new_address_seller = Address(address=address, lat= float(lat), lon=float(lon), seller_id=seller_id)
+        db.session.add(new_address_seller)
+    else:
+        address_seller.address = address
+        address_seller.lat = float(lat)
+        address_seller.lon = float(lon)
+
+    db.session.commit()
+
+    return jsonify({"message": "Address updated successfully"}), 200
+
+@api.route('/address/seller', methods=['GET'])
+@jwt_required()
+def get_address_seller():
+    seller_id = get_jwt_identity()
+    
+    get_seller_address = Address.query.filter_by(seller_id=seller_id).first()
+
+    if not get_seller_address:
+        return jsonify({"error": "No address assigned to this seller"}), 404
+
+    seller_address = {
+        "address": get_seller_address.address,
+        "lat": get_seller_address.lat,
+        "lon": get_seller_address.lon
+    }
+
+    return jsonify(seller_address), 200
+
+@api.route('/address/buyer', methods=['POST'])
+@jwt_required()
+def add_address_buyer():
+    buyer_id = get_jwt_identity()
+
+    data = request.get_json()
+
+    address = data.get("address")
+    lat = data.get("lat")
+    lon = data.get("lon")
+
+    if lat is None or lon is None or address is None:
+        return jsonify({"error": "Address, Latitude and Longitude are required"}), 400
+    
+    if not isinstance(lat, float) or not isinstance(lon, float):
+        return jsonify({"error": "Latitude and Longitude must be a float numbers"}), 400
+
+    
+    new_address_buyer = Address(address=address, lat= float(lat), lon=float(lon), comprador_id=buyer_id)
+
+    db.session.add(new_address_buyer)
+    db.session.commit()
+
+    return jsonify({"message": "address added successfully"}), 200
+
+@api.route('/address/buyer', methods=['GET'])
+@jwt_required()
+def get_address_buyer():
+    buyer_id = get_jwt_identity()
+    
+    get_buyer_address = Address.query.filter_by(comprador_id=buyer_id).all()
+
+    if not get_buyer_address:
+        return jsonify({"error": "No address assigned to this seller"}), 404
+
+    buyer_address = list(map(lambda address: address.serialize(),get_buyer_address))
+
+    return jsonify(buyer_address), 200
+
+@api.route('/address/buyer/<int:address_id>', methods=['DELETE'])
+@jwt_required()
+def delete_address_buyer(address_id):
+
+    address = Address.query.get_or_404(address_id)
+    db.session.delete(address)
+    db.session.commit()
+
+    return jsonify({"message": "Address deleted successfully"}), 200
+
+
+#--------Orders------------------------------------------------------
+@api.route('/carts/seller', methods=['GET']) 
+@jwt_required()
+def get_products_by_seller():
+    try:
+        seller_id = get_jwt_identity()  
+        carts = Cart.query.all()  
+
+        filtered_carts = []
+        for cart in carts:
+            
+            filtered_items = [
+                item for item in cart.items_cart if item.product.seller_id == seller_id
+            ]
+
+            if filtered_items:
+                cart_data = cart.serialize()
+              
+                cart_data["items_cart"] = [item.serialize() for item in filtered_items]
+                filtered_carts.append(cart_data)
+
+        return jsonify(filtered_carts), 200  
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500  
+    
+@api.route('/api/carts/<int:cart_id>', methods=["PUT"])
+@jwt_required()  
+def change_status(cart_id):
+    new_status = request.json.get("state")
+    valid_transitions = {
+        "generated": "sent",
+        "sent": "completed"
+    }
+
+    if new_status not in valid_transitions.values():
+        return jsonify({"error": "Invalid status"}), 400
+
+    cart = Cart.query.get(cart_id)
+    if cart is None:
+        return jsonify({"error": "Cart not found"}), 404
+
+    if valid_transitions.get(cart.state) == new_status:
+        cart.state = new_status
+    elif cart.state == new_status:
+        return jsonify({"message": "Order is already in this status"}), 400
+    else:
+        return jsonify({"error": "Invalid status transition"}), 400
+
+    db.session.commit()
+    return jsonify({"message": "Order status updated successfully", "cart": cart.serialize()}), 200
+
+
+
 
