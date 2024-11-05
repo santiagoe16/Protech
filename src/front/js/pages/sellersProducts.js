@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 export const SellersProducts = () => {
     const [products, setProducts] = useState([]);
+    const { store, actions } = useContext(Context);
     const [categories, setCategories] = useState([]);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -75,12 +76,16 @@ export const SellersProducts = () => {
             stock: parseInt(stock),
             image,
             category_id: categoryId,
+           
         });
+        const token = actions.verifyTokenSeller()
         fetch(`${process.env.BACKEND_URL}/api/products`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
             },
+           
             body: raw,
         })
             .then(() => {
@@ -90,6 +95,7 @@ export const SellersProducts = () => {
             })
             .catch((error) => console.error(error));
     };
+
 
     const deleteProduct = (product_id) => {
         fetch(`${process.env.BACKEND_URL}/api/products/${product_id}`, { method: "DELETE" })
