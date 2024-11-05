@@ -16,7 +16,7 @@ export const SellersProducts = () => {
     const [navigate, setNavigate] = useState(0);
     
     useEffect(() => {
-        const token = localStorage.getItem("jwt-token");
+        const token = localStorage.getItem("jwt-token-seller");
         if (!token) {
             navigate("/seller/login");
         } else {
