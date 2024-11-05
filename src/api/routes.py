@@ -15,6 +15,14 @@ api = Blueprint('api', __name__)
 CORS(api)
 
 
+UPLOAD_FOLDER = 'path/to/upload/folder'  
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
 
@@ -940,4 +948,36 @@ def upload_image():
     return jsonify({"message": "File uploaded successfully", "path": file_path}), 201
 
 
+@api.route('/products/<int:product_id>/image', methods=['PUT'])
+@jwt_required()
+def update_product_image(product_id):
+    try:
+        seller_id = get_jwt_identity()
+        product = Products.query.filter_by(id=product_id, seller_id=seller_id).first()
+
+        if not product:
+            return jsonify({"error": "Product not found or you don't have permission to update it"}), 404
+
+        if 'image' not in request.files:
+            return jsonify({"error": "No image part in the request"}), 400
+
+        file = request.files['image']
+        if file.filename == '':
+            return jsonify({"error": "No selected file"}), 400
+
+        if file and allowed_file(file.filename):
+            filename = f"{product_id}_{file.filename}"
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(file_path)
+
+            product.image = file_path
+            db.session.commit()
+
+            return jsonify({"message": "Product image updated successfully", "product": product.serialize()}), 200
+
+        else:
+            return jsonify({"error": "Invalid file type"}), 400
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 

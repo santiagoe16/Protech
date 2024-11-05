@@ -4,7 +4,9 @@ import { Context } from "../store/appContext";
 export const ProductsSeller = () => {
     const { store } = useContext(Context);
     const [products, setProducts] = useState([]);
-    const [selectedFile, setSelectedFile] = useState(null);
+    const [productImages, setProductImages] = useState({}); 
+    const cloudName = "dqs1ls601"; 
+    const presetName = "Protech"; 
 
     const getProducts = () => {
         const token = localStorage.getItem("jwt-token");
@@ -32,43 +34,31 @@ export const ProductsSeller = () => {
             })
             .then(data => {
                 setProducts(data);
-                console.log(data);
             })
             .catch(error => console.error("Error:", error));
     };
 
-    const handleFileChange = (e) => {
-        setSelectedFile(e.target.files[0]);
-    };
-
-    const updateProductImage = (productId) => {
-        if (!selectedFile) {
-            console.error("No file selected");
-            return;
-        }
-
-        const token = localStorage.getItem("jwt-token");
+    const handleFileChange = async (e, productId) => {
+        const file = e.target.files[0];
         const formData = new FormData();
-        formData.append("image", selectedFile);
+        formData.append('file', file);
+        formData.append('upload_preset', presetName);
 
-        fetch(`${process.env.BACKEND_URL}/api/products/${productId}/image`, {
-            method: "PUT",
-            headers: {
-                "Authorization": `Bearer ${token}`
-            },
-            body: formData
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to update product image");
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Image updated:", data);
-            getProducts(); 
-        })
-        .catch(error => console.error("Error updating product image:", error));
+        try {
+            const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            setProductImages(prevState => ({
+                ...prevState,
+                [productId]: data.secure_url 
+            }));
+            console.log("Image uploaded:", data.secure_url);
+        } catch (error) {
+            console.error("Error uploading image:", error);
+        }
     };
 
     useEffect(() => {
@@ -100,20 +90,18 @@ export const ProductsSeller = () => {
                                 <td>{product.price}</td>
                                 <td>{product.stock}</td>
                                 <td>
-                                    <img src={product.image} alt={product.name} style={{ width: "100px" }} />
+                                    <img 
+                                        src={productImages[product.id] || product.image} 
+                                        alt={product.name} 
+                                        style={{ width: "100px" }} 
+                                    />
                                 </td>
                                 <td>
                                     <input
                                         type="file"
                                         accept="image/*"
-                                        onChange={handleFileChange}
+                                        onChange={(e) => handleFileChange(e, product.id)}
                                     />
-                                    <button
-                                        className="btn btn-primary mt-2"
-                                        onClick={() => updateProductImage(product.id)}
-                                    >
-                                        Change Image
-                                    </button>
                                 </td>
                             </tr>
                         ))}
