@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 export const CartView = () => {
 	const { store, actions } = useContext(Context);
 	const [cartItems, setCartItems] = useState([]);
 	const [totalPrice, setTotalPrice] = useState(0);
 	const [cartId, setCartId] = useState(null);
+	const [isPayPalVisible, setIsPayPalVisible] = useState(false); // Estado para mostrar PayPal
 	const navigate = useNavigate();
 
 	const getCartItems = () => {
@@ -61,7 +63,6 @@ export const CartView = () => {
 				return response.json();
 			})
 			.then((data) => {
-				console.log(data.message);
 				getCartItems();
 			})
 			.catch((error) => {
@@ -71,9 +72,9 @@ export const CartView = () => {
 
 	const updateItemQuantity = (itemId, newAmount) => {
 		const token = actions.verifyTokenBuyer();
-		if (newAmount === "") return; // Si el input está vacío, no hacemos nada.
+		if (newAmount === "") return;
 
-		const updatedAmount = newAmount < 1 ? 1 : newAmount; // Si el valor es menor a 1, lo convierte en 1.
+		const updatedAmount = newAmount < 1 ? 1 : newAmount;
 
 		fetch(process.env.BACKEND_URL + "/api/buyer/cart/products/" + itemId, {
 			method: "PUT",
@@ -92,15 +93,16 @@ export const CartView = () => {
 				return response.json();
 			})
 			.then((data) => {
-				console.log(data.message);
-				getCartItems(); // Refrescar la vista del carrito después de actualizar la cantidad.
+				getCartItems();
 			})
 			.catch((error) => {
 				console.error("Error updating item quantity:", error);
 			});
 	};
 
-	const generateOrder = () => {
+	
+
+	const onPaymentSuccess = () => {
 		const token = actions.verifyTokenBuyer();
 
 		fetch(process.env.BACKEND_URL + `/api/cart/${cartId}/generate`, {
@@ -173,9 +175,34 @@ export const CartView = () => {
 				</tbody>
 			</table>
 			<h3>Total price: ${totalPrice.toFixed(2)}</h3>
-			<button className="btn btn-primary" onClick={() => generateOrder()}>
-				Generate order
-			</button>
+				<PayPalScriptProvider options={{ "client-id": "AbNoN6IXOGq7SC-c0-ponOTjVkR7e0cQWyLg4ZCvJriENbtbC2Ew92WFgNNbjSjnzj2SwTateYWTwxeL", currency: "USD" }}>
+					<div style={{width: 300}}>
+						<PayPalButtons 
+							style={{
+								layout: "vertical", 
+								color: "blue",
+								label: "paypal", 
+								height: 40,
+							}}
+							createOrder={(data, actions) => {
+								return actions.order.create({
+									purchase_units: [
+										{
+											amount: {
+												value: totalPrice.toFixed(2),
+											},
+										},
+									],
+								});
+							}}
+							onApprove={(data, actions) => {
+								return actions.order.capture().then(() => {
+									onPaymentSuccess(); 
+								});
+							}}
+						/>
+					</div>
+				</PayPalScriptProvider>
 		</div>
 	);
 };
