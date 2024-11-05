@@ -7,6 +7,7 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 from sqlalchemy import desc
+import os
 
 api = Blueprint('api', __name__)
 
@@ -850,7 +851,7 @@ def get_address_seller():
 #--------Orders------------------------------------------------------
 @api.route('/carts/seller', methods=['GET']) 
 @jwt_required()
-def get_products_by_seller():
+def get_orders_by_seller():
     try:
         seller_id = get_jwt_identity()  
         carts = Cart.query.all()  
@@ -899,6 +900,44 @@ def change_status(cart_id):
     db.session.commit()
     return jsonify({"message": "Order status updated successfully", "cart": cart.serialize()}), 200
 
+#-------------------Imagen productos---------------------
+
+@api.route('/products/seller', methods=['GET'])
+@jwt_required()
+def get_products_by_seller():
+    try:
+        seller_id = get_jwt_identity() 
+        
+        if not seller_id:
+            return jsonify({"error": "Seller ID not found in token"}), 401
+        
+        products = Products.query.filter_by(seller_id=seller_id).all()
+
+        if not products:
+            return jsonify({"message": "No products found for this seller"}), 404
+        
+        serialized_products = [product.serialize() for product in products]
+        return jsonify(serialized_products), 200
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@api.route('/api/upload', methods=['POST'])
+def upload_image():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+
+    file_path = os.path.join('uploads', file.filename)
+    file.save(file_path)
+
+    return jsonify({"message": "File uploaded successfully", "path": file_path}), 201
 
 
 

@@ -37,8 +37,8 @@ export const LoginSeller = () => {
                 console.log(result.access_token);
                 localStorage.setItem("jwt-token", result.access_token);
                 actions.changeAuthenticatedSeller(true); 
-                actions.setSellerId(result.seller_id);  
-                navigate("/products");
+                  
+                navigate("/product/seller");
             })
             .catch((error) => {
                 console.error('Fetch error:', error);
