@@ -13,10 +13,10 @@ export const SignupSeller = () => {
         e.preventDefault();
 
         const raw = {
-            email: email,
-            name: name,
-            password: password,
-            phone: phone,
+            email,
+            name,
+            password,
+            phone,
             bank_account: bankAccount
         };
 
@@ -33,7 +33,10 @@ export const SignupSeller = () => {
                 }
                 return response.json();
             })
-            .then(() => navigate("/seller/login"))
+            .then(() => {
+                // Redirigir a SellersProducts después de registrarse
+                navigate("/sellers/products");
+            })
             .catch((error) => console.error('Fetch error:', error));
     };
 
@@ -44,7 +47,7 @@ export const SignupSeller = () => {
                     <h2 className="text-center mb-3">Sign up as Seller</h2>
 
                     <div className="mb-4">
-                        <label htmlFor="name">name</label>
+                        <label htmlFor="name">Name</label>
                         <input type="text" className="form-control" id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter name" />
                     </div>
                     <div className="mb-4">
