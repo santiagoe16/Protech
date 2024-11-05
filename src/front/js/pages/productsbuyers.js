@@ -53,7 +53,7 @@ if (!filter && minPrice === "" && maxPrice === "") {
         return (matchesName || matchesCategory) && inPriceRange;
     });
 }
-    console.log("Products:", products);
+    
    
 
 
