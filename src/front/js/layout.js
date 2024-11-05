@@ -21,6 +21,7 @@ import { LoginSeller } from "./pages/loginseller";
 import { CardProduct } from "./component/cardproduct";
 import { ProductsBuyers } from "./pages/productsbuyers";
 import { CartView } from "./pages/cartview";
+import { SellersProducts } from "./pages/sellersProducts";
 import { Orders } from "./pages/ordersSeller";
 import { OrdersPlaced } from "./pages/ordersplaced";
 import { SellerAddress } from "./pages/selleraddress";
@@ -28,6 +29,7 @@ import { BuyerAddress } from "./pages/buyeraddress";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
+
 
 
 //create your first component
@@ -58,6 +60,7 @@ const Layout = () => {
                         <Route element={<Address/>} path="/address" />
                         <Route element={<SignupSeller/>} path="/seller/signup" />
                         <Route element={<LoginSeller/>} path="/seller/login" />
+                        <Route element={<SellersProducts />} path="/sellers/products" />                      
                         <Route element={<CardProduct/>} path="/cardproduct" />
                         <Route element={<ProductsBuyers/>} path="/productsbuyers" />
                         <Route element={<CartView/>} path="/cartview" />
