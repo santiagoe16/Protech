@@ -41,8 +41,11 @@ def get_product(product_id):
     return jsonify(product.serialize()), 200
 
 @api.route('/products', methods=['POST'])
+@jwt_required()
 def add_product():
     new_product_data = request.get_json()
+    seller_id = get_jwt_identity()
+    print (seller_id)
     if not new_product_data:
         return jsonify({"error": "No data provided for the new product."}), 400
 
@@ -67,7 +70,7 @@ def add_product():
         stock=new_product_data["stock"],
         image=new_product_data["image"],
         category_id=new_product_data["category_id"],
-        seller_id=new_product_data["seller_id"]
+        seller_id = seller_id
     )
 
     db.session.add(new_product)
@@ -119,8 +122,6 @@ def remove_product(product_id):
     db.session.delete(product)
     db.session.commit()
     return jsonify({"message": "Product successfully removed"}), 200
-
-#--------buyer----------------------------------------------
 
 @api.route('/categorias', methods=['GET'])
 def get_categorias():
