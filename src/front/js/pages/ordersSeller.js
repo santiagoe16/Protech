@@ -3,13 +3,13 @@ import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 
 export const Orders = () => {
-    const { store } = useContext(Context);
+    const { store, actions } = useContext(Context);
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     const getOrders = () => {
-        const token = localStorage.getItem("jwt-token"); 
+        const token = actions.verifyTokenSeller(); 
         if (!token) {
             navigate('/login');
             return;
@@ -40,12 +40,12 @@ export const Orders = () => {
                 alert("There was an error fetching orders. Please try again later.");
             })
             .finally(() => {
-                setLoading(false); // Finaliza el estado de carga
+                setLoading(false); 
             });
     };
 
     const changeStatus = (cartId, newState) => {
-        const token = localStorage.getItem("jwt-token");
+        const token = actions.verifyTokenSeller();
         if (!token) {
             console.error("No valid token found. User might need to log in.");
             return;
@@ -72,10 +72,15 @@ export const Orders = () => {
         .catch(error => console.error("Error updating order status:", error));
     };
 
+ 
     useEffect(() => {
-        getOrders();
+        const token = actions.verifyTokenSeller();
+        if (!token) {
+            navigate("/login");
+        } else {
+            getOrders();
+        }
     }, []);
-    
     return (
         <div className="container mt-5">
             <h2>Orders</h2>

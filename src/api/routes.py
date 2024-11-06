@@ -808,7 +808,7 @@ def signupSeller():
     db.session.add(new_seller)
     db.session.commit()
 
-    access_token = create_access_token(identity=new_seller.email)
+    access_token = create_access_token(identity=new_seller.id)
     
     return jsonify({"msg": "Usuario creado exitosamente", "access_token": access_token}), 200
 
@@ -931,26 +931,27 @@ def get_products_by_seller():
         return jsonify({"error": str(e)}), 500
 
 
-@api.route('/api/upload', methods=['POST'])
-def upload_image():
-    if 'file' not in request.files:
-        return jsonify({"error": "No file part"}), 400
+@api.route('/api/products/<int:product_id>/update-image', methods=['POST'])
+def update_product_image(product_id):
+    data = request.get_json()
+    image_url = data.get('image_url')
 
-    file = request.files['file']
+    if not image_url:
+        return jsonify({"error": "No image URL provided"}), 400
 
-    if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
+    product = Products.query.get(product_id)
+    if not product:
+        return jsonify({"error": "Product not found"}), 404
 
+    
+    product.image = image_url
+    db.session.commit()
 
-    file_path = os.path.join('uploads', file.filename)
-    file.save(file_path)
-
-    return jsonify({"message": "File uploaded successfully", "path": file_path}), 201
-
+    return jsonify({"message": "Product image updated successfully", "product": product.serialize()}), 200
 
 @api.route('/products/<int:product_id>/image', methods=['PUT'])
 @jwt_required()
-def update_product_image(product_id):
+def change_product_image(product_id):
     try:
         seller_id = get_jwt_identity()
         product = Products.query.filter_by(id=product_id, seller_id=seller_id).first()
