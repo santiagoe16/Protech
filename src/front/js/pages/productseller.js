@@ -17,16 +17,12 @@ export const ProductsSeller = () => {
             return;
         }
 
-        const myHeaders = new Headers();
-        myHeaders.append("Authorization", `Bearer ${token}`);
-
-        const requestOptions = {
+        fetch(`${process.env.BACKEND_URL}/api/products/seller`, {
             method: "GET",
-            headers: myHeaders,
-            redirect: "follow"
-        };
-
-        fetch(`${process.env.BACKEND_URL}/api/products/seller`, requestOptions)
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error("Failed to fetch products");
@@ -34,58 +30,33 @@ export const ProductsSeller = () => {
                 return response.json();
             })
             .then(data => {
-                
                 setProducts(data);
             })
             .catch(error => console.error("Error:", error));
     };
 
-    const updateProductImageInDB = async (productId, imageUrl) => {
-        const token = actions.verifyTokenSeller();
-        if (!token) {
-            console.error("No valid token found. User might need to log in.");
-            return;
-        }
-    
-        try {
-            const response = await fetch(`${process.env.BACKEND_URL}/api/products/${productId}/update-image`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({ image_url: imageUrl })
-            });
-    
-            if (!response.ok) {
-                throw new Error("Failed to update product image in the database");
-            }
-    
-            const data = await response.json();
-            console.log("Product image updated in database:", data);
-        } catch (error) {
-            console.error("Error updating product image in DB:", error);
-        }
-    };
-
     const handleFileChange = async (e, productId) => {
         const file = e.target.files[0];
         const formData = new FormData();
-        formData.append('file', file);
-        formData.append('upload_preset', presetName);
+        formData.append("file", file);
+        formData.append("upload_preset", presetName);
     
         try {
             const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-                method: 'POST',
+                method: "POST",
                 body: formData
             });
     
             const data = await response.json();
             const imageUrl = data.secure_url;
-    
-            fetch()
 
-            await updateProductImageInDB(productId, imageUrl);
+            await modifyProductImage(productId, imageUrl);
+            
+            setProducts(prevProducts =>
+                prevProducts.map(product =>
+                    product.id === productId ? { ...product, image: imageUrl } : product
+                )
+            );
     
         } catch (error) {
             console.error("Error uploading image:", error);
@@ -120,7 +91,6 @@ export const ProductsSeller = () => {
         }
     };
     
-
     useEffect(() => {
         const token = actions.verifyTokenSeller();
         if (!token) {
@@ -147,7 +117,7 @@ export const ProductsSeller = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {products.map((product) => (
+                        {products.map(product => (
                             <tr key={product.id}>
                                 <td>{product.id}</td>
                                 <td>{product.name}</td>
@@ -156,7 +126,7 @@ export const ProductsSeller = () => {
                                 <td>{product.stock}</td>
                                 <td>
                                     <img 
-                                        src="https://res.cloudinary.com/dqs1ls601/image/upload/v1730875251/o7ausoaj0yrtp3zezisj.png "
+                                        src={product.image}
                                         alt={product.name} 
                                         style={{ width: "100px" }} 
                                     />
@@ -165,7 +135,7 @@ export const ProductsSeller = () => {
                                     <input
                                         type="file"
                                         accept="image/*"
-                                        onChange={(e) => handleFileChange(e, product.id)}
+                                        onChange={e => handleFileChange(e, product.id)}
                                     />
                                 </td>
                             </tr>
