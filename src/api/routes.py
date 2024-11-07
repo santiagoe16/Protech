@@ -7,11 +7,25 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 from sqlalchemy import desc
+import cloudinary 
+import cloudinary.uploader
+from cloudinary.utils import cloudinary_url
+from cloudinary import api
+import os
 
-api = Blueprint('api', __name__)
+
+api = Blueprint('api', __name__)    
 
 CORS(api)
 
+
+UPLOAD_FOLDER = 'path/to/upload/folder'  
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
@@ -790,7 +804,7 @@ def signupSeller():
     db.session.add(new_seller)
     db.session.commit()
 
-    access_token = create_access_token(identity=new_seller.email)
+    access_token = create_access_token(identity=new_seller.id)
     
     return jsonify({"msg": "Usuario creado exitosamente", "access_token": access_token}), 200
 
@@ -807,6 +821,7 @@ def add_address_seller():
     description = data.get("description")
     address = data.get("address")
     lat = data.get("lat")
+    
     lon = data.get("lon")
 
     if lat is None or lon is None or address is None or name is None or description is None:
@@ -894,7 +909,7 @@ def delete_address_buyer(address_id):
 #--------Orders------------------------------------------------------
 @api.route('/carts/seller', methods=['GET']) 
 @jwt_required()
-def get_products_by_seller():
+def get_orders_by_seller():
     try:
         seller_id = get_jwt_identity()  
         carts = Cart.query.all()  
@@ -943,6 +958,107 @@ def change_status(cart_id):
     db.session.commit()
     return jsonify({"message": "Order status updated successfully", "cart": cart.serialize()}), 200
 
+#-------------------Imagen productos---------------------
+
+# Configuration       
+cloudinary.config( 
+    cloud_name = "dqs1ls601", 
+    api_key = "993698731427398", 
+    api_secret = "<gIUoJkVUxeDu5tIkkJb9PbD7m7M>", # Click 'View API Keys' above to copy your API secret
+    secure=True
+)
+
+@api.route('/products/seller', methods=['GET'])
+@jwt_required()
+def get_products_by_seller():
+    try:
+        seller_id = get_jwt_identity()
+
+        if not seller_id:
+            return jsonify({"error": "Seller ID not found in token"}), 401
+
+        products = Products.query.filter_by(seller_id=seller_id).all()
+
+        if not products:
+            return jsonify({"message": "No products found for this seller"}), 404
+
+        serialized_products = [product.serialize() for product in products]
+
+        return jsonify(serialized_products), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 
+@api.route('/api/products/<int:product_id>/update-image', methods=['POST'])
+def update_product_image(product_id):
+    data = request.get_json()
+    image_url = data.get('image_url')
+
+    if not image_url:
+        return jsonify({"error": "No image URL provided"}), 400
+
+    product = Products.query.get(product_id)
+    if not product:
+        return jsonify({"error": "Product not found"}), 404
+
+    
+    try:
+        upload_result = cloudinary.uploader.upload(
+            image_url,
+            folder="protech_products",
+            public_id=f"product_{product_id}"
+        )
+        product.image = upload_result["secure_url"]
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    return jsonify({"message": "Product image updated successfully", "product": product.serialize()}), 200
+
+
+
+@api.route('/products/<int:product_id>/image', methods=['PUT'])
+@jwt_required()
+def change_product_image(product_id):
+    try:
+        seller_id = get_jwt_identity()
+        product = Products.query.filter_by(id=product_id, seller_id=seller_id).first()
+
+        if not product:
+            return jsonify({"error": "Product not found or you don't have permission to update it"}), 404
+
+        if 'image' not in request.files:
+            return jsonify({"error": "No image part in the request"}), 400
+
+        file = request.files['image']
+        if file.filename == '':
+            return jsonify({"error": "No selected file"}), 400
+
+        if file and allowed_file(file.filename):
+            filename = f"{product_id}_{file.filename}"
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(file_path)
+
+            product.image = file_path
+            db.session.commit()
+
+            return jsonify({"message": "Product image updated successfully", "product": product.serialize()}), 200
+
+        else:
+            return jsonify({"error": "Invalid file type"}), 400
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@api.route('/products/image/<int:product_id>', methods=['PUT'])
+def modify_product_image(product_id):
+    product = Products.query.get(product_id)
+    data = request.get_json()
+
+    if 'image' in data:
+        product.image = data['image']
+
+    db.session.commit()
+    return jsonify({"message": "Product successfully edited"}), 200

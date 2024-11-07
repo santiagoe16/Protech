@@ -76,7 +76,6 @@ export const SellersProducts = () => {
             stock: parseInt(stock),
             image,
             category_id: categoryId,
-           
         });
         const token = actions.verifyTokenSeller()
         fetch(`${process.env.BACKEND_URL}/api/products`, {
@@ -143,8 +142,8 @@ export const SellersProducts = () => {
         })
             .then(() => {
                 getProducts();
-                setActiveTab("list-tab");
                 cleanFields();
+                setActiveTab("list-tab");
             })
             .catch((error) => console.error(error));
     };
@@ -201,7 +200,7 @@ export const SellersProducts = () => {
                 </li>
                 <li className="nav-item" role="presentation">
                     <button
-                        className={`nav-link ${activeTab === "edit-tab" ? "active" : "d-none"}`}
+                        className={`nav-link ${activeTab === "edit-tab" ? "active" : "d-none" }`}
                         id="edit-tab"
                         data-bs-toggle="tab"
                         data-bs-target="#edit-tab-pane"
@@ -248,6 +247,7 @@ export const SellersProducts = () => {
                                     <tr key={index}>
                                         <td>{index + 1}</td>
                                         <td className="text-center">
+                                        <i className="fas fa-edit me-3" style={{ cursor: "pointer" }} onClick={() => getToEdit(product.id)}></i>
                                             <i className="fas fa-eye" style={{ cursor: "pointer" }} onClick={() => viewMore(product.id)}></i>
                                         </td>
                                         <td>{product.name}</td>

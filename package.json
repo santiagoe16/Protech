@@ -76,6 +76,8 @@
 		"@paypal/paypal-js": "^8.1.2",
 		"@paypal/react-paypal-js": "^8.7.0",
 		"@react-google-maps/api": "^2.20.3",
+		"@strapi/provider-upload-cloudinary": "^5.2.0",
+		"cloudinary": "^2.5.1",
 		"prop-types": "^15.6.1",
 		"react": "^16.8.4",
 		"react-dom": "^16.8.4",
