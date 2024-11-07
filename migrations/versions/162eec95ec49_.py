@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: a7716bee89bb
+Revision ID: 162eec95ec49
 Revises: 
-Create Date: 2024-10-28 21:21:44.938216
+Create Date: 2024-11-05 22:09:42.533356
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a7716bee89bb'
+revision = '162eec95ec49'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -29,14 +29,6 @@ def upgrade():
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('clave', sa.String(length=80), nullable=False),
     sa.Column('telefono', sa.String(length=80), nullable=False),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('direccion',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('direccion', sa.String(length=120), nullable=False),
-    sa.Column('ciudad', sa.String(length=120), nullable=False),
-    sa.Column('codigo_postal', sa.String(length=80), nullable=False),
-    sa.Column('pais', sa.String(length=80), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('seller',
@@ -58,6 +50,18 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
+    op.create_table('address',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('address', sa.String(length=120), nullable=False),
+    sa.Column('lat', sa.Float(), nullable=False),
+    sa.Column('lon', sa.Float(), nullable=False),
+    sa.Column('comprador_id', sa.Integer(), nullable=True),
+    sa.Column('seller_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['comprador_id'], ['comprador.id'], ),
+    sa.ForeignKeyConstraint(['seller_id'], ['seller.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('seller_id')
+    )
     op.create_table('cart',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('state', sa.String(length=20), nullable=False),
@@ -75,7 +79,9 @@ def upgrade():
     sa.Column('stock', sa.Integer(), nullable=False),
     sa.Column('image', sa.String(length=500), nullable=False),
     sa.Column('category_id', sa.Integer(), nullable=False),
+    sa.Column('seller_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['category_id'], ['categoria.id'], ),
+    sa.ForeignKeyConstraint(['seller_id'], ['seller.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('item_cart',
@@ -95,9 +101,9 @@ def downgrade():
     op.drop_table('item_cart')
     op.drop_table('products')
     op.drop_table('cart')
+    op.drop_table('address')
     op.drop_table('user')
     op.drop_table('seller')
-    op.drop_table('direccion')
     op.drop_table('comprador')
     op.drop_table('categoria')
     # ### end Alembic commands ###

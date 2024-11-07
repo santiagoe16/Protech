@@ -5,16 +5,15 @@ import { Context } from "../store/appContext";
 const libraries = ["places"];
 const defaultCenter = { lat: 4.570868, lng: -74.297333 };
 
-export const SellerAddress = () => {
+export const BuyerAddress = () => {
     const { store, actions } = useContext(Context);
     const [map, setMap] = useState(null);
     const inputRef = useRef(null);
-    const [currentAddress, setCurrentAddress] = useState("");
+    const [currentAddress, setCurrentAddress] = useState([]);
     const markerRef = useRef(null);
     const [markerPosition, setMarkerPosition] = useState(defaultCenter);
     const [selectedPlace, setSelectedPlace] = useState(null);
-
-    const [sellerAddress, setSellerAddress] = useState({
+    const [buyerAddress, setBuyerAddress] = useState({
         address: "",
         lat: 0,
         lon: 0,
@@ -31,8 +30,8 @@ export const SellerAddress = () => {
     }, [map]);
 
     const getCurrentAddress = () => {
-        const token = actions.verifyTokenSeller()
-        fetch(process.env.BACKEND_URL + "/api/address/seller", {
+        const token = actions.verifyTokenBuyer()
+        fetch(process.env.BACKEND_URL + "/api/address/buyer", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -40,26 +39,36 @@ export const SellerAddress = () => {
         })
             .then((response) => response.json())
             .then((data) => {
-                setCurrentAddress(data.address);
-                setMarkerPosition({
-                    lat: parseFloat(data.lat),
-                    lng: parseFloat(data.lon),
-                })
+                setCurrentAddress(data);
+            });
+    };
+    
+    const deleteAddress = (addressId) => {
+        const token = actions.verifyTokenBuyer()
+        fetch(process.env.BACKEND_URL + "/api/address/buyer/" + addressId, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                getCurrentAddress();
             });
     };
 
-    const updateSellerAddress = () => {
-        const token = actions.verifyTokenSeller()
+    const updateBuyerAddress = () => {
+        const token = actions.verifyTokenBuyer()
         
-        if (sellerAddress.address) {
+        if (buyerAddress.address) {
             
             const raw = JSON.stringify({
-                address: sellerAddress.address,
-                lat: sellerAddress.lat,
-                lon: sellerAddress.lon,
+                address: buyerAddress.address,
+                lat: buyerAddress.lat,
+                lon: buyerAddress.lon,
             });
 
-            fetch(`${process.env.BACKEND_URL}/api/address/seller`, {
+            fetch(`${process.env.BACKEND_URL}/api/address/buyer`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -73,8 +82,7 @@ export const SellerAddress = () => {
                     }
                     return response.json();
                 })
-                .then((data) => {
-                    console.log("Address updated:", data);
+                .then(() => {
                     getCurrentAddress(); 
                 })
                 .catch((error) => console.error("Error:", error));
@@ -109,7 +117,7 @@ export const SellerAddress = () => {
             const location = place.geometry.location;
             setMarkerPosition(location);
 
-            setSellerAddress({
+            setBuyerAddress({
                 address: place.formatted_address,
                 lat: parseFloat(location.lat()),
                 lon: parseFloat(location.lng()),
@@ -135,7 +143,7 @@ export const SellerAddress = () => {
                 .then((data) => {
                     if (data.status === "OK" && data.results[0]) {
                         const newAddress = data.results[0].formatted_address;
-                        setSellerAddress({
+                        setBuyerAddress({
                             address: newAddress,
                             lat: parseFloat(clickedLocation.lat()),
                             lon: parseFloat(clickedLocation.lng()),
@@ -156,8 +164,20 @@ export const SellerAddress = () => {
 
     return (
         <div>
-            <div className="mt-5 mb-4 p-3 bg-light text-center">
-                <h5>Current address: {currentAddress}</h5>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }} className="mt-5 mb-4 container ">
+            {currentAddress.length > 0 ? (
+                currentAddress.map((address) => (
+                    <div key={address.id} style={{ width: "90%" }} className="p-3 bg-light d-flex mb-2 align-items-center">
+                        <i className="fas fa-trash ms-3" style={{ cursor: "pointer" }} onClick={() => deleteAddress(address.id)}></i>
+                        <h5 className="ms-4 mb-0">
+                            Address: {address.address}
+                        </h5>
+                    </div>
+                ))
+            ) : (
+                <h5>Without addresses</h5>
+            )}
+                
             </div>
             <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_API_KEY} libraries={libraries}>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -165,13 +185,12 @@ export const SellerAddress = () => {
                         <input
                             id="pac-input"
                             ref={inputRef}
-                            defaultValue={currentAddress}
                             type="text"
                             placeholder="Enter a location"
                             style={{ width: "400px", padding: "8px", marginBottom: "10px" }}
                         />
-                        <button className="ms-3 p-2 btn btn-primary" onClick={updateSellerAddress}>
-                            Update Address
+                        <button className="ms-3 p-2 btn btn-primary" onClick={updateBuyerAddress}>
+                            Add Address
                         </button>
                     </div>
                     <GoogleMap
