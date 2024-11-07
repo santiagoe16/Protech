@@ -7,9 +7,14 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
 from sqlalchemy import desc
+import cloudinary 
+import cloudinary.uploader
+from cloudinary.utils import cloudinary_url
+from cloudinary import api
 import os
 
-api = Blueprint('api', __name__)
+
+api = Blueprint('api', __name__)    
 
 # Allow CORS requests to this API
 CORS(api)
@@ -824,6 +829,7 @@ def add_address_seller():
     # Agregar validación de datos
     address = data.get("address")
     lat = data.get("lat")
+    
     lon = data.get("lon")
 
     if not isinstance(address, str) or not isinstance(lat, str) or not isinstance(lon, str):
@@ -910,25 +916,35 @@ def change_status(cart_id):
 
 #-------------------Imagen productos---------------------
 
+# Configuration       
+cloudinary.config( 
+    cloud_name = "dqs1ls601", 
+    api_key = "993698731427398", 
+    api_secret = "<gIUoJkVUxeDu5tIkkJb9PbD7m7M>", # Click 'View API Keys' above to copy your API secret
+    secure=True
+)
+
 @api.route('/products/seller', methods=['GET'])
 @jwt_required()
 def get_products_by_seller():
     try:
-        seller_id = get_jwt_identity() 
-        
+        seller_id = get_jwt_identity()
+
         if not seller_id:
             return jsonify({"error": "Seller ID not found in token"}), 401
-        
+
         products = Products.query.filter_by(seller_id=seller_id).all()
 
         if not products:
             return jsonify({"message": "No products found for this seller"}), 404
-        
+
         serialized_products = [product.serialize() for product in products]
+
         return jsonify(serialized_products), 200
-    
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 
 @api.route('/api/products/<int:product_id>/update-image', methods=['POST'])
@@ -944,10 +960,20 @@ def update_product_image(product_id):
         return jsonify({"error": "Product not found"}), 404
 
     
-    product.image = image_url
-    db.session.commit()
+    try:
+        upload_result = cloudinary.uploader.upload(
+            image_url,
+            folder="protech_products",
+            public_id=f"product_{product_id}"
+        )
+        product.image = upload_result["secure_url"]
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
     return jsonify({"message": "Product image updated successfully", "product": product.serialize()}), 200
+
+
 
 @api.route('/products/<int:product_id>/image', methods=['PUT'])
 @jwt_required()
@@ -982,3 +1008,13 @@ def change_product_image(product_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@api.route('/products/image/<int:product_id>', methods=['PUT'])
+def modify_product_image(product_id):
+    product = Products.query.get(product_id)
+    data = request.get_json()
+
+    if 'image' in data:
+        product.image = data['image']
+
+    db.session.commit()
+    return jsonify({"message": "Product successfully edited"}), 200

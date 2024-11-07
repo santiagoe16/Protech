@@ -5,12 +5,10 @@ import { useNavigate } from "react-router-dom";
 export const ProductsSeller = () => {
     const { store, actions } = useContext(Context);
     const [products, setProducts] = useState([]);
-    const [productImages, setProductImages] = useState({}); 
+    const navigate = useNavigate();
     const cloudName = "dqs1ls601"; 
     const presetName = "Protech"; 
-    const navigate = useNavigate(); 
-    
-    
+
     const getProducts = () => {
         const token = actions.verifyTokenSeller(); 
         
@@ -36,13 +34,14 @@ export const ProductsSeller = () => {
                 return response.json();
             })
             .then(data => {
+                
                 setProducts(data);
             })
             .catch(error => console.error("Error:", error));
     };
 
     const updateProductImageInDB = async (productId, imageUrl) => {
-        const token = actions.verifyTokenSeller(); 
+        const token = actions.verifyTokenSeller();
         if (!token) {
             console.error("No valid token found. User might need to log in.");
             return;
@@ -68,8 +67,7 @@ export const ProductsSeller = () => {
             console.error("Error updating product image in DB:", error);
         }
     };
-    
-    
+
     const handleFileChange = async (e, productId) => {
         const file = e.target.files[0];
         const formData = new FormData();
@@ -84,18 +82,44 @@ export const ProductsSeller = () => {
     
             const data = await response.json();
             const imageUrl = data.secure_url;
-            setProductImages(prevState => ({
-                ...prevState,
-                [productId]: imageUrl
-            }));
     
-        
+            fetch()
+
             await updateProductImageInDB(productId, imageUrl);
     
         } catch (error) {
             console.error("Error uploading image:", error);
         }
     };
+
+    const modifyProductImage = async (productId, imageUrl) => {
+        const token = actions.verifyTokenSeller(); 
+        if (!token) {
+            console.error("No valid token found. User might need to log in.");
+            return;
+        }
+    
+        try {
+            const response = await fetch(`${process.env.BACKEND_URL}/api/products/image/${productId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` 
+                },
+                body: JSON.stringify({ image: imageUrl })
+            });
+    
+            if (!response.ok) {
+                throw new Error("Failed to modify product image");
+            }
+    
+            const data = await response.json();
+            console.log("Product image updated successfully:", data.message);
+        } catch (error) {
+            console.error("Error modifying product image:", error);
+        }
+    };
+    
 
     useEffect(() => {
         const token = actions.verifyTokenSeller();
@@ -105,7 +129,7 @@ export const ProductsSeller = () => {
             getProducts();
         }
     }, []);
-   
+
     return (
         <div className="container mt-5">
             <h2>My Products</h2>
@@ -132,7 +156,7 @@ export const ProductsSeller = () => {
                                 <td>{product.stock}</td>
                                 <td>
                                     <img 
-                                        src={productImages[product.id] || product.image} 
+                                        src="https://res.cloudinary.com/dqs1ls601/image/upload/v1730875251/o7ausoaj0yrtp3zezisj.png "
                                         alt={product.name} 
                                         style={{ width: "100px" }} 
                                     />
