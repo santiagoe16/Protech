@@ -14,7 +14,7 @@ export const SellersProducts = () => {
     const [activeTab, setActiveTab] = useState("list-tab");
     const [categoryId, setCategoryId] = useState(0);
     const [editProduct_Id, setEditProduct_Id] = useState(0);
-    const [navigate, setNavigate] = useState(0);
+    const navigate = useNavigate("/");
     
     useEffect(() => {
         const token = localStorage.getItem("jwt-token-seller");

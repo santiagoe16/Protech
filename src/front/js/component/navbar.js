@@ -26,7 +26,9 @@ export const Navbar = () => {
 					{(store.authenticatedBuyer) ? (<Link to="/cartview"><button className="btn btn-primary">Cart</button></Link>):<></>}
 					{(store.authenticatedBuyer) ? (<>
 						<Link to="/productsbuyers"><button className="btn btn-primary">Products</button></Link>
-						<Link to="/ordersplaced"><button className="btn btn-primary">orders placed</button></Link></>)
+						<Link to="/ordersplaced"><button className="btn btn-primary">orders placed</button></Link>
+						<Link to="/buyeraddress"><button className="btn btn-primary">add Address</button></Link>
+					</>)
 					:<></>}
 					{(store.authenticatedBuyer || store.authenticatedSeller) ? (<button className="btn btn-danger" onClick={() => logOut()}>log out</button>):(<button className="btn btn-primary" onClick={() => navigate("/buyer/login")}>log in</button>)}
 					
