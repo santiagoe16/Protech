@@ -2,7 +2,7 @@
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin
 import os
-from .models import db, User, Products,Seller, Comprador, ItemCart, Categoria, Cart, Address
+from .models import db, User, Products,Seller, Comprador, ItemCart, Categoria, Cart, Address, Article
 
 def setup_admin(app):
     app.secret_key = os.environ.get('FLASK_APP_KEY', 'sample key')
@@ -18,6 +18,7 @@ def setup_admin(app):
     admin.add_view(ModelView(ItemCart, db.session))
     admin.add_view(ModelView(Cart, db.session))
     admin.add_view(ModelView(Address, db.session))
+    admin.add_view(ModelView(Article, db.session))
 
     # You can duplicate that line to add mew models
     # admin.add_view(ModelView(YourModelName, db.session))
