@@ -13,6 +13,8 @@ export const SellerAddress = () => {
     const markerRef = useRef(null);
     const [markerPosition, setMarkerPosition] = useState(defaultCenter);
     const [selectedPlace, setSelectedPlace] = useState(null);
+    const [nameArticle, setNameArticle] = useState("")
+    const [description, setDescription] = useState("")
 
     const [sellerAddress, setSellerAddress] = useState({
         address: "",
@@ -40,7 +42,7 @@ export const SellerAddress = () => {
         })
             .then((response) => response.json())
             .then((data) => {
-                setCurrentAddress(data.address);
+                setCurrentAddress(data);
                 setMarkerPosition({
                     lat: parseFloat(data.lat),
                     lng: parseFloat(data.lon),
@@ -54,6 +56,8 @@ export const SellerAddress = () => {
         if (sellerAddress.address) {
             
             const raw = JSON.stringify({
+                name: nameArticle,
+                description: description,
                 address: sellerAddress.address,
                 lat: sellerAddress.lat,
                 lon: sellerAddress.lon,
@@ -157,20 +161,35 @@ export const SellerAddress = () => {
     return (
         <div>
             <div className="mt-5 mb-4 p-3 bg-light text-center">
-                <h5>Current address: {currentAddress}</h5>
+                <h5>Name: {currentAddress.name}</h5>
+                <h5>Address: {currentAddress.address}</h5>
+                <h5>Description: {currentAddress.description}</h5>
             </div>
             <LoadScript googleMapsApiKey={process.env.GOOGLE_API_KEY} libraries={libraries}>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                    <div id="pac-card">
+                <div id="pac-card" className="container" style={{width: "40%"}}>
                         <input
-                            id="pac-input"
-                            ref={inputRef}
-                            defaultValue={currentAddress}
-                            type="text"
-                            placeholder="Enter a location"
-                            style={{ width: "400px", padding: "8px", marginBottom: "10px" }}
+                            id="pac-input" ref={inputRef}
+                            type="text" placeholder="Enter a location"
+                            className="me-3"
+                            style={{ width: "400px", padding: "8px"}}
                         />
-                        <button className="ms-3 p-2 btn btn-primary" onClick={updateSellerAddress}>
+                        <input 
+                            type="text" placeholder="Name of address"
+                            style={{ maxWidth: "327px", minWidth:"310px", width: "100%", padding: "8px", marginBottom: "12px"}}
+                            value={nameArticle}
+                            onChange={(e)=> setNameArticle(e.target.value)}
+                        ></input>
+                    </div>
+                    <div className="container" style={{width: "40%"}}>
+                        <textarea className="mb-2"
+                        maxLength="200" rows="4" 
+                        style={{maxHeight: "60px", width: "100%", resize: "none"}} 
+                        placeholder="Escribe aquí (máximo 200 caracteres)"
+                        value={description}
+                        onChange={(e)=> setDescription(e.target.value)}
+                        ></textarea>
+                        <button className=" btn btn-primary w-100 mb-4" onClick={updateSellerAddress}>
                             Update Address
                         </button>
                     </div>

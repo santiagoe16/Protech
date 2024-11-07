@@ -817,21 +817,25 @@ def add_address_seller():
     address_seller = Address.query.filter_by(seller_id=seller_id).first()
     data = request.get_json()
 
+    name = data.get("name")
+    description = data.get("description")
     address = data.get("address")
     lat = data.get("lat")
     
     lon = data.get("lon")
 
-    if lat is None or lon is None or address is None:
+    if lat is None or lon is None or address is None or name is None or description is None:
         return jsonify({"error": "Address, Latitude and Longitude are required"}), 400
     
     if not isinstance(lat, float) or not isinstance(lon, float):
         return jsonify({"error": "Latitude and Longitude must be a float numbers"}), 400
 
     if not address_seller:
-        new_address_seller = Address(address=address, lat= float(lat), lon=float(lon), seller_id=seller_id)
+        new_address_seller = Address(address=address, name = name, description = description, lat= float(lat), lon=float(lon), seller_id=seller_id)
         db.session.add(new_address_seller)
     else:
+        address_seller.name = name
+        address_seller.description = description
         address_seller.address = address
         address_seller.lat = float(lat)
         address_seller.lon = float(lon)
@@ -845,18 +849,12 @@ def add_address_seller():
 def get_address_seller():
     seller_id = get_jwt_identity()
     
-    get_seller_address = Address.query.filter_by(seller_id=seller_id).first()
+    seller_address = Address.query.filter_by(seller_id=seller_id).first()
 
-    if not get_seller_address:
+    if not seller_address:
         return jsonify({"error": "No address assigned to this seller"}), 404
 
-    seller_address = {
-        "address": get_seller_address.address,
-        "lat": get_seller_address.lat,
-        "lon": get_seller_address.lon
-    }
-
-    return jsonify(seller_address), 200
+    return jsonify(seller_address.serialize()), 200
 
 @api.route('/address/buyer', methods=['POST'])
 @jwt_required()
@@ -864,19 +862,20 @@ def add_address_buyer():
     buyer_id = get_jwt_identity()
 
     data = request.get_json()
-
+    name = data.get("name")
+    description = data.get("description")
     address = data.get("address")
     lat = data.get("lat")
     lon = data.get("lon")
 
-    if lat is None or lon is None or address is None:
-        return jsonify({"error": "Address, Latitude and Longitude are required"}), 400
+    if lat is None or lon is None or address is None or name is None or description is None:
+        return jsonify({"error": "Address, Latitude, Longitude, name and description are required"}), 400
     
     if not isinstance(lat, float) or not isinstance(lon, float):
-        return jsonify({"error": "Latitude and Longitude must be a float numbers"}), 400
+        return jsonify({"error": "Latitude and Longitude must be numbers"}), 400
 
     
-    new_address_buyer = Address(address=address, lat= float(lat), lon=float(lon), comprador_id=buyer_id)
+    new_address_buyer = Address(address=address,name = name, description = description, lat= float(lat), lon=float(lon), comprador_id=buyer_id)
 
     db.session.add(new_address_buyer)
     db.session.commit()
@@ -906,7 +905,6 @@ def delete_address_buyer(address_id):
     db.session.commit()
 
     return jsonify({"message": "Address deleted successfully"}), 200
-
 
 #--------Orders------------------------------------------------------
 @api.route('/carts/seller', methods=['GET']) 
