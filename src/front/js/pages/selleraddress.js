@@ -129,7 +129,7 @@ export const SellerAddress = () => {
             setSelectedPlace(null);
 
             fetch(
-                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${clickedLocation.lat()},${clickedLocation.lng()}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`
+                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${clickedLocation.lat()},${clickedLocation.lng()}&key=${process.env.GOOGLE_API_KEY}`
             )
                 .then((response) => response.json())
                 .then((data) => {
@@ -159,7 +159,7 @@ export const SellerAddress = () => {
             <div className="mt-5 mb-4 p-3 bg-light text-center">
                 <h5>Current address: {currentAddress}</h5>
             </div>
-            <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_API_KEY} libraries={libraries}>
+            <LoadScript googleMapsApiKey={process.env.GOOGLE_API_KEY} libraries={libraries}>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                     <div id="pac-card">
                         <input

@@ -157,7 +157,7 @@ export const Products = () => {
     };
 
     async function generarArticulo(producto) {
-        const apiKey = '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';
+        const apiKey = process.env.OPEN_AI_API_KEY
         const endpoint = 'https://api.openai.com/v1/chat/completions';
       
         const prompt = `Genera un artículo llamativo, con la categoria de teclado, genera un articulo interesante.\nLa respuesta debe estar en formato JSON con los siguientes 
