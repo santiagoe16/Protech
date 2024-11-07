@@ -40,7 +40,7 @@ export const Orders = () => {
                 alert("There was an error fetching orders. Please try again later.");
             })
             .finally(() => {
-                setLoading(false); // Finaliza el estado de carga
+                setLoading(false); 
             });
     };
 
@@ -72,10 +72,15 @@ export const Orders = () => {
         .catch(error => console.error("Error updating order status:", error));
     };
 
+ 
     useEffect(() => {
-        getOrders();
+        const token = actions.verifyTokenSeller();
+        if (!token) {
+            navigate("/login");
+        } else {
+            getOrders();
+        }
     }, []);
-    
     return (
         <div className="container mt-5">
             <h2>Orders</h2>
