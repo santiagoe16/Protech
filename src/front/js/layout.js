@@ -27,7 +27,7 @@ import { OrdersPlaced } from "./pages/ordersplaced";
 import { UploadProductImage } from "./pages/productimagen";
 import { SellerAddress } from "./pages/selleraddress";
 import { ProductsSeller } from "./pages/productseller";
-
+import { BuyerProfile } from "./pages/buyerProfile";
 import { BuyerAddress } from "./pages/buyeraddress";
 
 import { Navbar } from "./component/navbar";
@@ -73,6 +73,7 @@ const Layout = () => {
                         <Route element={<BuyerAddress/>} path="/buyeraddress" />
                         <Route element={<SellerAddress/>} path="/selleraddress" />
                         <Route element={<ProductsSeller/>} path="/product/seller" />
+                        <Route element={<BuyerProfile/>} path="/buyer/profile" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     {/* <Footer /> */}

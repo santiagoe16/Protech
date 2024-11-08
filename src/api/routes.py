@@ -1062,3 +1062,15 @@ def modify_product_image(product_id):
 
     db.session.commit()
     return jsonify({"message": "Product successfully edited"}), 200
+
+#-------------------imagen comprador--------------------
+
+@api.route('/compradores/profile', methods=['GET'])
+@jwt_required()
+def get_buyer_profile():
+    comprador_id = get_jwt_identity()  
+    comprador = Comprador.query.get(comprador_id)
+    if not comprador:
+        return jsonify({"message": "Comprador no encontrado"}), 404  
+    return jsonify(comprador.serialize()), 200
+
