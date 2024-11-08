@@ -23,6 +23,7 @@ export const Navbar = () => {
 				</Link>
 				
 				<div className="ml-auto">
+				<Link to="/blog"><button className="btn btn-primary">blog</button></Link>
 					{(store.authenticatedBuyer) ? (<Link to="/cartview"><button className="btn btn-primary">Cart</button></Link>):<></>}
 					{(store.authenticatedBuyer) ? (<>
 						<Link to="/productsbuyers"><button className="btn btn-primary">Products</button></Link>
