@@ -314,7 +314,7 @@ const handleFileChange = async (e, productId) => {
       console.log('Respuesta de OpenAI:', data);
 
       let content = data.choices[0].message.content;
-      content = content.replace(/\\n/g, ''); // Elimina los saltos de línea escapados
+      content = content.replace(/\\n/g, ''); 
       content = content.replace(/`/g, '');
       console.log("contenido=" + content);
       
@@ -332,7 +332,7 @@ const handleFileChange = async (e, productId) => {
     const endpointSearch = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(productName)}&cx=${cx}&searchType=image&key=${apiKeySearch}&num=1&imgType=photo`;
 
     try {
-      console.log("API Key:", apiKeySearch);  // Para verificar que la clave está correcta
+      console.log("API Key:", apiKeySearch); 
       console.log("CX ID:", cx);
       const response = await fetch(endpointSearch);
       if (!response.ok) throw new Error('Error al obtener la imagen');
@@ -348,7 +348,7 @@ const handleFileChange = async (e, productId) => {
     console.log(article.title,"imagen: " + imageArticle)
     
     const raw = {
-      title: article.title,  // No necesitas JSON.stringify en los valores individuales
+      title: article.title, 
       image: imageArticle,
       content: article.content
     };
@@ -358,7 +358,7 @@ const handleFileChange = async (e, productId) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(raw)  // Aquí conviertes el objeto 'raw' a JSON
+      body: JSON.stringify(raw)  
     })
     .then(response => {
         if (!response.ok) {
@@ -367,7 +367,7 @@ const handleFileChange = async (e, productId) => {
         return response.json();
     })
     .then(() => {
-        cleanFieldsArticle();  // Asegúrate de pasar la referencia de la función, no ejecutarla directamente
+        cleanFieldsArticle();  
     })
     .catch(error => {
         console.error("Error:", error);
