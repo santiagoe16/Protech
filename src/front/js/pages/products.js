@@ -156,39 +156,7 @@ export const Products = () => {
             });
     };
 
-    async function generarArticulo(producto) {
-        const apiKey = process.env.OPEN_AI_API_KEY
-        const endpoint = 'https://api.openai.com/v1/chat/completions';
-      
-        const prompt = `Genera un artículo llamativo, con la categoria de teclado, genera un articulo interesante.\nLa respuesta debe estar en formato JSON con los siguientes 
-        campos:\n{\n  \"title\": \"(Título atractico)\",\n  \"image\": \"(URL de una imagen relevante)\",\n  \"content\": \"(Texto del artículo que sea interesante para el lector)\"\n`;
-      
-        try {
-          const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify({
-              model: 'gpt-3.5-turbo',
-              messages: [{ role: 'user', content: prompt }],
-              max_tokens: 280,
-            })
-          });
-      
-          const data = await response.json();
-          console.log(data);
-          const articulo = data.choices[0].message.content;
-      
-          const articulojson = JSON.parse(articulo)
-      
-
-      
-        } catch (error) {
-          console.error('Error generando el artículo:', error);
-        }
-    }
+    
     return (
         <div className="container mt-5">
             <ul className="nav nav-tabs" id="myTab" role="tablist">
@@ -296,23 +264,6 @@ export const Products = () => {
                             )}
                         </tbody>
                     </table>
-                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                ...
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Save changes</button>
-                            </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
                 <div className={`tab-pane fade ${activeTab === "create-tab" ? "show active" : ""}`} id="create-tab-pane" role="tabpanel" aria-labelledby="create-tab" tabIndex="0">

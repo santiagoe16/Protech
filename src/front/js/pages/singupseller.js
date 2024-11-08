@@ -13,10 +13,10 @@ export const SignupSeller = () => {
         e.preventDefault();
 
         const raw = {
-            email,
-            name,
-            password,
-            phone,
+            email: email,
+            name: name,
+            password: password,
+            phone: phone,
             bank_account: bankAccount
         };
 

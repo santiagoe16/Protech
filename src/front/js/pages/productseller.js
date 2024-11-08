@@ -14,7 +14,26 @@ export const ProductsSeller = () => {
   const [activeTab, setActiveTab] = useState("list-tab");
   const [categoryId, setCategoryId] = useState(0);
   const [editProduct_Id, setEditProduct_Id] = useState(0);
+  const [article, setArticle] = useState({})
+  const [imageArticle, setImageArticle] = useState("")
+  const [articleProduct, setArticleProduct] = useState("")
   const navigate = useNavigate();
+
+  const topics = [
+    "Cómo elegir el (producto) perfecto según tus necesidades",
+    "Cómo aprovechar al máximo tu (producto) en el día a día",
+    "Errores comunes al usar un (producto) y cómo evitarlos",
+    "Todo lo que necesitas para mantener tu (producto) en buen estado",
+    "Los mejores trucos para sacar el máximo provecho de tu (producto)",
+    "Consejos para prolongar la vida útil de tu (producto)",
+    "Secretos para obtener el máximo rendimiento de tu (producto)",
+    "Los pros y contras de invertir en un (producto)",
+    "Qué esperar de un( (producto) de alta calidad",
+    "Preguntas que deberías hacer antes de comprar un( (producto)",
+    "Características esenciales que debes buscar en un (producto)",
+    "Los accesorios imprescindibles para complementar tu (producto)",
+    "Cómo cuidar y mantener en buen estado tu (producto)",
+  ]
 
   const cloudName = "dqs1ls601";
   const presetName = "Protech";
@@ -222,6 +241,104 @@ export const ProductsSeller = () => {
     }
   }, []);
 
+  const cleanFieldsArticle = () => {
+    setArticle({})
+    setImageArticle("")
+  }
+
+  async function generateArticle(productName) {
+    setArticleProduct(productName)
+    const topic = topics[Math.floor(Math.random() * topics.length)];
+
+    const apiKeyChatGPT = process.env.OPEN_AI_API_KEY;
+    const endpointChatGPT = 'https://api.openai.com/v1/chat/completions';
+
+    const prompt = `Escribe un artículo de 900 caracteres en formato JSON sobre el siguiente tema: "${topic}". El producto es: "${productName}". El JSON debe tener dos campos:
+      - 'title' para el título del artículo,
+      - 'content' para el cuerpo completo del artículo. 
+    Asegúrate de que el JSON esté bien formado, sin ningún formato adicional, sin comillas invertidas o markdown, ni usar saltos de linea como "\n", y que sea válido para ser procesado directamente como JSON.`;
+
+    try {
+      const response = await fetch(endpointChatGPT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKeyChatGPT}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-3.5-turbo',
+          messages: [
+            { role: "system", content: "Eres un asistente que escribe artículos informativos y atractivos sobre productos para un sitio de marketplace." },
+            { role: 'user', content: prompt }
+          ],
+          max_tokens: 400, 
+        })
+      });
+
+      const data = await response.json();
+      console.log('Respuesta de OpenAI:', data);
+
+      let content = data.choices[0].message.content;
+      content = content.replace(/\\n/g, ''); // Elimina los saltos de línea escapados
+      content = content.replace(/`/g, '');
+      console.log("contenido=" + content);
+      
+      const dataArticle = JSON.parse(content)
+      
+      setArticle(dataArticle);
+      console.log(dataArticle);
+
+    } catch (error) {
+      console.error('Error generando el artículo:', error);
+    }
+
+    const apiKeySearch = process.env.GOOGLE_API_KEY;
+    const cx = process.env.GOOGLE_CX_ID;
+    const endpointSearch = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(productName)}&cx=${cx}&searchType=image&key=${apiKeySearch}&num=1&imgType=photo`;
+
+    try {
+      console.log("API Key:", apiKeySearch);  // Para verificar que la clave está correcta
+      console.log("CX ID:", cx);
+      const response = await fetch(endpointSearch);
+      if (!response.ok) throw new Error('Error al obtener la imagen');
+      const data = await response.json();
+      setImageArticle(data.items[0]?.link || "https://example.com/default-image.jpg"); 
+    } catch (error) {
+      console.error('Error obteniendo imagen:', error);
+      setImageArticle("https://example.com/default-image.jpg")
+    }
+  }
+
+  const publishArticle = () => {
+    console.log(article.title,"imagen: " + imageArticle)
+    
+    const raw = {
+      title: article.title,  // No necesitas JSON.stringify en los valores individuales
+      image: imageArticle,
+      content: article.content
+    };
+
+    fetch(`${process.env.BACKEND_URL}/api/articles`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(raw)  // Aquí conviertes el objeto 'raw' a JSON
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Error al publicar el artículo");
+        }
+        return response.json();
+    })
+    .then(() => {
+        cleanFieldsArticle();  // Asegúrate de pasar la referencia de la función, no ejecutarla directamente
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+  }
+
   return (
     <div className="container mt-5">
       <h2 style={{ fontSize: "2rem", fontWeight: "bold", textAlign: "center", marginBottom: "20px" }}>
@@ -403,49 +520,80 @@ export const ProductsSeller = () => {
 
         <div className={`tab-pane fade ${activeTab === "list-tab" ? "show active" : ""}`} id="list-tab-pane" role="tabpanel" aria-labelledby="list-tab" tabIndex="0">
           {products.length > 0 ? (
-            <table className="table table-striped">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Actions</th>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Price</th>
-                  <th>Stock</th>
-                  <th>Image</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map((product, index) => (
-                  <tr key={product.id}>
-                    <td>{index + 1}</td>
-                    <td className="text-center">
-                      <i className="fas fa-edit me-3" style={{ cursor: "pointer" }} onClick={() => getToEdit(product.id)}></i>
-                      <i className="fas fa-trash me-3" style={{ cursor: "pointer" }} onClick={() => deleteProduct(product.id)}></i>
-                      <i className="fas fa-eye" style={{ cursor: "pointer" }} onClick={() => viewMore(product.id)}></i>
-                    </td>
-                    <td>{product.name}</td>
-                    <td>{product.description}</td>
-                    <td>{product.price}</td>
-                    <td>{product.stock}</td>
-                    <td>
-                      <img
-                        src={product.image || "https://res.cloudinary.com/dqs1ls601/image/upload/v1730875251/o7ausoaj0yrtp3zezisj.png"}
-                        alt={product.name}
-                        style={{ width: "100px" }}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileChange(e, product.id)}
-                      />
-                    </td>
+            <>
+              <table className="table table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Actions</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Image</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {products.map((product, index) => (
+                    <tr key={product.id}>
+                      <td>{index + 1}</td>
+                      <td className="text-center">
+                        <i className="fa-solid fa-newspaper me-3" type="button"  data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={()=>generateArticle(product.name)}></i>
+                        <i className="fas fa-edit me-3" style={{ cursor: "pointer" }} onClick={() => getToEdit(product.id)}></i>
+                        <i className="fas fa-trash me-3" style={{ cursor: "pointer" }} onClick={() => deleteProduct(product.id)}></i>
+                        <i className="fas fa-eye" style={{ cursor: "pointer" }} onClick={() => viewMore(product.id)}></i>
+                      </td>
+                      <td>{product.name}</td>
+                      <td>{product.description}</td>
+                      <td>{product.price}</td>
+                      <td>{product.stock}</td>
+                      <td>
+                        <img
+                          src={product.image || "https://res.cloudinary.com/dqs1ls601/image/upload/v1730875251/o7ausoaj0yrtp3zezisj.png"}
+                          alt={product.name}
+                          style={{ width: "100px" }}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleFileChange(e, product.id)}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="modal fade" id="exampleModal" tabIndex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-lg">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h1 className="modal-title fs-5" id="exampleModalLabel">Article</h1>
+                      <button type="button" onClick={() => cleanFieldsArticle()} className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div className="modal-body">
+                      <div>
+                        <div>
+                          <h2>{article.title}</h2>
+                        </div>
+                        <div style={{width: "100%", height: "500px"}}>
+                          <img src={imageArticle} style={{width: "100%", height: "100%", objectFit: "contain"}}/>
+                        </div>
+                        <div>
+                          <p>{article.content}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="modal-footer">
+                      <button type="button" onClick={() => cleanFieldsArticle()} className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" className="btn btn-primary" onClick={()=> publishArticle()} data-bs-dismiss="modal">Save</button>
+                      <button type="button" onClick={() => generateArticle(articleProduct)} className="btn btn-primary">regenerate</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
           ) : (
             <p>No products found for this seller.</p>
           )}
