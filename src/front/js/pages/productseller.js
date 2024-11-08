@@ -209,27 +209,62 @@ export const ProductsSeller = () => {
       console.error("Error updating product image in DB:", error);
     }
   };
+const handleFileChange = async (e, productId) => {
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", presetName);
+    
+        try {
+            const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                method: "POST",
+                body: formData
+            });
+    
+            const data = await response.json();
+            const imageUrl = data.secure_url;
 
-  const handleFileChange = async (e, productId) => {
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', presetName);
+            await modifyProductImage(productId, imageUrl);
+            
+            setProducts(prevProducts =>
+                prevProducts.map(product =>
+                    product.id === productId ? { ...product, image: imageUrl } : product
+                )
+            );
+    
+        } catch (error) {
+            console.error("Error uploading image:", error);
+        }
+    };
 
-    try {
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-        method: 'POST',
-        body: formData
-      });
+    const modifyProductImage = async (productId, imageUrl) => {
+        const token = actions.verifyTokenSeller(); 
+        if (!token) {
+            console.error("No valid token found. User might need to log in.");
+            return;
+        }
+    
+        try {
+            const response = await fetch(`${process.env.BACKEND_URL}/api/products/image/${productId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` 
+                },
+                body: JSON.stringify({ image: imageUrl })
+            });
+    
+            if (!response.ok) {
+                throw new Error("Failed to modify product image");
+            }
+    
+            const data = await response.json();
+            console.log("Product image updated successfully:", data.message);
+        } catch (error) {
+            console.error("Error modifying product image:", error);
+        }
+    };
 
-      const data = await response.json();
-      const imageUrl = data.secure_url;
-
-      await updateProductImageInDB(productId, imageUrl);
-    } catch (error) {
-      console.error("Error uploading image:", error);
-    }
-  };
 
   useEffect(() => {
     const token = actions.verifyTokenSeller();
@@ -427,9 +462,9 @@ export const ProductsSeller = () => {
               <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} className="form-control" id="stock" />
             </div>
             <div className="mb-3">
-              <label htmlFor="image" className="form-label">Image URL</label>
-              <input type="text" value={image} onChange={(e) => setImage(e.target.value)} className="form-control" id="image" />
-            </div>
+            <label htmlFor="image" className="form-label">Image</label>
+            <input type="file" onChange={(e) => handleFileChange(e, 0)} className="form-control" id="image" />
+          </div>
             <div className="mb-3">
               <label htmlFor="category" className="form-label">Category</label>
               <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="form-select" id="category">
@@ -463,7 +498,13 @@ export const ProductsSeller = () => {
             </div>
             <div className="mb-3">
               <label htmlFor="image" className="form-label">Image URL</label>
-              <input type="text" value={image} onChange={(e) => setImage(e.target.value)} className="form-control" id="image" />
+              <td>
+  <input
+    type="file"
+    accept="image/*"
+    onChange={(e) => handleFileChange(e, product.id)}
+  />
+</td>
             </div>
             <div className="mb-3">
               <label htmlFor="category" className="form-label">Category</label>

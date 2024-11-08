@@ -34,8 +34,8 @@ export const SignupSeller = () => {
                 return response.json();
             })
             .then(() => {
-                // Redirigir a SellersProducts después de registrarse
-                navigate("/sellers/products");
+                
+                navigate("/seller/login");
             })
             .catch((error) => console.error('Fetch error:', error));
     };
