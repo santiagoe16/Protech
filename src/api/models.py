@@ -161,6 +161,8 @@ class Cart(db.Model):
     
 class Address(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), unique=False, nullable=False)
+    description = db.Column(db.String(200), unique=False, nullable=False)
     address = db.Column(db.String(120), unique=False, nullable=False)
     lat = db.Column(db.Float, unique=False, nullable=False) 
     lon = db.Column(db.Float, unique=False, nullable=False)  
@@ -177,6 +179,8 @@ class Address(db.Model):
     def serialize(self):
         return {
             "id": self.id,
+            "name": self.name,
+            "description": self.description,
             "address": self.address,
             "lat": self.lat,
             "lon": self.lon,
@@ -184,4 +188,23 @@ class Address(db.Model):
             "comprador_id": self.comprador_id if self.comprador_id else None,
             "seller": self.seller.name if self.seller else None,
             "comprador": self.comprador.name if self.comprador else None
+        }
+    
+class Article(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(170), unique=False, nullable=False)
+    image = db.Column(db.String(180), unique=False, nullable=True)
+    content = db.Column(db.String(1500), unique=False, nullable=False)
+    created_at = db.Column(db.Date, default=date.today, unique=False, nullable=False)
+
+    def __repr__(self):
+        return f'<Article {self.id}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "created_at": self.created_at.strftime('%Y-%m-%d'),
+            "image": self.image,
+            "content": self.content,
         }
