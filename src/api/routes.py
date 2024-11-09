@@ -223,6 +223,7 @@ def add_comprador():
         name=new_comprador_data["name"],
         email=new_comprador_data["email"],
         clave=new_comprador_data["clave"],
+        image=new_comprador_data["image"],
         telefono=new_comprador_data["telefono"]
     )
 
@@ -679,7 +680,8 @@ def signupBuyer():
         name=new_comprador_data["name"],
         email=new_comprador_data["email"],
         clave=new_comprador_data["clave"],
-        telefono=new_comprador_data["telefono"]
+        telefono=new_comprador_data["telefono"],
+        image=new_comprador_data.get("imagen", "https://res.cloudinary.com/dqs1ls601/image/upload/v1731110351/gmrxh7lzzztfscswvvog.avif") 
     )
 
     db.session.add(new_comprador)
