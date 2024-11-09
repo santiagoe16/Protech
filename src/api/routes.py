@@ -1067,7 +1067,7 @@ def modify_product_image(product_id):
 
 #-------------------imagen comprador--------------------
 
-@api.route('/compradores/profile', methods=['GET'])
+@api.route('/buyer/profile', methods=['GET'])
 @jwt_required()
 def get_buyer_profile():
     comprador_id = get_jwt_identity()  
@@ -1076,3 +1076,61 @@ def get_buyer_profile():
         return jsonify({"message": "Comprador no encontrado"}), 404  
     return jsonify(comprador.serialize()), 200
 
+@api.route('/buyer/profile/upload-image', methods=['POST'])
+@jwt_required()
+def upload_profile_image():
+    comprador_id = get_jwt_identity()
+    comprador = Comprador.query.get(comprador_id)
+    if not comprador:
+        return jsonify({"message": "Comprador no encontrado"}), 404
+
+    if 'image' not in request.files:
+        return jsonify({"message": "No se encontró el archivo de imagen"}), 400
+
+    image_file = request.files['image']
+    try:
+        
+        upload_result = cloudinary.uploader.upload(image_file, folder="buyer_profile_images")
+        image_url = upload_result["secure_url"]
+
+        
+        comprador.profile_image = image_url
+        db.session.commit()
+
+        return jsonify({"message": "Imagen subida exitosamente", "profile_image": image_url}), 200
+    except Exception as e:
+        return jsonify({"message": "Error al subir la imagen", "error": str(e)}), 500
+
+@api.route('/buyer/profile/image', methods=['PUT'])
+@jwt_required()
+def modify_profile_image():
+    comprador_id = get_jwt_identity()
+    comprador = Comprador.query.get(comprador_id)
+
+    if not comprador:
+        return jsonify({"error": "Comprador no encontrado"}), 404
+
+    data = request.get_json()
+    if 'profile_image' in data:
+        comprador.profile_image = data['profile_image']
+        db.session.commit()
+        return jsonify({"message": "Imagen de perfil actualizada exitosamente", "profile_image": comprador.profile_image}), 200
+
+    return jsonify({"error": "No se proporcionó la URL de la imagen"}), 400
+
+@api.route('/buyer/profile/image', methods=['PUT'])
+@jwt_required()
+def modify_buyer_profile_image():
+    comprador_id = get_jwt_identity()
+    comprador = Comprador.query.get(comprador_id)
+
+    if not comprador:
+        return jsonify({"error": "Comprador no encontrado"}), 404
+
+    data = request.get_json()
+
+    if 'image' in data:
+        comprador.profile_image = data['image']
+
+    db.session.commit()
+    return jsonify({"message": "Imagen de perfil actualizada exitosamente", "profile_image": comprador.profile_image}), 200

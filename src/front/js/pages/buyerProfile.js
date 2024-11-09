@@ -1,78 +1,115 @@
 import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom"; 
 import { Context } from "../store/appContext";
 
 export const BuyerProfile = () => {
     const { store, actions } = useContext(Context);
-
     const [selectedFile, setSelectedFile] = useState(null);
+    const [buyerProfile, setBuyerProfile] = useState(null);
+    const navigate = useNavigate();
 
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            setSelectedFile(file);
-            console.log("File selected:", file.name);
-        }
-    };
+    const cloudName = "dqs1ls601";
+    const presetName = "Protech";
 
-    
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const token = localStorage.getItem("jwt-token");
+    const getBuyerProfile = () => {
+        const token = actions.verifyTokenBuyer();
 
-        if (!selectedFile) {
-            alert("Please select a file before submitting.");
+        if (!token) {
+            console.error("No valid token found. User might need to log in.");
+            navigate("/login");
             return;
         }
 
-        const formData = new FormData();
-        formData.append("file", selectedFile); 
-
-        fetch(`${process.env.BACKEND_URL}/api/upload`, {
-            method: "POST",
+        fetch(`${process.env.BACKEND_URL}/api/buyer/profile`, {
+            method: "GET",
             headers: {
-                "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
-            },
-            body: formData
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to upload image");
             }
-            return response.json();
         })
-        .then(data => {
-            console.log("Image uploaded successfully:", data);
-            alert("Image uploaded successfully!");
-        })
-        .catch(error => {
-            console.error("Error uploading image:", error);
-            alert("Error uploading image");
-        });
+            .then((response) => {
+                if (!response.ok) throw new Error("Failed to fetch buyer profile");
+                return response.json();
+            })
+            .then((data) => setBuyerProfile(data))
+            .catch((error) => console.error("Error:", error));
     };
 
-    return (
-        <>
-        <div className="container">
-        <div>
-            <h3>Upload Product Image</h3>
-            <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                    <label htmlFor="fileInput" className="form-label">Select an image:</label>
-                    <input
-                        type="file"
-                        id="fileInput"
-                        className="form-control"
-                        onChange={handleFileChange}
-                        accept="image/*" 
-                    />
-                </div>
-                <button type="submit" className="btn btn-primary">Upload</button>
-            </form>
-        </div>
+    const handleImageUpload = () => {
+        if (!selectedFile) return;
 
-        </div>
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+        formData.append("upload_preset", presetName);
+
+        fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                const imageUrl = data.secure_url;
+                
+                
+                setBuyerProfile(prevProfile => ({ ...prevProfile, image: imageUrl }));
+
+                
+                updateProfileImage(imageUrl);
+            })
+            .catch((error) => console.error("Image upload failed:", error));
+
+            
+    };
+
+    
+    const updateProfileImage = (imageUrl) => {
+        const token = actions.verifyTokenBuyer();
         
-        </>
+        fetch(`${process.env.BACKEND_URL}/api/buyer/profile/image`, {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ image: imageUrl }),
+        })
+            .then((response) => {
+                if (!response.ok) throw new Error("Failed to update profile image");
+                console.log("Profile image updated");
+                getBuyerProfile();  // Actualiza el perfil después de subir la imagen
+            })
+            .catch((error) => console.error("Error updating profile image:", error));
+    };
+
+    useEffect(() => {
+        getBuyerProfile();
+    }, []); 
+
+    return (
+        <div className="container">
+            <div>
+                <h3>Buyer Profile</h3>
+                {buyerProfile ? (
+                    <div>
+                        <p><strong>Name:</strong> {buyerProfile.name}</p>
+                        <p><strong>Email:</strong> {buyerProfile.email}</p>
+
+                        <img
+                            src={buyerProfile.image}
+                            alt={buyerProfile.name}
+                            style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                        />
+                        <br />
+                        <input
+                            type="file"
+                            onChange={(e) => setSelectedFile(e.target.files[0])}
+                            accept="image/*"
+                        />
+                        <button onClick={handleImageUpload}>Upload Image</button>
+                    </div>
+                ) : (
+                    <p>Loading profile...</p>
+                )}
+            </div>
+        </div>
     );
 };
