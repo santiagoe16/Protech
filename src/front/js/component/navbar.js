@@ -23,6 +23,47 @@ export const Navbar = () => {
 				</Link>
 				
 				<div className="ml-auto">
+<<<<<<< HEAD
+					{store.authenticatedBuyer && (
+						<>
+						<Link to="buyer/profile">
+								<button className="btn btn-primary">profile</button>
+							</Link>
+							<Link to="/cartview">
+								<button className="btn btn-primary">Cart</button>
+							</Link>
+							<Link to="/productsbuyers">
+								<button className="btn btn-primary">Products</button>
+							</Link>
+							<Link to="/ordersplaced">
+								<button className="btn btn-primary">Orders Placed</button>
+							</Link>
+							<Link to="/buyeraddress">
+								<button className="btn btn-primary">Add Address</button>
+							</Link>
+						</>
+					)}
+	
+					{store.authenticatedSeller && (
+						<>
+							<Link to="/orders">
+								<button className="btn btn-primary">Orders</button>
+							</Link>
+							<button className="btn btn-primary" onClick={() => navigate("/selleraddress")}>Update Address</button>
+							<button className="btn btn-primary" onClick={() => navigate("/product/seller")}>My Products</button>
+						</>
+					)}
+	
+					{(store.authenticatedBuyer || store.authenticatedSeller) ? (
+						<button className="btn btn-danger" onClick={logOut}>Log Out</button>
+					) : (
+						<>
+							<button className="btn btn-primary" onClick={() => navigate("/buyer/login")}>Log In</button>
+							{!store.authenticatedSeller && (
+								<button className="btn btn-primary" onClick={() => navigate("/seller/login")}>Start Selling</button>
+							)}
+						</>
+=======
 				<Link to="/blog"><button className="btn btn-primary">blog</button></Link>
 					{(store.authenticatedBuyer) ? (<Link to="/cartview"><button className="btn btn-primary">Cart</button></Link>):<></>}
 					{(store.authenticatedBuyer) ? (<>
@@ -36,15 +77,11 @@ export const Navbar = () => {
 					{(store.authenticatedSeller) ? (<Link to="/orders"><button className="btn btn-primary">Orders</button></Link>):<></>}
 					{!store.authenticatedSeller && (
 						<button className="btn btn-primary" onClick={() => navigate("/seller/login")}>Start selling</button>
+>>>>>>> develop
 					)}
-					{store.authenticatedSeller == true ? (
-						<button className="btn btn-primary" onClick={() => navigate("/selleraddress")}>update address</button>
-					):(<></>)}
-					{store.authenticatedSeller == true ? (
-						<button className="btn btn-primary" onClick={() => navigate("/product/seller")}>My Products</button>
-					):(<></>)}
 				</div>
 			</div>
 		</nav>
 	);
+	
 };

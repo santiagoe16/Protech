@@ -98,6 +98,7 @@ class Comprador(db.Model):
     email = db.Column(db.String(120), unique=False, nullable=False)
     clave = db.Column(db.String(80), unique=False, nullable=False)
     telefono = db.Column(db.String(80), unique=False, nullable=False)
+    image = db.Column(db.String(500), unique=False, nullable=True)
 
     carts = db.relationship("Cart", back_populates="comprador", lazy="dynamic")
     addresses = db.relationship('Address', back_populates='comprador', lazy="dynamic")
@@ -110,6 +111,7 @@ class Comprador(db.Model):
             "id": self.id,
             "name": self.name,
             "email": self.email,
+            "image": self.image,
             "telefono": self.telefono
         }
 
