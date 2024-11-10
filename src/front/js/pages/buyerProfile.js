@@ -49,10 +49,8 @@ export const BuyerProfile = () => {
             .then((data) => {
                 const imageUrl = data.secure_url;
                 
-                
-                setBuyerProfile(prevProfile => ({ ...prevProfile, image: imageUrl }));
+                setBuyerProfile(prevbuyerProfile => ({ ...prevbuyerProfile, image: imageUrl }));
 
-                
                 updateProfileImage(imageUrl);
             })
             .catch((error) => console.error("Image upload failed:", error));
@@ -75,7 +73,8 @@ export const BuyerProfile = () => {
             .then((response) => {
                 if (!response.ok) throw new Error("Failed to update profile image");
                 console.log("Profile image updated");
-                getBuyerProfile();  // Actualiza el perfil después de subir la imagen
+                setBuyerProfile(prevbuyerProfile => ({ ...prevbuyerProfile, image: imageUrl }));
+                getBuyerProfile();  
             })
             .catch((error) => console.error("Error updating profile image:", error));
     };
@@ -94,7 +93,7 @@ export const BuyerProfile = () => {
                         <p><strong>Email:</strong> {buyerProfile.email}</p>
 
                         <img
-                            src={buyerProfile.image}
+                            src={buyerProfile.image|| "https://res.cloudinary.com/dqs1ls601/image/upload/v1731110351/gmrxh7lzzztfscswvvog.avif"}
                             alt={buyerProfile.name}
                             style={{ width: "100px", height: "100px", objectFit: "cover" }}
                         />
