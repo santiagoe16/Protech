@@ -196,7 +196,13 @@ if (!filter && minPrice === "" && maxPrice === "") {
                                             <td>{product.description}</td>
                                             <td>{product.price}$</td>
                                             <td>{product.stock}</td>
-                                            <td>{product.image}</td>
+                                            <td>
+                        <img
+                          src={product.image || "https://res.cloudinary.com/dqs1ls601/image/upload/v1731206219/vbxdwt1xqinu1ffd82mm.jpg"}
+                          alt={product.name}
+                          style={{ width: "100px" }}
+                        />
+                      </td>
                                             <td>
                                                 <input
                                                     type="number"
