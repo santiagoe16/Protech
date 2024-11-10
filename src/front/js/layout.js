@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
@@ -28,10 +28,14 @@ import { UploadProductImage } from "./pages/productimagen";
 import { SellerAddress } from "./pages/selleraddress";
 import { ProductsSeller } from "./pages/productseller";
 import { BuyerProfile } from "./pages/buyerProfile";
+import { Blog } from "./pages/blog";
+import { Dashboard } from "./pages/dashboard";
+
 import { BuyerAddress } from "./pages/buyeraddress";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
+import { Sidebar } from "./component/sidebar";
 
 
 
@@ -40,14 +44,19 @@ const Layout = () => {
     //the basename is used when your project is published in a subdirectory and not in the root of the domain
     // you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
     const basename = process.env.BASENAME || "";
+    const location = useLocation();
+
+    const routesSidebar = ["/dashboard", "/dashboard/products"]
+
+    const showSidebar = routesSidebar.includes(location.pathname)
 
     if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/>;
 
     return (
-        <div className="h-100">
-            <BrowserRouter basename={basename}>
-                <ScrollToTop>
-                    <Navbar />
+        <div className="h-100 d-flex">
+            <ScrollToTop>
+                {showSidebar ? <Sidebar /> : <Navbar />}
+                <div style={{ marginLeft: showSidebar ? "250px" : "0", width: showSidebar ? "100%" : "0", marginTop: showSidebar ? "50px" : "0"}}>
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
@@ -74,11 +83,14 @@ const Layout = () => {
                         <Route element={<SellerAddress/>} path="/selleraddress" />
                         <Route element={<ProductsSeller/>} path="/product/seller" />
                         <Route element={<BuyerProfile/>} path="/buyer/profile" />
+                        <Route element={<Blog/>} path="/blog" />
+                        <Route element={<Dashboard/>} path="/dashboard" />
+                        
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
-                    {/* <Footer /> */}
-                </ScrollToTop>
-            </BrowserRouter>
+                </div>
+                {/* <Footer /> */}
+            </ScrollToTop>
         </div>
     );
 };

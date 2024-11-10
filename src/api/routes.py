@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Products, Seller , Comprador,Categoria, ItemCart, Cart, Address
+from api.models import db, User, Products, Seller , Comprador,Categoria, ItemCart, Cart, Address, Article
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
@@ -761,6 +761,65 @@ def delete_address(id):
 
     return jsonify({"message": "Address deleted successfully"}), 200
 
+#---------------------Address------------------------------------------------------------------
+
+# Ruta para obtener todos los artículos
+@api.route('/articles', methods=['GET'])
+def get_articles():
+    articles = Article.query.all()
+    return jsonify([article.serialize() for article in articles]), 200
+
+# Ruta para obtener un artículo por su ID
+@api.route('/articles/<int:id>', methods=['GET'])
+def get_article(id):
+    article = Article.query.get_or_404(id)
+    return jsonify(article.serialize()), 200
+
+# Ruta para crear un nuevo artículo
+@api.route('/articles', methods=['POST'])
+def create_article():
+    data = request.get_json()
+    title = data.get('title')
+    image = data.get('image')
+    content = data.get('content')
+
+    if not title or not content:
+        return jsonify({"error": "Title and content are required"}), 400
+
+    new_article = Article(
+        title=title,
+        image=image,
+        content=content 
+    )
+    db.session.add(new_article)
+    db.session.commit()
+
+    return jsonify(new_article.serialize()), 201
+
+# Ruta para actualizar un artículo por su ID
+@api.route('/articles/<int:id>', methods=['PUT'])
+def update_article(id):
+    article = Article.query.get_or_404(id)
+    data = request.get_json()
+
+    article.title = data.get('title', article.title)
+    article.image = data.get('image', article.image)
+    article.content = data.get('content', article.content)
+
+    db.session.commit()
+
+    return jsonify(article.serialize()), 200
+
+# Ruta para eliminar un artículo por su ID
+@api.route('/articles/<int:id>', methods=['DELETE'])
+def delete_article(id):
+    article = Article.query.get_or_404(id)
+
+    db.session.delete(article)
+    db.session.commit()
+
+    return jsonify({"message": "Article deleted"}), 200
+
 #------------LOGIN SELLERS  ----------------------------------
 
 @api.route('/seller/login', methods=['POST'])
@@ -780,7 +839,7 @@ def login():
 
     access_token = create_access_token(identity=seller.id)
     
-    return jsonify(access_token=access_token, seller_id=seller.id), 200
+    return jsonify(access_token=access_token), 200
 
 @api.route('/seller/reg', methods=['POST'])
 def signupSeller():
@@ -991,8 +1050,6 @@ def get_products_by_seller():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-
 @api.route('/api/products/<int:product_id>/update-image', methods=['POST'])
 def update_product_image(product_id):
     data = request.get_json()
@@ -1018,8 +1075,6 @@ def update_product_image(product_id):
         return jsonify({"error": str(e)}), 500
 
     return jsonify({"message": "Product image updated successfully", "product": product.serialize()}), 200
-
-
 
 @api.route('/products/<int:product_id>/image', methods=['PUT'])
 @jwt_required()

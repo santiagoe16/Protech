@@ -23,6 +23,7 @@ export const Navbar = () => {
 				</Link>
 				
 				<div className="ml-auto">
+<<<<<<< HEAD
 					{store.authenticatedBuyer && (
 						<>
 						<Link to="buyer/profile">
@@ -62,6 +63,21 @@ export const Navbar = () => {
 								<button className="btn btn-primary" onClick={() => navigate("/seller/login")}>Start Selling</button>
 							)}
 						</>
+=======
+				<Link to="/blog"><button className="btn btn-primary">blog</button></Link>
+					{(store.authenticatedBuyer) ? (<Link to="/cartview"><button className="btn btn-primary">Cart</button></Link>):<></>}
+					{(store.authenticatedBuyer) ? (<>
+						<Link to="/productsbuyers"><button className="btn btn-primary">Products</button></Link>
+						<Link to="/ordersplaced"><button className="btn btn-primary">orders placed</button></Link>
+						<Link to="/buyeraddress"><button className="btn btn-primary">add Address</button></Link>
+					</>)
+					:<></>}
+					{(store.authenticatedBuyer || store.authenticatedSeller) ? (<button className="btn btn-danger" onClick={() => logOut()}>log out</button>):(<button className="btn btn-primary" onClick={() => navigate("/buyer/login")}>log in</button>)}
+					
+					{(store.authenticatedSeller) ? (<Link to="/orders"><button className="btn btn-primary">Orders</button></Link>):<></>}
+					{!store.authenticatedSeller && (
+						<button className="btn btn-primary" onClick={() => navigate("/seller/login")}>Start selling</button>
+>>>>>>> develop
 					)}
 				</div>
 			</div>

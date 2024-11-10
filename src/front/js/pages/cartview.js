@@ -8,7 +8,6 @@ export const CartView = () => {
 	const [cartItems, setCartItems] = useState([]);
 	const [totalPrice, setTotalPrice] = useState(0);
 	const [cartId, setCartId] = useState(null);
-	const [isPayPalVisible, setIsPayPalVisible] = useState(false); // Estado para mostrar PayPal
 	const navigate = useNavigate();
 
 	const getCartItems = () => {
@@ -26,13 +25,17 @@ export const CartView = () => {
 				return response.json();
 			})
 			.then((data) => {
+			
 				setCartItems(data);
 				const total = data.reduce(
 					(acc, item) => acc + item.product.price * item.amount,
 					0
 				);
 				setTotalPrice(total);
+				console.log(totalPrice);
+				console.log(data);
 
+				
 				if (data.length > 0) {
 					setCartId(data[0].cart_id);
 				}
@@ -99,8 +102,6 @@ export const CartView = () => {
 				console.error("Error updating item quantity:", error);
 			});
 	};
-
-	
 
 	const onPaymentSuccess = () => {
 		const token = actions.verifyTokenBuyer();
@@ -175,13 +176,20 @@ export const CartView = () => {
 				</tbody>
 			</table>
 			<h3>Total price: ${totalPrice.toFixed(2)}</h3>
-				<PayPalScriptProvider options={{ "client-id": "AbNoN6IXOGq7SC-c0-ponOTjVkR7e0cQWyLg4ZCvJriENbtbC2Ew92WFgNNbjSjnzj2SwTateYWTwxeL", currency: "USD" }}>
-					<div style={{width: 300}}>
-						<PayPalButtons 
+			
+			{totalPrice > 0 && (
+				<PayPalScriptProvider 
+					options={{ 
+						"client-id": "AeCl0pbqrAkTaxaZ51SbGYmMafXEoQRYsdlaqH_bBxgzXoGuRKRjje8dIpR9cx4Io8h57X2Et0ufkhAO", 
+						currency: "USD"
+					}}
+				>
+					<div style={{ width: 300 }}>
+						<PayPalButtons
 							style={{
-								layout: "vertical", 
+								layout: "vertical",
 								color: "blue",
-								label: "paypal", 
+								label: "paypal",
 								height: 40,
 							}}
 							createOrder={(data, actions) => {
@@ -193,16 +201,23 @@ export const CartView = () => {
 											},
 										},
 									],
+								}).catch((err) => {
+									console.error("Error in createOrder", err);
+									alert("Error creando la orden: " + err.message);
 								});
 							}}
 							onApprove={(data, actions) => {
 								return actions.order.capture().then(() => {
-									onPaymentSuccess(); 
+									onPaymentSuccess();
+								}).catch((err) => {
+									console.error("Error in onApprove", err);
+									alert("Error capturando el pago: " + err.message);
 								});
 							}}
 						/>
 					</div>
 				</PayPalScriptProvider>
+			)}
 		</div>
 	);
 };

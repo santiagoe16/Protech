@@ -194,8 +194,8 @@ class Address(db.Model):
     
 class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(170), unique=False, nullable=False)
-    image = db.Column(db.String(180), unique=False, nullable=True)
+    title = db.Column(db.String(300), unique=False, nullable=False)
+    image = db.Column(db.String(500), unique=False, nullable=True)
     content = db.Column(db.String(1500), unique=False, nullable=False)
     created_at = db.Column(db.Date, default=date.today, unique=False, nullable=False)
 
