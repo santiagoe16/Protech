@@ -30,7 +30,7 @@ import { ProductsSeller } from "./pages/productseller";
 import { BuyerProfile } from "./pages/buyerProfile";
 import { Blog } from "./pages/blog";
 import { Dashboard } from "./pages/dashboard";
-
+import { DetailProduct } from "./pages/detailProduct";
 import { BuyerAddress } from "./pages/buyeraddress";
 
 import { Navbar } from "./component/navbar";
@@ -85,7 +85,8 @@ const Layout = () => {
                         <Route element={<BuyerProfile/>} path="/buyer/profile" />
                         <Route element={<Blog/>} path="/blog" />
                         <Route element={<Dashboard/>} path="/dashboard" />
-                        
+                        <Route element={<DetailProduct/>} path="/detail/product" />
+
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                 </div>
