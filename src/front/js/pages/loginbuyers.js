@@ -45,7 +45,7 @@ export const LoginBuyer = () => {
     };
 
 	return (
-		<div className="d-flex justify-content-center align-items-center h-75">
+		<div className="d-flex justify-content-center align-items-center h-75 w-100">
 			<div className= " p-5 rounded-3 shadow">
                 <form onSubmit = {handleSubmit}>
                     <h2 className="text-center mb-3">Log in buyer</h2>

@@ -8,10 +8,12 @@ import "../styles/index.css";
 
 //import your own components
 import Layout from "./layout";
+const basename = process.env.BASENAME || "";
+
 
 //render your react application
 ReactDOM.render(
-    <BrowserRouter>
+    <BrowserRouter basename = {basename}>
         <Layout />
     </BrowserRouter>,
     document.querySelector("#app")
