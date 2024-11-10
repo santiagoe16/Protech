@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 
-export const ProductsBuyers = () => {
+export const DetailProduct = () => {
     const { store, actions } = useContext(Context);
     const [products, setProducts] = useState([]);
     const [name, setName] = useState("");
