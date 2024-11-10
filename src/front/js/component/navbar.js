@@ -4,16 +4,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const Navbar = () => {
-	const {store, actions} = useContext(Context)
+	const { store, actions } = useContext(Context);
 	const navigate = useNavigate();
 	
-	const logOut = () =>{
-		localStorage.removeItem("jwt-token-seller")
-		localStorage.removeItem("jwt-token-buyer")
-		actions.changeAuthenticatedBuyer(false)
-		actions.changeAuthenticatedSeller(false)
-		navigate("/buyer/login")
-	}
+	const logOut = () => {
+		localStorage.removeItem("jwt-token-seller");
+		localStorage.removeItem("jwt-token-buyer");
+		actions.changeAuthenticatedBuyer(false);
+		actions.changeAuthenticatedSeller(false);
+		navigate("/buyer/login");
+	};
 
 	return (
 		<nav className="navbar navbar-light bg-light">
@@ -23,11 +23,10 @@ export const Navbar = () => {
 				</Link>
 				
 				<div className="ml-auto">
-<<<<<<< HEAD
 					{store.authenticatedBuyer && (
 						<>
-						<Link to="buyer/profile">
-								<button className="btn btn-primary">profile</button>
+							<Link to="/buyer/profile">
+								<button className="btn btn-primary">Profile</button>
 							</Link>
 							<Link to="/cartview">
 								<button className="btn btn-primary">Cart</button>
@@ -43,7 +42,7 @@ export const Navbar = () => {
 							</Link>
 						</>
 					)}
-	
+
 					{store.authenticatedSeller && (
 						<>
 							<Link to="/orders">
@@ -53,7 +52,7 @@ export const Navbar = () => {
 							<button className="btn btn-primary" onClick={() => navigate("/product/seller")}>My Products</button>
 						</>
 					)}
-	
+
 					{(store.authenticatedBuyer || store.authenticatedSeller) ? (
 						<button className="btn btn-danger" onClick={logOut}>Log Out</button>
 					) : (
@@ -63,25 +62,9 @@ export const Navbar = () => {
 								<button className="btn btn-primary" onClick={() => navigate("/seller/login")}>Start Selling</button>
 							)}
 						</>
-=======
-				<Link to="/blog"><button className="btn btn-primary">blog</button></Link>
-					{(store.authenticatedBuyer) ? (<Link to="/cartview"><button className="btn btn-primary">Cart</button></Link>):<></>}
-					{(store.authenticatedBuyer) ? (<>
-						<Link to="/productsbuyers"><button className="btn btn-primary">Products</button></Link>
-						<Link to="/ordersplaced"><button className="btn btn-primary">orders placed</button></Link>
-						<Link to="/buyeraddress"><button className="btn btn-primary">add Address</button></Link>
-					</>)
-					:<></>}
-					{(store.authenticatedBuyer || store.authenticatedSeller) ? (<button className="btn btn-danger" onClick={() => logOut()}>log out</button>):(<button className="btn btn-primary" onClick={() => navigate("/buyer/login")}>log in</button>)}
-					
-					{(store.authenticatedSeller) ? (<Link to="/orders"><button className="btn btn-primary">Orders</button></Link>):<></>}
-					{!store.authenticatedSeller && (
-						<button className="btn btn-primary" onClick={() => navigate("/seller/login")}>Start selling</button>
->>>>>>> develop
 					)}
 				</div>
 			</div>
 		</nav>
 	);
-	
 };
