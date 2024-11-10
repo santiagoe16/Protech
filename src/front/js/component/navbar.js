@@ -4,16 +4,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const Navbar = () => {
-	const {store, actions} = useContext(Context)
+	const { store, actions } = useContext(Context);
 	const navigate = useNavigate();
 	
-	const logOut = () =>{
-		localStorage.removeItem("jwt-token-seller")
-		localStorage.removeItem("jwt-token-buyer")
-		actions.changeAuthenticatedBuyer(false)
-		actions.changeAuthenticatedSeller(false)
-		navigate("/buyer/login")
-	}
+	const logOut = () => {
+		localStorage.removeItem("jwt-token-seller");
+		localStorage.removeItem("jwt-token-buyer");
+		actions.changeAuthenticatedBuyer(false);
+		actions.changeAuthenticatedSeller(false);
+		navigate("/buyer/login");
+	};
 
 	return (
 		<nav className="navbar navbar-light bg-light" style={{height: "50px", marginLeft: "0"}}>
@@ -25,8 +25,8 @@ export const Navbar = () => {
 				<div className="ml-auto">
 					{store.authenticatedBuyer && (
 						<>
-						<Link to="buyer/profile">
-								<button className="btn btn-primary">profile</button>
+							<Link to="/buyer/profile">
+								<button className="btn btn-primary">Profile</button>
 							</Link>
 							<Link to="/cartview">
 								<button className="btn btn-primary">Cart</button>
@@ -42,7 +42,7 @@ export const Navbar = () => {
 							</Link>
 						</>
 					)}
-	
+
 					{store.authenticatedSeller && (
 						<>
 							<Link to="/orders">
@@ -52,7 +52,7 @@ export const Navbar = () => {
 							<button className="btn btn-primary" onClick={() => navigate("/product/seller")}>My Products</button>
 						</>
 					)}
-	
+
 					{(store.authenticatedBuyer || store.authenticatedSeller) ? (
 						<button className="btn btn-danger" onClick={logOut}>Log Out</button>
 					) : (
@@ -67,5 +67,4 @@ export const Navbar = () => {
 			</div>
 		</nav>
 	);
-	
 };
