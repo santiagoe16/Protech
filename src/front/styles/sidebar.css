@@ -1,0 +1,61 @@
+/* Estilos generales para el sidebar */
+.sidebar {
+    position: fixed; /* Fija el sidebar a la izquierda */
+    top: 0; /* Alineado arriba de la pantalla */
+    left: 0; /* Alineado a la izquierda */
+    height: 100vh; /* Toma toda la altura de la pantalla */
+    width: 250px; /* Ancho del sidebar */
+    background-color: #333; /* Fondo oscuro */
+    color: white; /* Color de texto blanco */
+    display: flex;
+    flex-direction: column; /* Disposición vertical de los elementos */
+    padding-top: 20px; /* Espacio superior */
+    z-index: 1000; /* Asegura que el sidebar quede encima de otros contenidos */
+  }
+  
+.sidebar h2 {
+    text-align: center; /* Centra el título */
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Lista de navegación del sidebar */
+.sidebar ul {
+    list-style: none; /* Elimina los puntos de la lista */
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 15px 0; /* Espacio entre los enlaces */
+}
+
+.sidebar ul li a {
+    text-decoration: none; /* Elimina subrayado */
+    color: white; /* Texto blanco */
+    font-size: 18px;
+    padding: 10px 20px;
+    display: block; /* Hace que el enlace ocupe todo el ancho de su contenedor */
+    border-radius: 5px; /* Bordes redondeados */
+    transition: background-color 0.3s ease; /* Animación suave al pasar el ratón */
+}
+
+.sidebar ul li a:hover {
+    background-color: #555; /* Color de fondo cuando se pasa el ratón */
+}
+
+/* Para asegurarte de que el navbar dentro del sidebar esté fijo arriba */
+.sidebar .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: black; /* El fondo del navbar */
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+.navbar{
+    margin-left: 250px;
+}
