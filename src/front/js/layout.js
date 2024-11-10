@@ -43,7 +43,7 @@ import { Sidebar } from "./component/sidebar";
 const Layout = () => {
     //the basename is used when your project is published in a subdirectory and not in the root of the domain
     // you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
-    const basename = process.env.BASENAME || "";
+    
     const location = useLocation();
 
     const routesSidebar = ["/dashboard", "/dashboard/products"]
@@ -53,10 +53,10 @@ const Layout = () => {
     if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/>;
 
     return (
-        <div className="h-100 d-flex">
+        <div className="h-100 w-100">
             <ScrollToTop>
                 {showSidebar ? <Sidebar /> : <Navbar />}
-                <div style={{ marginLeft: showSidebar ? "250px" : "0", width: showSidebar ? "100%" : "0", marginTop: showSidebar ? "50px" : "0"}}>
+                <div className="h-100" style={{ marginLeft: showSidebar ? "250px" : "", width: showSidebar ? "100%" : "", marginTop: showSidebar ? "50px" : ""}}>
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
