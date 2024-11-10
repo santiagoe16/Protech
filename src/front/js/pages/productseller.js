@@ -540,7 +540,7 @@ const handleFileChange = async (e, productId) => {
                     <td>{product.stock}</td>
                     <td>
                       <img
-                        src={product.image || "https://res.cloudinary.com/dqs1ls601/image/upload/v1731183557/images_gjl0he.jpg"}
+                        src={product.image || "https://res.cloudinary.com/dqs1ls601/image/upload/v1731206219/vbxdwt1xqinu1ffd82mm.jpg"}
                         alt={product.name}
                         style={{ width: "100px" }}
                       />
@@ -590,7 +590,7 @@ const handleFileChange = async (e, productId) => {
                       <td>{product.stock}</td>
                       <td>
                         <img
-                          src={product.image || "https://res.cloudinary.com/dqs1ls601/image/upload/v1730875251/o7ausoaj0yrtp3zezisj.png"}
+                          src={product.image || "https://res.cloudinary.com/dqs1ls601/image/upload/v1731206219/vbxdwt1xqinu1ffd82mm.jpg"}
                           alt={product.name}
                           style={{ width: "100px" }}
                         />
