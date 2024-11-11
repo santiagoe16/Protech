@@ -21,6 +21,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			],
 			selectedProduct: {} ,
+			amounts: {},
 		},
 		actions: {
 			verifyTokenBuyer: () => {
@@ -68,7 +69,42 @@ const getState = ({ getStore, getActions, setStore }) => {
 					});
 			},
 			
-			
+			handleAmountChangeflux: (productId, value) => {
+                const store = getStore();
+                const newAmount = value === "" ? "" : Math.max(1, parseInt(value));
+
+                setStore({
+                    amounts: {
+                        ...store.amounts,
+                        [productId]: newAmount
+                    }
+                });
+            },
+
+            addToCartFlux: (productId) => {
+                const store = getStore();
+                const token = localStorage.getItem("jwt-token-buyer");
+                const amount = store.amounts[productId] || 1; 
+
+                const raw = JSON.stringify({
+                    amount: amount,
+                    product_id: productId
+                });
+
+                return fetch(process.env.BACKEND_URL + "/api/itemscarts", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: raw
+                })
+                    .then((response) => response.json())
+                    .then((result) => {
+                        getActions().getProductsFlux(); 
+                    })
+                    .catch((error) => console.error("Error al agregar al carrito:", error));
+            },
 
 			getMessage: async () => {
 				try{

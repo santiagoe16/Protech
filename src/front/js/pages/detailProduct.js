@@ -5,21 +5,23 @@ import { useNavigate } from "react-router-dom";
 
 export const DetailProduct = () => {
     const { store, actions } = useContext(Context);
-    const { id } = useParams(); 
+    const { id } = useParams();
     const [product, setProduct] = useState(null);
+    const [amounts, setAmounts] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
         const token = actions.verifyTokenBuyer()
         if (!token) {
             navigate("buyer/login");
-          } else {
+        } else {
             const selectedProduct = store.products.find((product) => product.id === parseInt(id));
             setProduct(selectedProduct);
-          }
-       
+        }
+
     }, [id, store.products]);
 
+    
     return (
         <>
             {product ? (
@@ -28,17 +30,30 @@ export const DetailProduct = () => {
                     <p>{product.description}</p>
                     <p>Price: ${product.price}</p>
                     <img src={product.image} alt={product.name} />
+                    <input
+                        type="number"
+                        size={10}
+                        value={store.amounts[product.id] || ""}
+                        onChange={(e) => actions.handleAmountChangeflux(product.id, e.target.value)}
+                        placeholder="Amount"
+                        className="form-control"
+                        id="amount"
+                    />
+                    <button
+                        className="btn btn-primary mt-2"
+                        onClick={() => actions.addToCartFlux(product.id)}
+                    >Add to Cart</button>
                 </div>
             ) : (
                 <p>Loading...</p>
             )}
             <div>
-            <h2>Productos</h2>
-            <ul>
-                {store.products.map((product) => (
-                    <li key={product.id}>{product.name} - ${product.price}</li>
-                ))}
-            </ul>
+                <h2>Productos</h2>
+                <ul>
+                    {store.products.map((product) => (
+                        <li key={product.id}>{product.name} - ${product.price}</li>
+                    ))}
+                </ul>
             </div>
         </>
     );
