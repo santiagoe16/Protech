@@ -205,6 +205,9 @@ const handleFileChange = async (e, productId) => {
             const data = await response.json();
             const imageUrl = data.secure_url;
 
+            console.log("hola" + JSON.stringify(data));
+            
+
             await modifyProductImage(productId, imageUrl);
             
             setProducts(prevProducts =>

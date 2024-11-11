@@ -42,6 +42,9 @@ export const Navbar = () => {
 					{store.authenticatedSeller == true ? (
 						<button className="btn btn-primary" onClick={() => navigate("/product/seller")}>My Products</button>
 					):(<></>)}
+					{store.authenticatedSeller == true ? (
+						<button className="btn btn-primary" onClick={() => navigate("/profile/seller")}>Profile</button>
+					):(<></>)}
 				</div>
 			</div>
 		</nav>

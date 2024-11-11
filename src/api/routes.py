@@ -1042,7 +1042,7 @@ def change_product_image(product_id):
             file.save(file_path)
 
             product.image = file_path
-            db.session.commit()
+            db .session.commit()
 
             return jsonify({"message": "Product image updated successfully", "product": product.serialize()}), 200
 
@@ -1062,3 +1062,177 @@ def modify_product_image(product_id):
 
     db.session.commit()
     return jsonify({"message": "Product successfully edited"}), 200
+
+
+#--------------ProfileSeller----------
+ # Configuración de Cloudinary
+cloudinary.config( 
+    cloud_name = "dqs1ls601", 
+    api_key = "993698731427398", 
+    api_secret = "<gIUoJkVUxeDu5tIkkJb9PbD7m7M>",
+    secure = True
+)
+
+@api.route('/profile/seller', methods=['GET'])
+@jwt_required()
+def get_seller_profile():
+    try:
+        seller_id = get_jwt_identity()
+
+        if not seller_id:
+            return jsonify({"error": "Seller ID not found in token"}), 401
+        
+        seller = Seller.query.get(seller_id)
+
+        if not seller:
+            return jsonify({"error": "Seller not found"}), 404
+
+        return jsonify(seller.serialize()), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@api.route('/profile/seller/<int:seller_id>', methods=['GET'])
+@jwt_required()
+def get_seller_by_id(seller_id):
+    try:
+        current_seller_id = get_jwt_identity()
+        
+        if current_seller_id != seller_id:
+            return jsonify({"error": "No autorizado para ver este perfil"}), 403
+
+        seller = Seller.query.get(seller_id)
+
+        if not seller:
+            return jsonify({"error": "Vendedor no encontrado"}), 404
+
+        return jsonify(seller.serialize()), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Cambiado el nombre de la función para evitar conflictos
+@api.route('/profile/seller/<int:seller_id>', methods=['PUT']) #### editar
+@jwt_required()
+def update_seller_profile(seller_id):  # Cambiado el nombre de la función
+    try:
+        current_seller_id = get_jwt_identity()
+        
+        if current_seller_id != seller_id:
+            return jsonify({"error": "No autorizado para modificar este perfil"}), 403
+
+        seller = Seller.query.get(seller_id)
+
+        if not seller:
+            return jsonify({"error": "Vendedor no existe"}), 404
+
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "No se han proporcionado datos para actualizar"}), 400
+
+        updated_fields = []
+        for field in ['name','email', 'phone', 'bank_account']:
+            if field in data:
+                setattr(seller, field, data[field])
+                updated_fields.append(field)
+
+        if not updated_fields:
+            return jsonify({"error": "No se han proporcionado cambios para actualizar"}), 400
+
+        try:
+            db.session.commit()
+            return jsonify({
+                "message": "Vendedor actualizado con éxito",
+                "updated_fields": updated_fields,
+                "seller": seller.serialize()
+            }), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": f"Error al actualizar: {str(e)}"}), 500
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@api.route('/api/profile/<int:seller_id>/update-image', methods=['POST'])
+def update_seller_image(seller_id):
+    data = request.get_json()
+    image_url = data.get('image_url')
+
+    if not image_url:
+        return jsonify({"error": "No image URL provided"}), 400
+
+    seller = Seller.query.get(seller_id)
+    if not seller:
+        return jsonify({"error": "Seller not found"}), 404
+
+    
+    try:
+        upload_result = cloudinary.uploader.upload(
+            image_url,
+            folder="protech_products",
+            public_id=f"seller_{seller_id}"
+        )
+        seller.image = upload_result["secure_url"]
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+    return jsonify({"message": "seller profile image updated successfully", "seller": seller.serialize()}), 200
+
+
+
+@api.route('/seller/<int:seller_id>/image', methods=['PUT'])
+@jwt_required()
+def change_seller_image(seller_id):
+    try:
+        seller_id = get_jwt_identity()
+        seller = Seller.query.filter_by( seller_id=seller_id).first()
+
+        if not seller:
+            return jsonify({"error": "Seller not found or you don't have permission to update it"}), 404
+
+        if 'image' not in request.files:
+            return jsonify({"error": "No image part in the request"}), 400
+
+        file = request.files['image']
+        if file.filename == '':
+            return jsonify({"error": "No selected file"}), 400
+
+        if file and allowed_file(file.filename):
+            filename = f"{seller_id}_{file.filename}"
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(file_path)
+
+            seller.image = file_path
+            db .session.commit()
+
+            return jsonify({"message": "seller image updated successfully", "product": seller.serialize()}), 200
+
+        else:
+            return jsonify({"error": "Invalid file type"}), 400
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@api.route('/seller/image/<int:seller_id>', methods=['PUT'])
+def modify_seller_image(seller_id):
+    seller = Seller.query.get(seller_id)
+    data = request.get_json()
+
+    if 'image' in data:
+        seller.image = data['image']
+
+    db.session.commit()
+    return jsonify({"message": "Image successfully edited"}), 200
+
+
+
+        
+
+   
+
+
+
+ 
+           
