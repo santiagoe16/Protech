@@ -25,57 +25,65 @@ export const DetailProduct = () => {
 
 
     return (
-        <>
-            <div className="container">
-                <div className="container ProductDetail">
-                    {product ? (
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          
-                            <div style={{ flex: 1, marginRight: '20px' }}>
-                                <img src={product.image} alt={product.name}  />
-                            </div>
+        <div className="container">
+            <div className="ProductDetail">
+                {product ? (
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                        <div style={{ flex: 1, marginRight: "20px" }}>
+                            <img src={product.image} alt={product.name} />
+                        </div>
+                        <div style={{ flex: 2 }}>
+                            <p>{product.category.name}</p>
+                            <h2>{product.name}</h2>
+                            <p>{product.description}</p>
+                            <p>Price: ${product.price}</p>
+                            <input
+                                type="number"
+                                size={10}
+                                value={store.amounts[product.id] || ""}
+                                onChange={(e) => actions.handleAmountChangeflux(product.id, e.target.value)}
+                                placeholder="Amount"
+                                className="form-control"
+                                id="amount"
+                            />
+                            <button
+                                className="btn btn-outline-warning"
+                                onClick={() => actions.addToCartFlux(product.id)}
+                            >
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <p>Loading...</p>
+                )}
+            </div>
 
-                            <div style={{ flex: 2 }}>
-                                <p>{product.category.name}</p>
-                                <h2>{product.name}</h2>
-                                <p>{product.description}</p>
-                                <p>Price: ${product.price}</p>
-                                <input
-                                    type="number"
-                                    size={10}
-                                    value={store.amounts[product.id] || ""}
-                                    onChange={(e) => actions.handleAmountChangeflux(product.id, e.target.value)}
-                                    placeholder="Amount"
-                                    className="form-control"
-                                    id="amount"
-                                />
+            <div>
+                <h2>Other Products</h2>
+                <div className="card-container">
+                    {store.products.map((product, index) => (
+                        <div key={product.id || index} className="card mb-4" style={{ minWidth: "18rem", maxWidth: "300px" }}>
+                            <img src={product.image} className="card-img-top" alt={product.name} />
+                            <div className="card-body">
+                                <h5 className="card-title">{product.name}</h5>
+                                <p className="mb-0">Category: {product.category.name}</p>
+                                <p className="mb-0">Price: ${product.price}</p>
+                                <p className="mb-0">Stock: {product.stock}</p>
+                            </div>
+                            <div className="card-footer d-flex justify-content-between">
                                 <button
-                                    className="btn btn-primary mt-2"
+                                    type="button"
+                                    className="btn btn-outline-warning"
                                     onClick={() => actions.addToCartFlux(product.id)}
                                 >
                                     Add to Cart
                                 </button>
                             </div>
                         </div>
-                    ) : (
-                        <p>Loading...</p>
-                    )}
-                </div>
-                <div className="Detalles">
-                
-                               
-                               
-                </div>
-                <div>
-                    <h2>Productos</h2>
-                    <ul>
-                        {store.products.map((product) => (
-                            <li key={product.id}>{product.name} - ${product.price}</li>
-                        ))}
-                    </ul>
+                    ))}
                 </div>
             </div>
-
-        </>
+        </div>
     );
 };
