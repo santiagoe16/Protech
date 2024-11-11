@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
+import { Link } from "react-router-dom";
 
 export const ProductsBuyers = () => {
     const { store, actions } = useContext(Context);
@@ -186,6 +187,9 @@ export const ProductsBuyers = () => {
                                                     className="fas fa-eye"
                                                     onClick={() => viewMore(product.id)}
                                                 ></i>
+                                                <Link to={`/detail/${product.id}`}>
+                                                    <button type="button" className="btn btn-outline-primary">Learn more</button>
+                                                </Link>
                                             </td>
                                             <td>{product.name}</td>
                                             <td>{product.description}</td>
