@@ -1,0 +1,83 @@
+
+
+
+.ProductDetail img {
+    max-width: 100%;
+    width: 500px;
+    height: auto;
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+
+
+.ProductDetail h2 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #010002;
+    margin-top: 0;
+}
+
+.ProductDetail p {
+    font-size: 16px;
+    color: #000000;
+    line-height: 1.6;
+    margin: 5px 0;
+}
+
+/* Estilo para el precio */
+.ProductDetail p:nth-child(3) {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1c1f1d; 
+}
+
+
+.ProductDetail input {
+    width: 100px;
+    padding: 8px;
+    margin-top: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+
+
+
+/* Efecto hover para el botón */
+.ProductDetail button:hover {
+    background-color: #2980b9; /* Color azul oscuro al pasar el cursor */
+}
+
+/* Estilo para los productos listados abajo */
+.Detalles {
+    margin-top: 40px;
+}
+
+.Detalles ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.Detalles li {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    font-size: 18px;
+    color: #333;
+}
+
+.Detalles li:hover {
+    background-color: #f5f5f5; /* Fondo gris claro al pasar el cursor */
+}
+
+/* Estilo para los contenedores de productos relacionados */
+.Detalles h2 {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+body {
+    background-color: #000303; /* Fondo suave y neutro para toda la página */
+}
