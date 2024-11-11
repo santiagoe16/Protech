@@ -17,6 +17,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			authenticatedBuyer: false,
 			authenticatedSeller:false,
 			sellerId: null,
+			products:[
+
+			],
+			selectedProduct: {} ,
 		},
 		actions: {
 			verifyTokenBuyer: () => {
@@ -43,6 +47,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 			changeAuthenticatedSeller: (bool) => {
 				setStore({authenticatedSeller: bool})
 			},
+
+			getProductsFlux: () => {
+				return fetch(process.env.BACKEND_URL + "/api/products", { method: "GET" })
+					.then((response) => response.json())
+					.then((data) => {
+						setStore({ products: data });
+			
+						const initialAmounts = {};
+						data.forEach(product => {
+							initialAmounts[product.id] = 1;
+						});
+						setStore({ amounts: initialAmounts });
+			
+						return data; 
+					})
+					.catch((error) => {
+						console.error(error);
+						throw error; 
+					});
+			},
+			
+			
 
 			getMessage: async () => {
 				try{
