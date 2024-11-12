@@ -70,7 +70,7 @@ class Categoria(db.Model):
 class Seller(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    email = db.Column(db.String(120), nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     phone = db.Column(db.String(80), unique=False, nullable=False)
     bank_account = db.Column(db.String(120), unique=False, nullable=True)

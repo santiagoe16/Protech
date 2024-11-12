@@ -1146,7 +1146,7 @@ def get_seller_profile():
 
 @api.route('/seller/profile/upload-image', methods=['POST'])
 @jwt_required()
-def upload_profile_image():
+def upload_profile_seller_image():
     seller_id = get_jwt_identity()
     seller = Seller.query.get(seller_id)
     if not seller:
@@ -1169,12 +1169,44 @@ def upload_profile_image():
 
 @api.route('/seller/profile/image', methods=['PUT'])
 @jwt_required()
-def modify_profile_image():
+def modify_profile_seller_image():
     seller_id = get_jwt_identity()
     seller = Seller.query.get(seller_id)
 
     if not seller:
         return jsonify({"error": "Seller not found"}), 404
+
+    data = request.get_json()
+
+    if 'image' in data:
+        seller.image = data['image']
+        db.session.commit()
+        return jsonify({"message": "Profile image updated successfully", "image": seller.image}), 200
+
+    return jsonify({"error": "No image URL provided"}), 400
+
+@api.route('/seller/profile/edit', methods=['PUT'])
+@jwt_required()
+def edit_seller_profile():
+    seller_id = get_jwt_identity()
+    seller = Seller.query.get(seller_id)
+    if not seller:
+        return jsonify({"message": "Seller not found"}), 404
+
+    data = request.get_json()
+
+    if 'name' in data:
+        seller.name = data['name']
+    if 'email' in data:
+        seller.email = data['email']
+    if 'phone' in data:
+        seller.phone = data['phone']
+    if 'bank_account' in data:
+        seller.bank_account = data['bank_account']
+
+    db.session.commit()
+
+    return jsonify({"message": "Profile updated successfully", "seller": seller.serialize()}), 200
 ##-----------------perfil comprador-----
 
 @api.route('/buyer/profile', methods=['GET'])
