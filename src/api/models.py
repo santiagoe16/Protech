@@ -73,8 +73,9 @@ class Seller(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     phone = db.Column(db.String(80), unique=False, nullable=False)
-    
+    bank_account = db.Column(db.String(120), unique=False, nullable=True)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    image = db.Column(db.String(255), unique=False, nullable=True)
 
 
     address = db.relationship('Address', back_populates='seller', uselist=True)
@@ -91,6 +92,7 @@ class Seller(db.Model):
             "name": self.name,
             "phone" : self.phone,
             "bank_account": self.bank_account,
+            "image": self.image,
         }
     
 class Comprador(db.Model):
