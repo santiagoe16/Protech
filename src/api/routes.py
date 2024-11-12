@@ -1100,7 +1100,7 @@ def change_product_image(product_id):
             file.save(file_path)
 
             product.image = file_path
-            db.session.commit()
+            db .session.commit()
 
             return jsonify({"message": "Product image updated successfully", "product": product.serialize()}), 200
 
@@ -1121,6 +1121,92 @@ def modify_product_image(product_id):
     db.session.commit()
     return jsonify({"message": "Product successfully edited"}), 200
 
+
+#--------------ProfileSeller----------
+ # Configuración de Cloudinary
+ # Configuration       
+cloudinary.config( 
+    cloud_name = "dqs1ls601", 
+    api_key = "993698731427398", 
+    api_secret = "<gIUoJkVUxeDu5tIkkJb9PbD7m7M>", # Click 'View API Keys' above to copy your API secret
+    secure=True
+)
+
+
+
+@api.route('/seller/profile', methods=['GET'])
+@jwt_required()
+def get_seller_profile():
+    seller_id = get_jwt_identity()  
+    seller = Seller.query.get(seller_id)
+    if not seller:
+        return jsonify({"message": "Seller not found"}), 404  
+    return jsonify(seller.serialize()), 200
+
+
+@api.route('/seller/profile/upload-image', methods=['POST'])
+@jwt_required()
+def upload_profile_seller_image():
+    seller_id = get_jwt_identity()
+    seller = Seller.query.get(seller_id)
+    if not seller:
+        return jsonify({"message": "Seller not found"}), 404
+
+    if 'image' not in request.files:
+        return jsonify({"message": "No image file found"}), 400
+
+    image_file = request.files['image']
+    try:
+        upload_result = cloudinary.uploader.upload(image_file, folder="seller_profile_images")
+        image_url = upload_result["secure_url"]
+
+        seller.image = image_url
+        db.session.commit()
+
+        return jsonify({"message": "Image uploaded successfully", "image": image_url}), 200
+    except Exception as e:
+        return jsonify({"message": "Error uploading image", "error": str(e)}), 500
+
+@api.route('/seller/profile/image', methods=['PUT'])
+@jwt_required()
+def modify_profile_seller_image():
+    seller_id = get_jwt_identity()
+    seller = Seller.query.get(seller_id)
+
+    if not seller:
+        return jsonify({"error": "Seller not found"}), 404
+
+    data = request.get_json()
+
+    if 'image' in data:
+        seller.image = data['image']
+        db.session.commit()
+        return jsonify({"message": "Profile image updated successfully", "image": seller.image}), 200
+
+    return jsonify({"error": "No image URL provided"}), 400
+
+@api.route('/seller/profile/edit', methods=['PUT'])
+@jwt_required()
+def edit_seller_profile():
+    seller_id = get_jwt_identity()
+    seller = Seller.query.get(seller_id)
+    if not seller:
+        return jsonify({"message": "Seller not found"}), 404
+
+    data = request.get_json()
+
+    if 'name' in data:
+        seller.name = data['name']
+    if 'email' in data:
+        seller.email = data['email']
+    if 'phone' in data:
+        seller.phone = data['phone']
+    if 'bank_account' in data:
+        seller.bank_account = data['bank_account']
+
+    db.session.commit()
+
+    return jsonify({"message": "Profile updated successfully", "seller": seller.serialize()}), 200
 ##-----------------perfil comprador-----
 
 @api.route('/buyer/profile', methods=['GET'])

@@ -27,6 +27,7 @@ import { OrdersPlaced } from "./pages/ordersplaced";
 import { UploadProductImage } from "./pages/productimagen";
 import { SellerAddress } from "./pages/selleraddress";
 import { ProductsSeller } from "./pages/productseller";
+import { ProfileSeller } from "./pages/profileSeller";
 import { BuyerProfile } from "./pages/buyerProfile";
 import { Blog } from "./pages/blog";
 import { Dashboard } from "./pages/dashboard";
@@ -38,6 +39,7 @@ import { BuyerAddress } from "./pages/buyeraddress";
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 import { Sidebar } from "./component/sidebar";
+
 
 
 
@@ -84,6 +86,7 @@ const Layout = () => {
                         <Route element={<BuyerAddress/>} path="/buyeraddress" />
                         <Route element={<SellerAddress/>} path="/selleraddress" />
                         <Route element={<ProductsSeller/>} path="/product/seller" />
+                        <Route element={<ProfileSeller/>} path= "/profile/seller" />
                         <Route element={<BuyerProfile/>} path="/buyer/profile" />
                         <Route element={<Blog/>} path="/blog" />
                         <Route element={<Dashboard/>} path="/dashboard" />
