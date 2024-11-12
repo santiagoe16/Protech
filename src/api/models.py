@@ -101,6 +101,7 @@ class Comprador(db.Model):
     email = db.Column(db.String(120), unique=False, nullable=False)
     clave = db.Column(db.String(80), unique=False, nullable=False)
     telefono = db.Column(db.String(80), unique=False, nullable=False)
+    image = db.Column(db.String(500), unique=False, nullable=True)
 
     carts = db.relationship("Cart", back_populates="comprador", lazy="dynamic")
     addresses = db.relationship('Address', back_populates='comprador', lazy="dynamic")
@@ -113,6 +114,7 @@ class Comprador(db.Model):
             "id": self.id,
             "name": self.name,
             "email": self.email,
+            "image": self.image,
             "telefono": self.telefono
         }
 
@@ -195,8 +197,8 @@ class Address(db.Model):
     
 class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(170), unique=False, nullable=False)
-    image = db.Column(db.String(180), unique=False, nullable=True)
+    title = db.Column(db.String(300), unique=False, nullable=False)
+    image = db.Column(db.String(500), unique=False, nullable=True)
     content = db.Column(db.String(1500), unique=False, nullable=False)
     created_at = db.Column(db.Date, default=date.today, unique=False, nullable=False)
 

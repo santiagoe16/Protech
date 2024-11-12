@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Products, Seller , Comprador,Categoria, ItemCart, Cart, Address
+from api.models import db, User, Products, Seller , Comprador,Categoria, ItemCart, Cart, Address, Article
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
@@ -223,6 +223,7 @@ def add_comprador():
         name=new_comprador_data["name"],
         email=new_comprador_data["email"],
         clave=new_comprador_data["clave"],
+        image=new_comprador_data["image"],
         telefono=new_comprador_data["telefono"]
     )
 
@@ -456,6 +457,7 @@ def update_itemcart(itemcart_id):
 
 #------------------cart----------------------------------------
 @api.route('/cart/<int:cart_id>/generate', methods=['PUT'])
+@jwt_required()
 def generate_cart(cart_id):
 
     cart = Cart.query.get(cart_id)
@@ -679,7 +681,8 @@ def signupBuyer():
         name=new_comprador_data["name"],
         email=new_comprador_data["email"],
         clave=new_comprador_data["clave"],
-        telefono=new_comprador_data["telefono"]
+        telefono=new_comprador_data["telefono"],
+        image=new_comprador_data.get("imagen") 
     )
 
     db.session.add(new_comprador)
@@ -759,6 +762,65 @@ def delete_address(id):
 
     return jsonify({"message": "Address deleted successfully"}), 200
 
+#---------------------Address------------------------------------------------------------------
+
+# Ruta para obtener todos los artículos
+@api.route('/articles', methods=['GET'])
+def get_articles():
+    articles = Article.query.all()
+    return jsonify([article.serialize() for article in articles]), 200
+
+# Ruta para obtener un artículo por su ID
+@api.route('/articles/<int:id>', methods=['GET'])
+def get_article(id):
+    article = Article.query.get_or_404(id)
+    return jsonify(article.serialize()), 200
+
+# Ruta para crear un nuevo artículo
+@api.route('/articles', methods=['POST'])
+def create_article():
+    data = request.get_json()
+    title = data.get('title')
+    image = data.get('image')
+    content = data.get('content')
+
+    if not title or not content:
+        return jsonify({"error": "Title and content are required"}), 400
+
+    new_article = Article(
+        title=title,
+        image=image,
+        content=content 
+    )
+    db.session.add(new_article)
+    db.session.commit()
+
+    return jsonify(new_article.serialize()), 201
+
+# Ruta para actualizar un artículo por su ID
+@api.route('/articles/<int:id>', methods=['PUT'])
+def update_article(id):
+    article = Article.query.get_or_404(id)
+    data = request.get_json()
+
+    article.title = data.get('title', article.title)
+    article.image = data.get('image', article.image)
+    article.content = data.get('content', article.content)
+
+    db.session.commit()
+
+    return jsonify(article.serialize()), 200
+
+# Ruta para eliminar un artículo por su ID
+@api.route('/articles/<int:id>', methods=['DELETE'])
+def delete_article(id):
+    article = Article.query.get_or_404(id)
+
+    db.session.delete(article)
+    db.session.commit()
+
+    return jsonify({"message": "Article deleted"}), 200
+
 #------------LOGIN SELLERS  ----------------------------------
 
 @api.route('/seller/login', methods=['POST'])
@@ -778,7 +840,7 @@ def login():
 
     access_token = create_access_token(identity=seller.id)
     
-    return jsonify(access_token=access_token, seller_id=seller.id), 200
+    return jsonify(access_token=access_token), 200
 
 @api.route('/seller/reg', methods=['POST'])
 def signupSeller():
@@ -989,8 +1051,6 @@ def get_products_by_seller():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-
 @api.route('/api/products/<int:product_id>/update-image', methods=['POST'])
 def update_product_image(product_id):
     data = request.get_json()
@@ -1016,8 +1076,6 @@ def update_product_image(product_id):
         return jsonify({"error": str(e)}), 500
 
     return jsonify({"message": "Product image updated successfully", "product": product.serialize()}), 200
-
-
 
 @api.route('/products/<int:product_id>/image', methods=['PUT'])
 @jwt_required()
@@ -1117,50 +1175,56 @@ def modify_profile_image():
 
     if not seller:
         return jsonify({"error": "Seller not found"}), 404
+##-----------------perfil comprador-----
+
+@api.route('/buyer/profile', methods=['GET'])
+@jwt_required()
+def get_buyer_profile():
+    comprador_id = get_jwt_identity()  
+    comprador = Comprador.query.get(comprador_id)
+    if not comprador:
+        return jsonify({"message": "Comprador no encontrado"}), 404  
+    return jsonify(comprador.serialize()), 200
+
+
+@api.route('/buyer/profile/upload-image', methods=['POST'])
+@jwt_required()
+def upload_profile_image():
+    comprador_id = get_jwt_identity()
+    comprador = Comprador.query.get(comprador_id)
+    if not comprador:
+        return jsonify({"message": "Comprador no encontrado"}), 404
+
+    if 'image' not in request.files:
+        return jsonify({"message": "No se encontró el archivo de imagen"}), 400
+
+    image_file = request.files['image']
+    try:
+
+        upload_result = cloudinary.uploader.upload(image_file, folder="buyer_profile_images")
+        image_url = upload_result["secure_url"]
+
+        comprador.image = image_url
+        db.session.commit()
+
+        return jsonify({"message": "Imagen subida exitosamente", "image": image_url}), 200
+    except Exception as e:
+        return jsonify({"message": "Error al subir la imagen", "error": str(e)}), 500
+
+@api.route('/buyer/profile/image', methods=['PUT'])
+@jwt_required()
+def modify_profile_image():
+    comprador_id = get_jwt_identity()
+    comprador = Comprador.query.get(comprador_id)
+
+    if not comprador:
+        return jsonify({"error": "Comprador no encontrado"}), 404
 
     data = request.get_json()
 
     if 'image' in data:
-        seller.image = data['image']
+        comprador.image = data['image']
         db.session.commit()
-        return jsonify({"message": "Profile image updated successfully", "image": seller.image}), 200
+        return jsonify({"message": "Imagen de perfil actualizada exitosamente", "image": comprador.image}), 200
 
-    return jsonify({"error": "No image URL provided"}), 400
-
-@api.route('/seller/profile/edit', methods=['PUT'])
-@jwt_required()
-def edit_seller_profile():
-    seller_id = get_jwt_identity()
-    seller = Seller.query.get(seller_id)
-    if not seller:
-        return jsonify({"message": "Seller not found"}), 404
-
-    data = request.get_json()
-
-    if 'name' in data:
-        seller.name = data['name']
-    if 'email' in data:
-        seller.email = data['email']
-    if 'phone' in data:
-        seller.phone = data['phone']
-    if 'bank_account' in data:
-        seller.bank_account = data['bank_account']
-
-    db.session.commit()
-
-    return jsonify({"message": "Profile updated successfully", "seller": seller.serialize()}), 200
-
-
-
-
-
-
-
-        
-
-   
-
-
-
- 
-           
+    return jsonify({"error": "No se proporcionó la URL de la imagen"}), 400

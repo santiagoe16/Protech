@@ -1,0 +1,39 @@
+
+.purple{
+    padding: 9px 16px;
+    border: none;
+    background-color: #6366f1;
+    color: white;
+    border-radius: 6px;
+}
+.card-black{
+    background-color: #1E212B;
+    color: white;
+    border-radius: 11px;
+    padding: 55px 77px;
+    
+}
+.card-black h1 p{
+    margin-bottom: 12px;
+}
+.body-card{
+    border-radius: 8px;
+    padding: 26px;
+    background-color: #1E212B;
+    color:white
+}
+.text-gray{
+    color: rgb(255 255 255 / 75%);
+}
+.body-card h5{
+    font-weight: 400;
+}
+.container-icon h5{
+    font-size: 20px;
+    border-radius: 50%;
+    padding: 6px;
+    background: #6366f1;
+}
+.card-icon{
+    margin: 4px;
+}
