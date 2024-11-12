@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "/workspaces/lt34-protech/src/front/styles/dashboard.css";
 import { Cart, CurrencyDollar, People } from 'react-bootstrap-icons';
 
-export const Dashboard = () => {
+export const DashboardProducts = () => {
 	const { store, actions } = useContext(Context);
 	const navigate = useNavigate();
 

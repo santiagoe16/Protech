@@ -50,6 +50,7 @@ export const Navbar = () => {
 							</Link>
 							<button className="btn btn-primary" onClick={() => navigate("/selleraddress")}>Update Address</button>
 							<button className="btn btn-primary" onClick={() => navigate("/product/seller")}>My Products</button>
+							<button className="btn btn-primary" onClick={() => navigate("/dashboard")}>dashboard</button>
 						</>
 					)}
 
