@@ -8,12 +8,11 @@ export const CartView = () => {
     const [cartItems, setCartItems] = useState([]);
     const [cartId, setCartId] = useState(null);
     const [totalPrice,setTotalPrice] = useState(0)
-    const totalPriceRef = useRef(0);  // Usar ref para mantener el total
-    const cartItemsRef = useRef([]);  // Usar ref para almacenar el estado actual de los items del carrito
-    const cartIdRef = useRef(0);  // Usar ref para el cartId
+    const totalPriceRef = useRef(0);  
+    const cartItemsRef = useRef([]);  
+    const cartIdRef = useRef(0);  
     const navigate = useNavigate();
 
-    // Función para obtener los elementos del carrito
     const getCartItems = () => {
         const token = actions.verifyTokenBuyer();
         fetch(process.env.BACKEND_URL + "/api/buyer/cart/products", {
@@ -28,11 +27,11 @@ export const CartView = () => {
                 return response.json();
             })
             .then((data) => {
-                setCartItems(data); // Actualizamos el estado del carrito
-                cartItemsRef.current = data;  // Guardamos en la ref
+                setCartItems(data); 
+                cartItemsRef.current = data;  
                 const total = data.reduce((acc, item) => acc + item.product.price * item.amount, 0);
                 setTotalPrice(total)
-                totalPriceRef.current = total;  // Calculamos el total
+                totalPriceRef.current = total;  
                 if (data.length > 0) {
                     setCartId(data[0].cart_id);
                     cartIdRef.current = parseInt(data[0].cart_id); 
@@ -44,10 +43,9 @@ export const CartView = () => {
     };
 
     useEffect(() => {
-        getCartItems(); // Se obtiene la información del carrito al montar el componente
+        getCartItems(); 
     }, []);
 
-    // Función para eliminar un item del carrito
     const deleteItem = (itemId) => {
         const token = actions.verifyTokenBuyer();
 
@@ -65,7 +63,6 @@ export const CartView = () => {
                 return response.json();
             })
             .then(() => {
-                // Al eliminar el artículo, obtenemos nuevamente los artículos y actualizamos el total
                 getCartItems();
             })
             .catch((error) => {
@@ -73,7 +70,6 @@ export const CartView = () => {
             });
     };
 
-    // Función para actualizar la cantidad de un item
     const updateItemQuantity = (itemId, newAmount) => {
         const token = actions.verifyTokenBuyer();
         if (newAmount === "") return;
@@ -97,7 +93,6 @@ export const CartView = () => {
                 return response.json();
             })
             .then(() => {
-                // Después de actualizar la cantidad, obtener los artículos y actualizar el total
                 getCartItems();
             })
             .catch((error) => {
@@ -105,9 +100,8 @@ export const CartView = () => {
             });
     };
 
-    // Crear la orden de PayPal
     const createOrder = (data, actions) => {
-        const total = totalPriceRef.current; // Tomamos el total actualizado
+        const total = totalPriceRef.current;
 
         if (total === 0 || cartItemsRef.current.length === 0) {
             console.error("No hay productos en el carrito o el total es 0");
@@ -119,14 +113,13 @@ export const CartView = () => {
                 {
                     amount: {
                         currency_code: "USD",
-                        value: total.toFixed(2), // Aseguramos que el total esté con dos decimales
+                        value: total.toFixed(2), 
                     },
                 },
             ],
         });
     };
 
-    // Aprobar la compra
     const onApprove = () => {
         const token = actions.verifyTokenBuyer();
         fetch(process.env.BACKEND_URL + `/api/cart/${cartIdRef.current}/generate`, {
@@ -183,7 +176,7 @@ export const CartView = () => {
                     )}
                 </tbody>
             </table>
-            <h3>Total price: ${totalPrice}</h3>
+            <h3>Total price: ${totalPrice.toFixed(2)}</h3>
 
             <PayPalScriptProvider
                 options={{

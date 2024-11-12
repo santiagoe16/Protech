@@ -27,10 +27,12 @@ import { OrdersPlaced } from "./pages/ordersplaced";
 import { UploadProductImage } from "./pages/productimagen";
 import { SellerAddress } from "./pages/selleraddress";
 import { ProductsSeller } from "./pages/productseller";
+import { BuyerProfile } from "./pages/buyerProfile";
 import { Blog } from "./pages/blog";
 import { Dashboard } from "./pages/dashboard";
 import { DashboardProducts } from "./pages/dashboardProducts";
 
+import { DetailProduct } from "./pages/detailProduct";
 import { BuyerAddress } from "./pages/buyeraddress";
 
 import { Navbar } from "./component/navbar";
@@ -82,11 +84,14 @@ const Layout = () => {
                         <Route element={<BuyerAddress/>} path="/buyeraddress" />
                         <Route element={<SellerAddress/>} path="/selleraddress" />
                         <Route element={<ProductsSeller/>} path="/product/seller" />
+                        <Route element={<BuyerProfile/>} path="/buyer/profile" />
                         <Route element={<Blog/>} path="/blog" />
                         <Route element={<Dashboard/>} path="/dashboard" />
                         <Route element={<DashboardProducts/>} path="/dashboard/products" />
 
                         
+                        <Route element={<DetailProduct/>} path="/detail/:id" />
+
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                 </div>

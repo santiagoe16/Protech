@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
+import { Link } from "react-router-dom";
 
 export const ProductsBuyers = () => {
     const { store, actions } = useContext(Context);
@@ -24,7 +25,7 @@ export const ProductsBuyers = () => {
     const handleMinPriceChange = (e) => {
         setMinPrice(e.target.value);
     };
-    
+
     const handleMaxPriceChange = (e) => {
         setMaxPrice(e.target.value);
     };
@@ -33,28 +34,23 @@ export const ProductsBuyers = () => {
     const filtering = (e) => {
         setFilter(e.target.value);
     };
-    
+
     let results = [];
-if (!filter && minPrice === "" && maxPrice === "") {
-    results = products; 
-} else {
-    results = products.filter((product) => {
-        const matchesName = product.name && product.name.toLowerCase().includes(filter.toLowerCase());
-        const matchesCategory = product.category && product.category.name.toLowerCase().includes(filter.toLowerCase());
-        //esto no funciona si no lo mapeas al momento de mostrarlo
-        const price = product.price;
-        const inPriceRange = 
-            (minPrice === "" || price >= parseFloat(minPrice)) && 
-            (maxPrice === "" || price <= parseFloat(maxPrice));
-        //el return esta usando or
-        return (matchesName || matchesCategory) && inPriceRange;
-    });
-}
-    
-   
-
-
-    
+    if (!filter && minPrice === "" && maxPrice === "") {
+        results = products;
+    } else {
+        results = products.filter((product) => {
+            const matchesName = product.name && product.name.toLowerCase().includes(filter.toLowerCase());
+            const matchesCategory = product.category && product.category.name.toLowerCase().includes(filter.toLowerCase());
+            //esto no funciona si no lo mapeas al momento de mostrarlo
+            const price = product.price;
+            const inPriceRange =
+                (minPrice === "" || price >= parseFloat(minPrice)) &&
+                (maxPrice === "" || price <= parseFloat(maxPrice));
+            //el return esta usando or
+            return (matchesName || matchesCategory) && inPriceRange;
+        });
+    }
 
 
     const getProducts = () => {
@@ -119,10 +115,10 @@ if (!filter && minPrice === "" && maxPrice === "") {
         if (value === "") {
             setAmounts({
                 ...amounts,
-                [productId]: "" 
+                [productId]: ""
             });
         } else {
-            const amountValue = Math.max(1, parseInt(value)); 
+            const amountValue = Math.max(1, parseInt(value));
             setAmounts({
                 ...amounts,
                 [productId]: amountValue
@@ -134,11 +130,11 @@ if (!filter && minPrice === "" && maxPrice === "") {
         <>
             <div>
                 <input value={filter} onChange={filtering} type="text" placeholder="search" className="form-control" ></input>
-                <input value={minPrice} onChange={handleMinPriceChange} type="number" placeholder="Min Price"    />
-                <input value={maxPrice} onChange={handleMaxPriceChange} type="number" placeholder="Max Price"  />
+                <input value={minPrice} onChange={handleMinPriceChange} type="number" placeholder="Min Price" />
+                <input value={maxPrice} onChange={handleMaxPriceChange} type="number" placeholder="Max Price" />
             </div>
-            
-            
+
+
             <div className="container mt-5">
                 <ul className="nav nav-tabs" id="myTab" role="tablist">
                     <li className="nav-item" role="presentation">
@@ -191,12 +187,21 @@ if (!filter && minPrice === "" && maxPrice === "") {
                                                     className="fas fa-eye"
                                                     onClick={() => viewMore(product.id)}
                                                 ></i>
+                                                <Link to={`/detail/${product.id}`}>
+                                                    <button type="button" className="btn btn-outline-primary">Learn more</button>
+                                                </Link>
                                             </td>
                                             <td>{product.name}</td>
                                             <td>{product.description}</td>
                                             <td>{product.price}$</td>
                                             <td>{product.stock}</td>
-                                            <td>{product.image}</td>
+                                            <td>
+                                                <img
+                                                    src={product.image || "https://res.cloudinary.com/dqs1ls601/image/upload/v1731206219/vbxdwt1xqinu1ffd82mm.jpg"}
+                                                    alt={product.name}
+                                                    style={{ width: "100px" }}
+                                                />
+                                            </td>
                                             <td>
                                                 <input
                                                     type="number"
