@@ -860,7 +860,6 @@ def signupSeller():
         phone=new_seller_data["phone"],
         bank_account=new_seller_data["bank_account"],
         password=new_seller_data["password"],
-        image=new_seller_data["https://res.cloudinary.com/dqs1ls601/image/upload/v1731183221/wzm7y5dgtbwqj503dk89.avif"],
         is_active=True)
     
 
