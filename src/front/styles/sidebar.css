@@ -1,61 +1,120 @@
 /* Estilos generales para el sidebar */
 .sidebar {
-    position: fixed; /* Fija el sidebar a la izquierda */
-    top: 0; /* Alineado arriba de la pantalla */
-    left: 0; /* Alineado a la izquierda */
-    height: 100vh; /* Toma toda la altura de la pantalla */
-    width: 250px; /* Ancho del sidebar */
-    background-color: #333; /* Fondo oscuro */
-    color: white; /* Color de texto blanco */
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 280px;
+    background-color: #0B0F19;
+    border-right: 1px solid rgba(204, 204, 204, 0.16);
+    color: white;
     display: flex;
-    flex-direction: column; /* Disposición vertical de los elementos */
-    padding-top: 20px; /* Espacio superior */
-    z-index: 1000; /* Asegura que el sidebar quede encima de otros contenidos */
-  }
-  
-.sidebar h2 {
-    text-align: center; /* Centra el título */
-    margin-bottom: 20px;
-    font-size: 24px;
-    font-weight: bold;
+    flex-direction: column;
+    padding: 10px 16px;
+    z-index: 1000;
+}
+
+.sidebar p {
+    font-size: 12px;
+    padding: 30px 16px 0;
+    margin-bottom: 10px;
+    font-weight: 400;
+}
+
+.sidebar h3 {
+    padding: 0 14px 23px;
 }
 
 /* Lista de navegación del sidebar */
 .sidebar ul {
-    list-style: none; /* Elimina los puntos de la lista */
+    list-style: none;
     padding: 0;
 }
 
 .sidebar ul li {
-    margin: 15px 0; /* Espacio entre los enlaces */
+    margin: 6px 0;
+    border-radius: 8px;
 }
 
-.sidebar ul li a {
-    text-decoration: none; /* Elimina subrayado */
-    color: white; /* Texto blanco */
-    font-size: 18px;
-    padding: 10px 20px;
-    display: block; /* Hace que el enlace ocupe todo el ancho de su contenedor */
-    border-radius: 5px; /* Bordes redondeados */
-    transition: background-color 0.3s ease; /* Animación suave al pasar el ratón */
+.sidebar li a {
+    text-decoration: none;
+    color: white;
+    font-size: 15px;
+    padding: 12px 16px;
+    display: block;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
 }
 
-.sidebar ul li a:hover {
-    background-color: #555; /* Color de fondo cuando se pasa el ratón */
-}
-
-/* Para asegurarte de que el navbar dentro del sidebar esté fijo arriba */
-.sidebar .navbar {
+/* Navbar en el dashboard */
+.sidebar .navbar-dashboard {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    background-color: black; /* El fondo del navbar */
+    background-color: #0B0F19;
     color: white;
-    padding: 10px 20px;
     text-align: center;
 }
 
-.navbar{
-    margin-left: 250px;
+.navbar-dashboard {
+    margin-left: 280px;
+    display: flex !important;
+    width: 90% !important;
+    padding: 16px;
+    border-bottom: 1px solid rgba(204, 204, 204, 0.16);
+}
+
+/* Estilos del menú desplegable */
+.dropdownn-menu {
+    padding: 0;
+    margin: 5px 0 0 10px;
+}
+
+.dropdownn-menu li {
+    margin: 8px 0;
+}
+
+.dropdownn-menu li a {
+    padding: 12px 16px;
+    color: #fff;
+}
+
+.dropdownn-menu li:hover {
+    color: white;
+    background-color: #6366f1;
+    border-radius: 8px;
+}
+
+.drop-icon {
+    margin-left: 110px;
+    transition: transform 0.3s ease;
+    font-size: 19px;
+}
+
+.icon-circle {
+    font-size: 5px;
+    margin-right: 8px;
+    margin-bottom: 4px;
+}
+
+.icon-li {
+    font-size: 16px;
+    margin-bottom: 4px;
+    margin-right: 8px;
+}
+
+/* Estilos de hover y estados activos */
+.sidebar ul li:hover {
+    background-color: rgba(99, 101, 241, 0.158);
+    color: #6366f1;
+}
+
+.active {
+    background-color: #6366f1;
+    box-shadow: 0 0.5rem 1.125rem -0.5rem rgba(99, 102, 241, 0.9);
+    color: white;
+}
+
+.sidebar ul li a:not(.active):hover {
+    color: #6366f1;
 }

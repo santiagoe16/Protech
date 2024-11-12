@@ -456,6 +456,7 @@ def update_itemcart(itemcart_id):
 
 #------------------cart----------------------------------------
 @api.route('/cart/<int:cart_id>/generate', methods=['PUT'])
+@jwt_required()
 def generate_cart(cart_id):
 
     cart = Cart.query.get(cart_id)

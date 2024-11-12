@@ -29,6 +29,7 @@ import { SellerAddress } from "./pages/selleraddress";
 import { ProductsSeller } from "./pages/productseller";
 import { Blog } from "./pages/blog";
 import { Dashboard } from "./pages/dashboard";
+import { DashboardProducts } from "./pages/dashboardProducts";
 
 import { BuyerAddress } from "./pages/buyeraddress";
 
@@ -55,7 +56,7 @@ const Layout = () => {
         <div className="h-100 w-100">
             <ScrollToTop>
                 {showSidebar ? <Sidebar /> : <Navbar />}
-                <div className="h-100" style={{ marginLeft: showSidebar ? "250px" : "", width: showSidebar ? "100%" : "", marginTop: showSidebar ? "50px" : ""}}>
+                <div className="h-100" style={{ marginLeft: showSidebar ? "448px" : "", marginRight: showSidebar ? "167px" : "", marginTop: showSidebar ? "100px" : ""}}>
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
@@ -83,6 +84,8 @@ const Layout = () => {
                         <Route element={<ProductsSeller/>} path="/product/seller" />
                         <Route element={<Blog/>} path="/blog" />
                         <Route element={<Dashboard/>} path="/dashboard" />
+                        <Route element={<DashboardProducts/>} path="/dashboard/products" />
+
                         
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>

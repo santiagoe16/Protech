@@ -38,7 +38,10 @@ export const Navbar = () => {
 						<button className="btn btn-primary" onClick={() => navigate("/seller/login")}>Start selling</button>
 					)}
 					{store.authenticatedSeller == true ? (
-						<button className="btn btn-primary" onClick={() => navigate("/selleraddress")}>update address</button>
+						<>
+							<button className="btn btn-primary" onClick={() => navigate("/selleraddress")}>update address</button>
+							<button className="btn btn-primary" onClick={() => navigate("/dashboard")}>dashboard</button>
+						</>
 					):(<></>)}
 					{store.authenticatedSeller == true ? (
 						<button className="btn btn-primary" onClick={() => navigate("/product/seller")}>My Products</button>
