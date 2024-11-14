@@ -22,7 +22,7 @@ class Products(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
-    description = db.Column(db.String(400), unique=False, nullable=False)
+    description = db.Column(db.String(1000), unique=False, nullable=False)
     price = db.Column(db.Integer, unique=False, nullable=False)
     stock = db.Column(db.Integer, unique=False, nullable=False)
     image = db.Column(db.String(500), unique=False, nullable=False)
@@ -91,7 +91,6 @@ class Seller(db.Model):
             "email": self.email,
             "name": self.name,
             "phone" : self.phone,
-            "bank_account": self.bank_account,
             "image": self.image,
         }
     

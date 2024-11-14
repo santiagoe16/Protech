@@ -92,6 +92,7 @@ def add_product():
     return jsonify({"message": "Product successfully added"}), 201
 
 @api.route('/products/<int:product_id>', methods=['PUT'])
+@jwt_required()
 def update_product(product_id):
     product = Products.query.get(product_id)
     if product is None:

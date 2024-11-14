@@ -14,17 +14,12 @@ export const Sidebar = () => {
 
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-    const toggleDropdown = () => {
-        setIsDropdownOpen(!isDropdownOpen);
-    }
-
     return (
         <>
             <div className="sidebar">
                 <div className="navbar-dashboard">
                     <div className="container d-flex">
                         <div>
-                            <h4 className="mb-0">Navbar</h4>
                         </div> 
                         <div className="ms-auto">
                             <button className="btn btn-primary" onClick={() => navigate("buyer/login")}>Login</button>
@@ -50,7 +45,7 @@ export const Sidebar = () => {
                         </NavLink>
                     </li>
                     <li className="dropdownn-trigger">
-                        <NavLink to="" onClick={toggleDropdown} className={({ isActive }) => (isActive ? "active" : "")}>
+                        <NavLink to="" onClick={()=>setIsDropdownOpen(!isDropdownOpen)} className={({ isActive }) => (isActive ? "active" : "")}>
                             <Bag className="icon-li" /> Orders
                             {isDropdownOpen ? (
                                 <CaretUp className="drop-icon" />
