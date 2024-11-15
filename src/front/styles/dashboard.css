@@ -1,5 +1,5 @@
 
-.purple{
+.purple-button{
     padding: 9px 16px;
     border: none;
     background-color: #6366f1;
@@ -9,24 +9,28 @@
 .card-black{
     background-color: #1E212B;
     color: white;
-    border-radius: 11px;
-    padding: 55px 77px;
+    border-radius: 10px;
     
 }
-.card-black h1 p{
+h1 p{
     margin-bottom: 12px;
 }
+h2{
+    color: white;
+}
+span{
+    font-size: 14px;
+    color: rgba(177, 177, 177, 0.945);
+}
 .body-card{
-    border-radius: 8px;
     padding: 26px;
-    background-color: #1E212B;
-    color:white
 }
 .text-gray{
     color: rgb(255 255 255 / 75%);
 }
-.body-card h5{
-    font-weight: 400;
+h5{
+    font-weight: 500;
+    font-size: 18.5px;
 }
 .container-icon h5{
     font-size: 20px;
@@ -36,4 +40,126 @@
 }
 .card-icon{
     margin: 4px;
+}
+.form-select{
+    color: white;
+    padding: 9px 16px;
+    padding-right: 43px;
+    cursor: pointer;
+    border-color: rgba(255, 255, 255, 0.158);
+    box-shadow: none;
+    background-color: #10141E;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    color: white;
+    border-radius: 9px;
+}
+.form-select:hover {
+    color: white;
+    padding: 9px 16px;
+    padding-right: 43px;
+    cursor: pointer;
+    border-color: rgba(255, 255, 255, 0.356);
+    box-shadow: none;
+    background-color: #10141E;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    color: white;
+    border-radius: 9px;
+}
+.form-select:focus {
+    border-color: rgba(255, 255, 255, 0.356);
+    box-shadow: none;
+}
+.form-select option:hover {
+    background-color: rgb(89 91 181 / 30%);
+}
+.grafic{
+    height: 390px;
+}
+.grafic-2{
+    height: 100%;
+}
+.bg-purple{
+    background-color: rgb(89 91 181 / 30%);
+}
+.table tbody tr:hover {
+    background-color: rgb(89 91 181 / 30%);
+    color: white;
+}
+.table-centered tbody tr:hover td {
+    color: white; 
+}
+.table-centered thead tr th {
+    color: rgba(255, 255, 255, 0.897);
+    padding: 12px 24px;
+    font-weight: 500;
+}
+.table-centered tbody tr td {
+    color: rgba(255, 255, 255, 0.808); 
+    padding: 12px 24px;
+}
+.card-black input{
+    width: 330px;
+    background-color: #10141E;
+    border-color: rgba(255, 255, 255, 0.158);
+    padding: 8px 16px;
+    border-radius: 9px;
+    color: rgba(255, 255, 255, 0.808);
+}
+.card-black input:focus{
+    background-color: #10141E;
+    caret-color: white;
+    border-color: rgba(255, 255, 255, 0.356);
+    box-shadow: none;
+    color: rgba(255, 255, 255, 0.808);
+}
+.footer-table{
+    color: rgba(255, 255, 255, 0.808); 
+}
+.pagination-buttons{
+    padding: 9px 15px;
+    border: none;
+    background-color: #6366f1;
+    color: white;
+    border-radius: 6px;
+}
+.pagination-buttons-notactive{
+    padding: 9px 14px;
+    border: 1px solid rgb(255 255 255 / 34%);
+    background-color: #1E212B;
+    color: white;
+    border-radius: 6px;
+}
+.pagination-buttons-notactive:hover{
+    padding: 9px 14px;
+    border: 1px solid #6366f1;
+    background-color: #6366f1;
+    color: white;
+    border-radius: 6px;
+}
+.dropdown-toggle{
+    caret:unset;
+    color: rgba(255, 255, 255, 0.808); 
+}
+.dropdown-toggle:hover{
+    caret:unset;
+    color: rgba(255, 255, 255, 0.808); 
+}
+.dropdown-toggle::after {
+    display: none;
+}
+.dropdown-menu{
+    font-size: 14px;
+    padding: 8px 8px;
+    background-color: #1b1b1c;
+}
+.dropdown-menu a{
+    padding: 5px 12px;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+}
+.dropdown-item:hover{
+    background-color: rgba(89, 91, 181, 0.384);
+    color: white;
+    border-radius: 7px;
 }

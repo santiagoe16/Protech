@@ -32,6 +32,8 @@ import { BuyerProfile } from "./pages/buyerProfile";
 import { Blog } from "./pages/blog";
 import { Dashboard } from "./pages/dashboard";
 import { DashboardProducts } from "./pages/dashboardProducts";
+import { AddProduct } from "./pages/addproduct";
+import { EditProduct } from "./pages/editproduct";
 
 import { DetailProduct } from "./pages/detailProduct";
 import { BuyerAddress } from "./pages/buyeraddress";
@@ -50,9 +52,9 @@ const Layout = () => {
     
     const location = useLocation();
 
-    const routesSidebar = ["/dashboard", "/dashboard/products"]
+    const routesSidebar = ["/dashboard", "/dashboard/products", "/add-product", "/edit-product"]
 
-    const showSidebar = routesSidebar.includes(location.pathname)
+    const showSidebar =  routesSidebar.some(route => location.pathname.startsWith(route))
 
     if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/>;
 
@@ -91,6 +93,8 @@ const Layout = () => {
                         <Route element={<Blog/>} path="/blog" />
                         <Route element={<Dashboard/>} path="/dashboard" />
                         <Route element={<DashboardProducts/>} path="/dashboard/products" />
+                        <Route element={<AddProduct/>} path="/add-product" />
+                        <Route element={<EditProduct/>} path="/edit-product/:productId" />
 
                         
                         <Route element={<DetailProduct/>} path="/detail/:id" />
