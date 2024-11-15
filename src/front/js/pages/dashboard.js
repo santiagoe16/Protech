@@ -6,16 +6,115 @@ import { Cart, CurrencyDollar, People, CaretDown } from 'react-bootstrap-icons';
 
 export const Dashboard = () => {
 	const { store, actions } = useContext(Context);
+	const [earnings, setEarnings] = useState(0)
+	const [orders, setOrders] = useState(0)
+	const [customers, setCustomers] = useState(0)
+	const [recentOrders, setRecentOrders] = useState([])
 	const navigate = useNavigate();
 
-	const getCartItems = () => {
-		const token = actions.verifyTokenBuyer();
+	const getMonthlyRevenue = () => {
+		const token = actions.verifyTokenSeller();
 
-		
+        fetch(process.env.BACKEND_URL + "/api/sales/revenue", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Error deleting item: " + response.statusText);
+                }
+                return response.json();
+            })
+            .then((data) => {
+				setEarnings(data[data.length - 1].total_revenue)
+            })
+            .catch((error) => {
+                console.error("Error removing item from cart:", error);
+            });
 	};
 
+	const getMonthlyOrders = () => {
+		const token = actions.verifyTokenSeller();
+
+        fetch(process.env.BACKEND_URL + "/api/orders/count", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Error deleting item: " + response.statusText);
+                }
+                return response.json();
+            })
+            .then((data) => {
+				setOrders(data.orders_count)
+            })
+            .catch((error) => {
+                console.error("Error removing item from cart:", error);
+            });
+	};
+
+	const getMonthlyCustomers = () => {
+		const token = actions.verifyTokenSeller();
+
+        fetch(process.env.BACKEND_URL + "/api/customers/count", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Error deleting item: " + response.statusText);
+                }
+                return response.json();
+            })
+            .then((data) => {
+				setCustomers(data.customers_count)
+            })
+            .catch((error) => {
+                console.error("Error removing item from cart:", error);
+            });
+	};
+
+	const getRecentOrders = () => {
+		const token = actions.verifyTokenSeller();
+
+        fetch(process.env.BACKEND_URL + "/api/orders/recent", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Error deleting item: " + response.statusText);
+                }
+                return response.json();
+            })
+            .then((data) => {
+				setRecentOrders(data)
+				console.log(data);
+				
+            })
+            .catch((error) => {
+                console.error("Error removing item from cart:", error);
+            });
+	};
+	
 	useEffect(() => {
-		getCartItems();
+		getMonthlyRevenue();
+		getMonthlyOrders();
+		getMonthlyCustomers();
+		getRecentOrders();
 	}, []);
 
 	return (
@@ -43,7 +142,7 @@ export const Dashboard = () => {
 							</div>
 						</div>
 						<div>
-							<h3 className="mb-2">$93,438.78</h3>
+							<h3 className="mb-2">${earnings}</h3>
 							<span className="text-gray">Monthly revenue</span>
 						</div>
 					</div>
@@ -59,8 +158,8 @@ export const Dashboard = () => {
 							</div>
 						</div>
 						<div>
-							<h3 className="mb-2">$93,438.78</h3>
-							<span className="text-gray">Monthly revenue</span>
+							<h3 className="mb-2">{orders}</h3>
+							<span className="text-gray">Monthly orders</span>
 						</div>
 					</div>
 				</div>
@@ -75,8 +174,8 @@ export const Dashboard = () => {
 							</div>
 						</div>
 						<div>
-							<h3 className="mb-2">$93,438.78</h3>
-							<span className="text-gray">Monthly revenue</span>
+							<h3 className="mb-2">{customers}</h3>
+							<span className="text-gray">Monthly customers</span>
 						</div>
 					</div>
 				</div>
@@ -136,50 +235,26 @@ export const Dashboard = () => {
 							<table className="table-centered text-nowrap  table table-borderless table-hover">
 								<thead>
 									<tr className="bg-purple">
-										<th>Order Number</th>
 										<th>Product Name</th>
 										<th>Order Date</th>
 										<th>Price</th>
-										<th>Status</th>
+										<th>Stock</th>
+										<th>Amount</th>
 									</tr>
 								</thead>
-								<tbody>
-									<tr>
-										<td>#FC0005</td>
-										<td>Haldiram's Sev Bhujia</td>
-										<td>28 March 2023</td>
-										<td>$18.00</td>
-										<td>Shipped</td>
-									</tr>
-									<tr>
-										<td>#FC0004</td>
-										<td>NutriChoice Digestive</td>
-										<td>24 March 2023</td>
-										<td>$24.00</td>
-										<td>Pending</td>
-									</tr>
-									<tr>
-										<td>#FC0003</td>
-										<td>Onion Flavour Potato</td>
-										<td>8 Feb 2023</td>
-										<td>$9.00</td>
-										<td>Cancel</td>
-									</tr>
-									<tr>
-										<td>#FC0002</td>
-										<td>Blueberry Greek Yogurt</td>
-										<td>20 Jan 2023</td>
-										<td>$12.00</td>
-										<td>Pending</td>
-									</tr>
-									<tr>
-										<td>#FC0001</td>
-										<td>Slurrp Millet Chocolate</td>
-										<td>14 Jan 2023</td>
-										<td>$8.00</td>
-										<td>Processing</td>
-									</tr>
-								</tbody>
+									<tbody>
+										{recentOrders.map((order) =>
+											order.items.map((item, index) => (
+												<tr key={index}>
+													<td>{item.product_name}</td>
+													<td>{order.created_at}</td>
+													<td>${item.price.toFixed(2)}</td>
+													<td>{item.stock}</td>
+													<td>{item.amount}</td>
+												</tr>
+											))
+										)}
+									</tbody>
 							</table>
 						</div>
 					</div>
