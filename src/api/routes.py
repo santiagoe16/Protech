@@ -60,6 +60,7 @@ def get_product(product_id):
 def add_product():
     new_product_data = request.get_json()
     seller_id = get_jwt_identity()
+
     print (seller_id)
     if not new_product_data:
         return jsonify({"error": "No data provided for the new product."}), 400
@@ -139,10 +140,58 @@ def remove_product(product_id):
     db.session.commit()
     return jsonify({"message": "Product successfully removed"}), 200
 
+@api.route('/seller/top-products', methods=['GET'])
+@jwt_required()
+def get_top_seller_products():
+    seller_id = get_jwt_identity()
+
+    # Obtener todos los productos de un vendedor específico
+    products = Products.query.filter_by(seller_id=seller_id).all()
+
+    # Diccionario para almacenar la cantidad vendida por producto
+    product_sales = {}
+
+    for product in products:
+        # Obtener todos los items que correspondan a este producto
+        items_sold = ItemCart.query.filter_by(product_id=product.id).all()
+
+        # Contabilizar el total vendido de este producto
+        total_sold = sum(item.amount for item in items_sold)
+
+        product_sales[product] = total_sold
+
+    # Ordenar los productos por cantidad vendida en orden descendente
+    top_products = sorted(product_sales.items(), key=lambda x: x[1], reverse=True)[:4]
+
+    # Serializar la información para devolverla como JSON
+    top_products_data = [
+        {
+            "product_name": product.name,
+            "total_sold": total_sold
+        }
+        for product, total_sold in top_products
+    ]
+
+    return jsonify(top_products_data), 200
+
 @api.route('/categorias', methods=['GET'])
+@jwt_required()
 def get_categorias():
-    categorias = Categoria.query.all()  
-    return jsonify([categoria.serialize() for categoria in categorias]), 200
+    # Obtener todas las categorías
+    categorias = Categoria.query.all()
+
+    # Crear la respuesta con una consulta por categoría
+    result = []
+    for categoria in categorias:
+        product_count = Products.query.filter_by(category_id=categoria.id).count()  # Contar productos
+        result.append({
+            "id": categoria.id,
+            "name": categoria.name,
+            "product_count": product_count
+        })
+
+    return jsonify(result), 200
+
 
 @api.route('/categorias/<int:categoria_id>', methods=['GET'])
 def get_categoria(categoria_id):
@@ -287,6 +336,17 @@ def get_seller(seller_id):
         return jsonify({"msg": "Vendedor no encontrado"}), 404
     return jsonify(seller.serialize()), 200
 
+@api.route('/seller/info', methods=['GET'])
+@jwt_required()
+def get_seller_info():
+    seller_id = get_jwt_identity()
+    seller = Seller.query.get(seller_id)
+
+    if not seller:
+        return jsonify({"msg": "Vendedor no encontrado"}), 404
+    
+    return jsonify(seller.serialize()), 200
+
 
 @api.route('/seller/signup', methods=['POST'])
 def signup():
@@ -429,26 +489,34 @@ def add_itemcart():
     product = Products.query.get(new_item_cart["product_id"])
     if not product:
         return jsonify({"error": "The product with the given ID does not exist."}), 404
-    
-    item_exist = ItemCart.query.filter_by(cart_id = cart.id, product_id = product.id).first()
+
+    existing_item = ItemCart.query.filter_by(cart_id=cart.id).first()
+
+    if existing_item:
+        existing_product = Products.query.get(existing_item.product_id)
+        if existing_product.seller_id != product.seller_id:
+            return jsonify({
+                "error": "You can only add products from the same seller to the cart."
+            }), 400
+
+    item_exist = ItemCart.query.filter_by(cart_id=cart.id, product_id=product.id).first()
 
     if item_exist:
         item_exist.amount += new_item_cart["amount"]
         cart.total_price += product.price * new_item_cart["amount"]
-
     else:
         new_item = ItemCart(
             amount=new_item_cart["amount"],
             product_id=new_item_cart["product_id"],
             cart_id=cart.id
         )
-
         cart.total_price += product.price * new_item_cart["amount"]
-
         db.session.add(new_item)
+
     db.session.commit()
 
     return jsonify({"message": "Product successfully added to cart", "cart_total": cart.total_price}), 201
+
 
 @api.route('/itemscarts/<int:itemcart_id>', methods=['DELETE'])
 def remove_itemcart(itemcart_id):
@@ -1025,6 +1093,40 @@ def get_orders_by_seller():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500  
+
+@api.route('/seller/orders', methods=['GET'])
+@jwt_required()
+def get_seller_orders():
+    seller_id = get_jwt_identity()  # Obtener el ID del vendedor desde el token JWT
+
+    # Obtener todos los carritos en estado 'generated' que contienen productos del vendedor autenticado
+    orders = Cart.query.join(ItemCart).join(Products).filter(
+        Cart.state == 'generated',
+        Products.seller_id == seller_id
+    ).all()
+
+    if not orders:
+        return jsonify({"error": "No orders found for this seller."}), 404
+
+    # Serializar y devolver los pedidos del vendedor
+    serialized_orders = [
+        {
+            "cart_id": order.id,
+            "state": order.state,
+            "created_at": order.created_at.strftime('%Y-%m-%d'),
+            "total_price": order.total_price,
+            "comprador": order.comprador.serialize(),
+            "items": [
+                {
+                    "item_id": item.id,
+                    "amount": item.amount,
+                    "product": item.product.serialize()
+                } for item in order.items_cart if item.product.seller_id == seller_id
+            ]
+        } for order in orders
+    ]
+
+    return jsonify(serialized_orders), 200
     
 @api.route('/orders/count', methods=['GET'])
 @jwt_required()

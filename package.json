@@ -77,10 +77,13 @@
 		"@paypal/react-paypal-js": "^8.7.0",
 		"@react-google-maps/api": "^2.20.3",
 		"@strapi/provider-upload-cloudinary": "^5.2.0",
+		"chart.js": "^4.4.6",
+		"chartjs-plugin-datalabels": "^2.2.0",
 		"cloudinary": "^2.5.1",
 		"prop-types": "^15.6.1",
 		"react": "^16.8.4",
 		"react-bootstrap-icons": "^1.11.4",
+		"react-chartjs-2": "^5.2.0",
 		"react-dom": "^16.8.4",
 		"react-polyfills": "0.0.1",
 		"react-router-dom": "^6.3.0"

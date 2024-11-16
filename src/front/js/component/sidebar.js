@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate, NavLink } from "react-router-dom";
 import { Link } from "react-router-dom";
+import githublogo from "../../img/rigo-baby.jpg";
 import { Bag, House, Cart, ListTask, CaretDown, CaretUp, CircleFill } from 'react-bootstrap-icons';
 import "/workspaces/lt34-protech/src/front/styles/sidebar.css"
 
@@ -10,9 +11,12 @@ export const Sidebar = () => {
     const [cartItems, setCartItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [cartId, setCartId] = useState(null);
+    const [infoProfile, setInfoProfile] = useState({});
     const navigate = useNavigate();
-
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+    const cloudName = "dqs1ls601";
+    const presetName = "Protech";
 
     const logOut = () => {
 		localStorage.removeItem("jwt-token-seller");
@@ -22,6 +26,34 @@ export const Sidebar = () => {
 		navigate("/buyer/login");
 	};
 
+    const getProfileImage = () => {
+		const token = actions.verifyTokenSeller();
+
+        fetch(process.env.BACKEND_URL + "/api/seller/info", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Error deleting item: " + response.statusText);
+                }
+                return response.json();
+            })
+            .then((data) => {
+				setInfoProfile(data)
+                console.log(infoProfile)
+            })
+            .catch((error) => {
+                console.error("Error removing item from cart:", error);
+            });
+	};
+
+    useEffect(()=>{
+        getProfileImage();
+    },[])
     return (
         <>
             <div className="sidebar">
@@ -30,15 +62,19 @@ export const Sidebar = () => {
                         <div>
                         </div> 
                         <div className="ms-auto nav-item">
-                            <div className="nav-link dropdown-toggle"  role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="/workspaces/lt34-protech/public/github_logo_white_background.jpg" alt="" className="bg-light avatar avatar-md rounded-circle"/>
-
+                            <div className="dropdown-toggle "  role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src={infoProfile.image} alt="" className="rounded-circle avatar cover"/>
                             </div>
                             <ul className="dropdown-menu dropdown-menu-end p-2">
+                                <div className="py-1 px-2 mb-2">
+                                    <span className="name">{infoProfile.name}</span>
+                                    <small>{infoProfile.email}</small>
+                                </div>
+                                <hr className="dropdown-divider"/>
                                 <li><NavLink to="/productsbuyers" className="item-dropdown" >Home</NavLink></li>
                                 <li><NavLink to="/profile/seller" className="item-dropdown" >Profile</NavLink></li>
                                 <hr className="dropdown-divider"/>
-                                <li><a onClick={()=>logOut} className="item-dropdown log-out" >Log Out</a></li>
+                                <li><a onClick={logOut} className="item-dropdown log-out" >Log Out</a></li>
                             </ul>
                         </div>
                     </div>
@@ -57,23 +93,23 @@ export const Sidebar = () => {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/buyeraddress/categories" className={ ({ isActive }) => (isActive ? "active sidebar-item" : "sidebar-item")}>
+                        <NavLink to="/dashboard/categories" className={ ({ isActive }) => (isActive ? "active sidebar-item" : "sidebar-item")}>
                             <ListTask className="icon-li" /> Categories
                         </NavLink>
                     </li>
                     <li className="dropdownn-trigger">
-                        <NavLink to="" onClick={()=>setIsDropdownOpen(!isDropdownOpen)} className={({ isActive }) => (isActive ? "active sidebar-item" : "sidebar-item")}>
+                        <a  onClick={()=>setIsDropdownOpen(!isDropdownOpen)} className={  isDropdownOpen ? "active sidebar-item" : "sidebar-item"}>
                             <Bag className="icon-li" /> Orders
                             {isDropdownOpen ? (
                                 <CaretUp className="drop-icon" />
                             ) : (
                                 <CaretDown className="drop-icon" />
                             )}
-                        </NavLink>
+                        </a>
                         {isDropdownOpen && (
                             <ul className="dropdownn-menu">
                                 <li>
-                                    <NavLink to="/orders/seller" className={({ isActive }) => (isActive ? "active sidebar-item" : "sidebar-item")}>
+                                    <NavLink to="/dashboard/order-list" className={({ isActive }) => (isActive ? "active sidebar-item" : "sidebar-item")}>
                                         <CircleFill className="icon-circle" /> Pending Orders
                                     </NavLink>
                                 </li>

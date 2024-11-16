@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "/workspaces/lt34-protech/src/front/styles/dashboard.css";
 import { ThreeDotsVertical, Trash, PencilSquare, Newspaper } from 'react-bootstrap-icons';
 
-export const DashboardProducts = () => {
+export const OrderList = () => {
 	const { store, actions } = useContext(Context);
 	const navigate = useNavigate();
 	const [products, setProducts] = useState([])

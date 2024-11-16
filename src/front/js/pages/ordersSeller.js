@@ -10,11 +10,6 @@ export const Orders = () => {
 
     const getOrders = () => {
         const token = actions.verifyTokenSeller(); 
-        if (!token) {
-            navigate('/login');
-            return;
-        }
-
         const myHeaders = new Headers();
         myHeaders.append("Authorization", `Bearer ${token}`); 
 
@@ -24,7 +19,7 @@ export const Orders = () => {
             redirect: "follow"
         };
 
-        fetch(`${process.env.BACKEND_URL}/api/carts/seller`, requestOptions)
+        fetch(`${process.env.BACKEND_URL}/api/seller/orders`, requestOptions)
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Failed to fetch orders");
@@ -72,7 +67,6 @@ export const Orders = () => {
         .catch(error => console.error("Error updating order status:", error));
     };
 
- 
     useEffect(() => {
         const token = actions.verifyTokenSeller();
         if (!token) {
@@ -81,6 +75,7 @@ export const Orders = () => {
             getOrders();
         }
     }, []);
+
     return (
         <div className="container mt-5">
             <h2>Orders</h2>
@@ -90,42 +85,53 @@ export const Orders = () => {
                 <table className="table table-striped">
                     <thead>
                         <tr>
-                            <th>ID Carrito</th>
-                            <th>Producto</th>
-                            <th>Cantidad</th>
-                            <th>Estatus</th>
+                            <th>ID de Orden</th>
+                            <th>Comprador</th>
+                            <th>Fecha de Creación</th>
+                            <th>Total</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {orders.map((order) =>
-                            order.items_cart.map((item) => (
-                                <tr key={`${order.id}-${item.product.id}`}>
-                                    <td>{order.id}</td>
-                                    <td>{item.product.name}</td>
-                                    <td>{item.amount}</td>
-                                    <td>{order.state}</td>
+                        {orders.map((order) => (
+                            <React.Fragment key={order.cart_id}>
+                                <tr>
+                                    <td>{order.cart_id}</td>
+                                    <td>{order.comprador.name}</td>
+                                    <td>{order.created_at}</td>
+                                    <td>${order.total_price}</td>
                                     <td>
                                         {order.state === "generated" && (
                                             <button
                                                 className="btn btn-warning"
-                                                onClick={() => changeStatus(order.id, "sent")}
+                                                onClick={() => changeStatus(order.cart_id, "sent")}
                                             >
-                                                Mark as sent
+                                                Marcar como enviado
                                             </button>
                                         )}
                                         {order.state === "sent" && (
                                             <button
                                                 className="btn btn-success"
-                                                onClick={() => changeStatus(order.id, "completed")}
+                                                onClick={() => changeStatus(order.cart_id, "completed")}
                                             >
-                                                Mark as completed
+                                                Marcar como completado
                                             </button>
                                         )}
                                     </td>
                                 </tr>
-                            ))
-                        )}
+                                {/* Mostrar productos de cada orden */}
+                                {order.items.map((item) => (
+                                    <tr key={`${order.cart_id}-${item.product.id}`}>
+                                        <td colSpan="2">
+                                            <strong>Producto:</strong> {item.product.name}
+                                        </td>
+                                        <td colSpan="2">
+                                            <strong>Cantidad:</strong> {item.amount}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </React.Fragment>
+                        ))}
                     </tbody>
                 </table>
             )}

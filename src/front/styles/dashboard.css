@@ -74,9 +74,10 @@ h5{
 }
 .grafic{
     height: 390px;
+    width: 100%;
 }
 .grafic-2{
-    height: 100%;
+    height: 390px;
 }
 .bg-purple{
     background-color: rgb(89 91 181 / 30%);
