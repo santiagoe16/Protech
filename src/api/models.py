@@ -114,7 +114,8 @@ class Comprador(db.Model):
             "name": self.name,
             "email": self.email,
             "image": self.image,
-            "telefono": self.telefono
+            "telefono": self.telefono,
+            "address": [address.serialize() for address in self.addresses]
         }
 
 class ItemCart(db.Model):
@@ -159,8 +160,8 @@ class Cart(db.Model):
             "state": self.state,
             "created_at": self.created_at.strftime('%Y-%m-%d'),
             "total_price": self.total_price,
-            "comprador_id": self.comprador_id,
-            "items_cart": [item.serialize() for item in self.items_cart]
+            "comprador": self.comprador.serialize(),
+            "items": [item.serialize() for item in self.items_cart]
         }
     
 class Address(db.Model):

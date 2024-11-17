@@ -124,7 +124,7 @@ export const Dashboard = () => {
 					<div className="card-black">
 						<div style={{padding: "55px 77px"}}>
 							<h1>Welcome to the dashboard</h1>
-							<p>Here you can see all about yours products</p>
+							<p style={{fontSize: "16px", marginBottom: "15px"}}>Here you can see all about yours products</p>
 							<button className="purple-button" onClick={()=>navigate("/add-product")}>Create product</button>
 						</div>
 					</div>

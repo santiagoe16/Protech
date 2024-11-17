@@ -659,7 +659,7 @@ def create_cart():
     if Comprador.query.get(comprador_id) is None:
         return jsonify({"message": "Comprador not found"}), 404
 
-    valid_states = {"open", "generated", "sent", "completed"}
+    valid_states = {"open", "generated", "sent", "completed", "cancel"}
     if state not in valid_states:
         return jsonify({"error": f"Invalid state. Allowed values are: {', '.join(valid_states)}"}), 400
 
@@ -1103,7 +1103,7 @@ def get_seller_orders():
     orders = Cart.query.join(ItemCart).join(Products).filter(
         Cart.state == 'generated',
         Products.seller_id == seller_id
-    ).all()
+    ).order_by(Cart.created_at.asc()).all()
 
     if not orders:
         return jsonify({"error": "No orders found for this seller."}), 404
@@ -1127,22 +1127,50 @@ def get_seller_orders():
     ]
 
     return jsonify(serialized_orders), 200
-    
+
+@api.route('/seller/last-order', methods=['GET'])
+@jwt_required()
+def get_last_order():
+    seller_id = get_jwt_identity() 
+
+    order = Cart.query.join(ItemCart).join(Products).filter(
+        Cart.state == 'generated',
+        Products.seller_id == seller_id
+    ).order_by(Cart.id.desc()).first()
+
+    if not order:
+        return jsonify({"error": "No orders found."}), 404
+
+    serialized_order = {
+        "id": order.id,
+        "state": order.state,
+        "created_at": order.created_at.strftime('%Y-%m-%d'),
+        "total_price": order.total_price,
+        "comprador": order.comprador.serialize(),
+        "items": [
+            {
+                "item_id": item.id,
+                "amount": item.amount,
+                "product": item.product.serialize()
+            } for item in order.items_cart if item.product.seller_id == seller_id
+        ]
+    }
+
+    return jsonify(serialized_order), 200
+
 @api.route('/orders/count', methods=['GET'])
 @jwt_required()
 def get_orders_count():
-    seller_id = get_jwt_identity()  # Obtiene la ID del vendedor desde el JWT
-    current_year = datetime.now().year  # Año actual
-    current_month = datetime.now().month  # Mes actual
+    seller_id = get_jwt_identity() 
+    current_year = datetime.now().year  
+    current_month = datetime.now().month 
 
-    # Obtener los carritos que fueron creados en el mes y año actuales
     carts = Cart.query.join(ItemCart).join(Products).filter(
         Products.seller_id == seller_id, 
-        db.extract('year', Cart.created_at) == current_year,  # Filtra por año
-        db.extract('month', Cart.created_at) == current_month  # Filtra por mes
+        db.extract('year', Cart.created_at) == current_year,  
+        db.extract('month', Cart.created_at) == current_month  
     ).all()
 
-    # Contar los carritos (pedidos)
     orders_count = len(carts)
 
     return jsonify({
@@ -1154,21 +1182,18 @@ def get_orders_count():
 @api.route('/customers/count', methods=['GET'])
 @jwt_required()
 def get_customers_count():
-    seller_id = get_jwt_identity()  # Obtiene la ID del vendedor desde el JWT
-    current_year = datetime.now().year  # Año actual
-    current_month = datetime.now().month  # Mes actual
+    seller_id = get_jwt_identity()  
+    current_year = datetime.now().year
+    current_month = datetime.now().month 
 
-    # Obtener los carritos de los productos que pertenecen a este vendedor (seller_id)
     carts = Cart.query.join(ItemCart).join(Products).filter(
-        Products.seller_id == seller_id,  # Filtra por seller_id en Product
-        db.extract('year', Cart.created_at) == current_year,  # Filtra por año
-        db.extract('month', Cart.created_at) == current_month  # Filtra por mes
+        Products.seller_id == seller_id, 
+        db.extract('year', Cart.created_at) == current_year,  
+        db.extract('month', Cart.created_at) == current_month  
     ).all()
 
-    # Obtener los clientes (buyers) únicos que realizaron compras en ese mes
     customers = set(cart.comprador_id for cart in carts)
 
-    # Contar la cantidad de clientes únicos
     customers_count = len(customers)
 
     return jsonify({
@@ -1180,37 +1205,29 @@ def get_customers_count():
 @api.route('/sales/revenue', methods=['GET'])
 @jwt_required()
 def get_monthly_revenue_by_seller():
-    # Obtener el ID del vendedor
     seller_id = get_jwt_identity()
 
-    # Crear un diccionario para almacenar los ingresos por mes y año
     revenue_by_month = {}
 
-    # Obtener todos los carritos en los que este vendedor haya vendido productos
     carts = Cart.query.all()
 
     for cart in carts:
-        # Filtrar los items del carrito que pertenecen a este vendedor
+       
         for item in cart.items_cart:
             if item.product.seller_id == seller_id:
-                # Calcular el ingreso de este producto en el carrito
+                # 
                 total_item_revenue = item.amount * item.product.price
 
-                # Obtener el año y mes de la fecha de la orden
                 year = cart.created_at.year
                 month = cart.created_at.month
 
-                # Crear la clave (año, mes)
                 key = (year, month)
 
-                # Si no existe la clave, inicializar el valor
                 if key not in revenue_by_month:
                     revenue_by_month[key] = 0
 
-                # Sumar el ingreso de este item al total del mes/año
                 revenue_by_month[key] += total_item_revenue
 
-    # Convertir el diccionario en una lista con formato JSON
     revenue_data = [
         {
             'year': year,
@@ -1220,7 +1237,6 @@ def get_monthly_revenue_by_seller():
         for (year, month), total_revenue in revenue_by_month.items()
     ]
 
-    # Retornar los ingresos mensuales
     return jsonify(revenue_data), 200
     
 @api.route('/api/carts/<int:cart_id>', methods=["PUT"])

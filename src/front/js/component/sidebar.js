@@ -97,8 +97,8 @@ export const Sidebar = () => {
                             <ListTask className="icon-li" /> Categories
                         </NavLink>
                     </li>
-                    <li className="dropdownn-trigger">
-                        <a  onClick={()=>setIsDropdownOpen(!isDropdownOpen)} className={  isDropdownOpen ? "active sidebar-item" : "sidebar-item"}>
+                    <li className="dropdownn-trigger not-hover">
+                        <a  onClick={()=>setIsDropdownOpen(!isDropdownOpen)} className={"sidebar-item hover"}>
                             <Bag className="icon-li" /> Orders
                             {isDropdownOpen ? (
                                 <CaretUp className="drop-icon" />
@@ -110,12 +110,12 @@ export const Sidebar = () => {
                             <ul className="dropdownn-menu">
                                 <li>
                                     <NavLink to="/dashboard/order-list" className={({ isActive }) => (isActive ? "active sidebar-item" : "sidebar-item")}>
-                                        <CircleFill className="icon-circle" /> Pending Orders
+                                        <CircleFill className="icon-circle" /> List
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <NavLink to="" className={({ isActive }) => (isActive ? "active sidebar-item" : "sidebar-item")}>
-                                        <CircleFill className="icon-circle" /> Completed Orders
+                                    <NavLink to="/dashboard/order-single" className={({ isActive }) => (isActive ? "active sidebar-item" : "sidebar-item")}>
+                                        <CircleFill className="icon-circle" /> Single
                                     </NavLink>
                                 </li>
                             </ul>

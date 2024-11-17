@@ -153,3 +153,9 @@ small{
     padding: 0px 3px ;
     font-size: 13px;
 }
+.not-hover:hover{
+    background-color:#0B0F19 !important;
+}
+.hover:hover{
+    background-color: rgba(99, 101, 241, 0.158);
+}

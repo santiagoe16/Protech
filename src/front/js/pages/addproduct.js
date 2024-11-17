@@ -21,12 +21,6 @@ export const AddProduct = () => {
 	const getCategories = () => {
 		const token = actions.verifyTokenSeller();
 
-		if (!token) {
-		console.error("No valid token found. User might need to log in.");
-		navigate("/login");
-		return;
-		}
-
 		fetch(`${process.env.BACKEND_URL}/api/categorias`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -139,7 +133,7 @@ export const AddProduct = () => {
 								<div className="col-6">
 									<label htmlFor="category">Product category</label>
 									<select value={categoryId || ""} onChange={(e) => setCategoryId(Number(e.target.value))} className="form-select" id="category">
-										<option value="" disabled>Select Category</option> {/* Opción no seleccionable */}
+										<option value="" disabled>Select Category</option> 
 										{categories.length > 0 ? (
 											categories.map((category) => (
 											<option key={category.id} value={category.id}>{category.name}</option>

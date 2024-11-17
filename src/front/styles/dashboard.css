@@ -4,7 +4,7 @@
     border: none;
     background-color: #6366f1;
     color: white;
-    border-radius: 6px;
+    border-radius: 7px;
 }
 .card-black{
     background-color: #1E212B;
@@ -46,24 +46,24 @@ h5{
     padding: 9px 16px;
     padding-right: 43px;
     cursor: pointer;
-    border-color: rgba(255, 255, 255, 0.158);
+    border-color: rgba(255, 255, 255, 0.233);
     box-shadow: none;
     background-color: #10141E;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
     color: white;
-    border-radius: 9px;
+    border-radius: 7px;
 }
 .form-select:hover {
     color: white;
     padding: 9px 16px;
     padding-right: 43px;
     cursor: pointer;
-    border-color: rgba(255, 255, 255, 0.356);
+    border-color: rgba(255, 255, 255, 0.349);
     box-shadow: none;
     background-color: #10141E;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
     color: white;
-    border-radius: 9px;
+    border-radius: 7px;
 }
 .form-select:focus {
     border-color: rgba(255, 255, 255, 0.356);
@@ -163,4 +163,21 @@ h5{
     background-color: rgba(89, 91, 181, 0.384);
     color: white;
     border-radius: 7px;
+}
+p{
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+h6{
+    font-weight: 400;
+}
+.status{
+    background-color: #6366f1;
+    padding: 3px 12px 4px;
+    border-radius: 16px;
+    color: white;
+}
+.order-single td{
+    border-top: 1px solid rgba(255, 255, 255, 0.192);
+    padding: 20px 24px !important; 
 }
