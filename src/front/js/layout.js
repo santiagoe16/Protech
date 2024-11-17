@@ -3,6 +3,9 @@ import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
+import { Navbar } from "./component/navbar";
+import { Footer } from "./component/footer";
+import { Sidebar } from "./component/sidebar";
 import { Home } from "./pages/home";
 import { Demo } from "./pages/demo";
 import { Single } from "./pages/single";
@@ -34,13 +37,15 @@ import { Dashboard } from "./pages/dashboard";
 import { DashboardProducts } from "./pages/dashboardProducts";
 import { AddProduct } from "./pages/addproduct";
 import { EditProduct } from "./pages/editproduct";
-
+import { Categories } from "./pages/categories";
+import { AddCategory } from "./pages/addcategory";
+import { EditCategory } from "./pages/editcategory";
+import { OrderList } from "./pages/orderlist";
+import { OrderSingle } from "./pages/ordersingle";
 import { DetailProduct } from "./pages/detailProduct";
 import { BuyerAddress } from "./pages/buyeraddress";
 
-import { Navbar } from "./component/navbar";
-import { Footer } from "./component/footer";
-import { Sidebar } from "./component/sidebar";
+
 
 
 
@@ -52,7 +57,8 @@ const Layout = () => {
     
     const location = useLocation();
 
-    const routesSidebar = ["/dashboard", "/dashboard/products", "/add-product", "/edit-product"]
+    const routesSidebar = ["/dashboard", "/dashboard/products", "/add-product", "/edit-product", "/dashboard/categories", "/add-category",
+        "/edit-category", "/dashboard/order-list", "/dashboard/order-single"]
 
     const showSidebar =  routesSidebar.some(route => location.pathname.startsWith(route))
 
@@ -95,6 +101,12 @@ const Layout = () => {
                         <Route element={<DashboardProducts/>} path="/dashboard/products" />
                         <Route element={<AddProduct/>} path="/add-product" />
                         <Route element={<EditProduct/>} path="/edit-product/:productId" />
+                        <Route element={<Categories/>} path="/dashboard/categories" />
+                        <Route element={<AddCategory/>} path="/add-category" />
+                        <Route element={<EditCategory/>} path="/edit-category/:categoryId" />
+                        <Route element={<OrderList/>} path="/dashboard/order-list" />
+                        <Route element={<OrderSingle/>} path="/dashboard/order-single/:cartId" />
+                        <Route element={<OrderSingle/>} path="/dashboard/order-single" />
 
                         
                         <Route element={<DetailProduct/>} path="/detail/:id" />

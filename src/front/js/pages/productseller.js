@@ -66,10 +66,27 @@ export const ProductsSeller = () => {
   };
 
   const getCategories = () => {
-    fetch(`${process.env.BACKEND_URL}/api/categorias`)
-      .then((response) => response.json())
-      .then((data) => setCategories(data))
-      .catch((error) => console.error("Error fetching categories:", error));
+    const token = actions.verifyTokenSeller();
+    
+    fetch(`${process.env.BACKEND_URL}/api/categorias`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		})
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error("Error fetching products: " + response.statusText);
+				}
+				return response.json();
+			})
+			.then((data) => {
+				setCategories(data)
+                console.log(categories);
+                
+			})
+			.catch((error) => {
+				console.error("Error fetching cart items:", error);
+			});
   };
 
   const cleanFields = () => {

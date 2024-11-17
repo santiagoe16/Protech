@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 import "/workspaces/lt34-protech/src/front/styles/addproduct.css";
-import { Cart, CurrencyDollar, People, CaretDown } from 'react-bootstrap-icons';
 
 export const AddProduct = () => {
 	const { store, actions } = useContext(Context);
@@ -18,42 +17,37 @@ export const AddProduct = () => {
 	const cloudName = "dqs1ls601";
   	const presetName = "Protech";
 
-	const getCartItems = () => {
-		const token = actions.verifyTokenBuyer();
 
-		fetch(process.env.BACKEND_URL + "/api/buyer/cart/products", {
+	const getCategories = () => {
+		const token = actions.verifyTokenSeller();
+
+		fetch(`${process.env.BACKEND_URL}/api/categorias`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
 		})
 			.then((response) => {
 				if (!response.ok) {
-					throw new Error("Error fetching cart items: " + response.statusText);
+					throw new Error("Error fetching products: " + response.statusText);
 				}
 				return response.json();
 			})
 			.then((data) => {
-
+				setCategories(data)
+                
 			})
 			.catch((error) => {
 				console.error("Error fetching cart items:", error);
 			});
 	};
 
-	const getCategories = () => {
-		fetch(`${process.env.BACKEND_URL}/api/categorias`)
-		  .then((response) => response.json())
-		  .then((data) => setCategories(data))
-		  .catch((error) => console.error("Error fetching categories:", error));
-	};
-
 	useEffect(() => {
-		getCartItems();
 		getCategories()
 	}, []);
 
 	const createProduct = (e) =>{
 		e.preventDefault();
+		
 		const raw = JSON.stringify({
 			name: name,
 			description: description,
@@ -80,6 +74,7 @@ export const AddProduct = () => {
 		})
 		.then(() => {
 			cleanFields();
+			navigate("/dashboard/products")
 		})
 		.catch((error) => console.error("Error creating product:", error));
 	}
@@ -97,8 +92,6 @@ export const AddProduct = () => {
     
             const data = await response.json();
             const imageUrl = data.secure_url;
-
-            console.log("data cloudinary" + JSON.stringify(data));
 
             setImageProduct(imageUrl)
             
@@ -138,14 +131,14 @@ export const AddProduct = () => {
 									<input id="name" value={name} onChange={(e)=>setName(e.target.value)} placeholder="Product name" className="form-control" type="text" required></input>
 								</div>
 								<div className="col-6">
-									<label htmlFor="category">Proudct category</label>
-									<select value = {categoryId} onChange={(e)=>setCategoryId(e.target.value)} 
-										className="form-select" id="category">
+									<label htmlFor="category">Product category</label>
+									<select value={categoryId || ""} onChange={(e) => setCategoryId(Number(e.target.value))} className="form-select" id="category">
+										<option value="" disabled>Select Category</option> 
 										{categories.length > 0 ? (
 											categories.map((category) => (
 											<option key={category.id} value={category.id}>{category.name}</option>
 											))
-										):<></>}
+										) : <></>}
 									</select>
 								</div>
 							</div>

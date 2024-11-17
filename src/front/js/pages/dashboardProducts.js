@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 import "/workspaces/lt34-protech/src/front/styles/dashboard.css";
-import { ThreeDotsVertical, Trash, PencilSquare } from 'react-bootstrap-icons';
+import { ThreeDotsVertical, Trash, PencilSquare, Newspaper } from 'react-bootstrap-icons';
 
 export const DashboardProducts = () => {
 	const { store, actions } = useContext(Context);
@@ -10,7 +10,26 @@ export const DashboardProducts = () => {
 	const [products, setProducts] = useState([])
 	const [searchTerm, setSearchTerm] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
+	const [articleProduct, setArticleProduct] = useState("");
+	const [article, setArticle] = useState({});
+	const [imageArticle, setImageArticle] = useState("");
 	const itemsPerPage = 3;
+
+	const topics = [
+		"Cómo elegir el (producto) perfecto según tus necesidades",
+		"Cómo aprovechar al máximo tu (producto) en el día a día",
+		"Errores comunes al usar un (producto) y cómo evitarlos",
+		"Todo lo que necesitas para mantener tu (producto) en buen estado",
+		"Los mejores trucos para sacar el máximo provecho de tu (producto)",
+		"Consejos para prolongar la vida útil de tu (producto)",
+		"Secretos para obtener el máximo rendimiento de tu (producto)",
+		"Los pros y contras de invertir en un (producto)",
+		"Qué esperar de un( (producto) de alta calidad",
+		"Preguntas que deberías hacer antes de comprar un( (producto)",
+		"Características esenciales que debes buscar en un (producto)",
+		"Los accesorios imprescindibles para complementar tu (producto)",
+		"Cómo cuidar y mantener en buen estado tu (producto)",
+	]
 
 	const getProducts = () => {
 		const token = actions.verifyTokenSeller();
@@ -77,6 +96,103 @@ export const DashboardProducts = () => {
 		navigate(`/edit-product/${productId}`);
 	}
 
+	const generateArticle = async (productName) => {
+		setArticleProduct(productName)
+		const topic = topics[Math.floor(Math.random() * topics.length)];
+	
+		const apiKeyChatGPT = process.env.OPEN_AI_API_KEY;
+		const endpointChatGPT = 'https://api.openai.com/v1/chat/completions';
+	
+		const prompt = `Escribe un artículo de 900 caracteres en formato JSON sobre el siguiente tema: "${topic}". El producto es: "${productName}". El JSON debe tener dos campos:
+		  - 'title' para el título del artículo,
+		  - 'content' para el cuerpo completo del artículo. 
+		Asegúrate de que el JSON esté bien formado, sin ningún formato adicional, sin comillas invertidas o markdown, ni usar saltos de linea como "\n", y que sea válido para ser procesado directamente como JSON.`;
+	
+		try {
+			const response = await fetch(endpointChatGPT, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${apiKeyChatGPT}`
+				},
+				body: JSON.stringify({
+				model: 'gpt-3.5-turbo',
+				messages: [
+					{ role: "system", content: "Eres un asistente que escribe artículos informativos y atractivos sobre productos para un sitio de marketplace." },
+					{ role: 'user', content: prompt }
+				],
+					max_tokens: 400, 
+				})
+			});
+	
+			const data = await response.json();
+			console.log('Respuesta de OpenAI:', data);
+		
+			let content = data.choices[0].message.content;
+			content = content.replace(/\\n/g, ''); 
+			content = content.replace(/`/g, '');
+			console.log("contenido=" + content);
+			
+			const dataArticle = JSON.parse(content)
+			
+			setArticle(dataArticle);
+			console.log(dataArticle);
+	
+		} catch (error) {
+		  	console.error('Error generando el artículo:', error);
+		}
+	
+		const apiKeySearch = process.env.GOOGLE_API_KEY;
+		const cx = process.env.GOOGLE_CX_ID;
+		const endpointSearch = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(productName)}&cx=${cx}&searchType=image&key=${apiKeySearch}&num=1&imgType=photo`;
+	
+		try {
+			console.log("API Key:", apiKeySearch); 
+			console.log("CX ID:", cx);
+			const response = await fetch(endpointSearch);
+			if (!response.ok) throw new Error('Error al obtener la imagen');
+			const data = await response.json();
+			setImageArticle(data.items[0]?.link || "https://example.com/default-image.jpg"); 
+		} catch (error) {
+			console.error('Error obteniendo imagen:', error);
+			setImageArticle("https://example.com/default-image.jpg")
+		}
+	}
+
+	const publishArticle = () => {
+		console.log(article.title,"imagen: " + imageArticle)
+		
+		const raw = {
+			title: article.title, 
+			image: imageArticle,
+			content: article.content
+		};
+	
+		fetch(`${process.env.BACKEND_URL}/api/articles`, {
+		  method: "POST",
+		  headers: {
+				"Content-Type": "application/json",
+		  },
+		  body: JSON.stringify(raw)  
+		})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error("Error al publicar el artículo");
+			}
+			return response.json();
+		})
+		.then(() => {
+			cleanFieldsArticle();  
+		})
+		.catch(error => {
+			console.error("Error:", error);
+		});
+	}
+	const cleanFieldsArticle = () => {
+		setArticle({})
+		setImageArticle("")
+	}
+
 	return (
 		<div style={{paddingBottom: "100px"}}>
 			<div className="row mb-5" >
@@ -126,7 +242,7 @@ export const DashboardProducts = () => {
 									<tr key={index}>
 										<td>{product.name}</td>
 										<td>{product.category.name}</td>
-										<td>{product.price}</td>
+										<td>${product.price}</td>
 										<td>{product.stock}</td>
 										<td>
 											<a className="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
@@ -135,6 +251,8 @@ export const DashboardProducts = () => {
 											<ul className="dropdown-menu dropdown-menu-end">
 												<li onClick={() => deleteProduct(product.id)}><a className="dropdown-item"><Trash/> Delete</a></li>
 												<li onClick={() => editProduct(product.id)}><a className="dropdown-item"><PencilSquare/> Edit</a></li>
+												<li data-bs-target="#exampleModal" data-bs-toggle="modal" onClick={()=>generateArticle(product.name)}>
+												<a className="dropdown-item"><Newspaper/> generate Article</a></li>
 											</ul>
 										</td>
 									</tr>
@@ -178,6 +296,40 @@ export const DashboardProducts = () => {
 						</div>
 					</div>
 				</div>
+			</div>
+			<div className="modal fade" id="exampleModal" tabIndex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-lg">
+                  	<div className="modal-content">
+						<div className="modal-header">
+							<h1 className="modal-title fs-5" id="exampleModalLabel">Article</h1>
+							<button type="button" onClick={() => cleanFieldsArticle()} className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div className="modal-body">
+							<div>
+								<div>
+									<h2>{article.title}</h2>
+								</div>
+								<div style={{width: "100%", height: "500px"}}>
+									<img src={imageArticle} style={{width: "100%", height: "100%", objectFit: "contain"}}/>
+								</div>
+								<div>
+									<p>{article.content}</p>
+								</div>
+							</div>
+						</div>
+						<div className="modal-footer">
+							<button type="button" onClick={() => cleanFieldsArticle()} className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+							<button type="button" className="btn btn-primary" data-bs-dismiss="modal" 
+								onClick={()=> {
+									publishArticle() 
+									cleanFieldsArticle()
+								}}
+							>Save</button> 
+								
+							<button type="button" onClick={() => generateArticle(articleProduct)} className="btn btn-primary">regenerate</button>
+						</div>
+					</div>
+                </div>
 			</div>
 		</div>
 	);

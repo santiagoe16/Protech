@@ -135,3 +135,27 @@ li .item-dropdown{
 hr{
     background-color: #6366f1;
 }
+.avatar{
+    width: 40px;
+    height: 40px;
+    padding: 0px;
+    object-fit: cover;
+}
+.name{
+    color: white;
+    font-size: 15px;
+    padding: 2px 3px;
+    font-weight: 500;
+    display: block;
+}
+small{
+    color: #d1d1d1;
+    padding: 0px 3px ;
+    font-size: 13px;
+}
+.not-hover:hover{
+    background-color:#0B0F19 !important;
+}
+.hover:hover{
+    background-color: rgba(99, 101, 241, 0.158);
+}

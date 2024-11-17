@@ -85,6 +85,7 @@ export const EditProduct = () => {
 		})
 		.then(() => {
 			cleanFields();
+			navigate("/dashboard/products")
 		})
 		.catch((error) => console.error("Error creating product:", error));
 	}

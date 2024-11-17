@@ -3,6 +3,7 @@ import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
 import "/workspaces/lt34-protech/src/front/styles/dashboard.css";
 import { Cart, CurrencyDollar, People, CaretDown } from 'react-bootstrap-icons';
+import TopSellerProductsChart from "../component/topsellerproducts";
 
 export const Dashboard = () => {
 	const { store, actions } = useContext(Context);
@@ -102,7 +103,6 @@ export const Dashboard = () => {
             })
             .then((data) => {
 				setRecentOrders(data)
-				console.log(data);
 				
             })
             .catch((error) => {
@@ -124,8 +124,8 @@ export const Dashboard = () => {
 					<div className="card-black">
 						<div style={{padding: "55px 77px"}}>
 							<h1>Welcome to the dashboard</h1>
-							<p>Here you can see all about yours products</p>
-							<button className="purple-button">Create product</button>
+							<p style={{fontSize: "16px", marginBottom: "15px"}}>Here you can see all about yours products</p>
+							<button className="purple-button" onClick={()=>navigate("/add-product")}>Create product</button>
 						</div>
 					</div>
 				</div>
@@ -187,24 +187,19 @@ export const Dashboard = () => {
 						<div className="d-flex justify-content-between">
 							<div>
 								<h5>Revenue</h5>
-								<span>(+63%) than last year)</span>
-							</div>
-							<div>
-								<select className="form-select" id="opciones" name="opciones">
-									<option value="opcion1">2024</option>
-									<option value="opcion2">2023</option>
-									<option value="opcion3">2022</option>
-								</select>
 							</div>
 						</div>
 						<div className="grafic">
-
+							
 						</div>
 					</div>
 				</div>
 				<div className="col-4">
 					<div className="card-black body-card h-100">
-						<div><h5>Total Sales</h5></div>
+						<div className="mb-4"><h5>Top Products</h5></div>
+						<div className="grafic">
+							<TopSellerProductsChart></TopSellerProductsChart>
+						</div>
 					</div>
 				</div>
 			</div>

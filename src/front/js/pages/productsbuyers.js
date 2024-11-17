@@ -103,12 +103,20 @@ export const ProductsBuyers = () => {
         };
 
         fetch(process.env.BACKEND_URL + "/api/itemscarts", requestOptions)
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw err; });
+                }
+                return response.json();
+            })
             .then((result) => {
                 getProducts();
                 setActiveTab("list-tab");
             })
-            .catch((error) => console.error(error));
+            .catch((error) => {
+                console.error(error)
+                alert("You cannot add products from different sellers to the cart");
+            });
     }
 
     const handleAmountChange = (productId, value) => {
