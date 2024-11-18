@@ -74,7 +74,7 @@ export const Navbar = () => {
 							<Link to="/productsbuyers">
 								<button className="btn btn-primary">Products</button>
 							</Link>
-							<Link to="/ordersplaced">
+							<Link to="/orders-placed">
 								<button className="btn btn-primary">Orders Placed</button>
 							</Link>
 							<Link to="/buyeraddress">

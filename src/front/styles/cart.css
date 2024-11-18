@@ -62,3 +62,6 @@ item-cart p{
 .order-sumary h4, h5, h6{
     padding: 0px 12px;
 }
+.order-sumary h6{
+    padding: 0px 12px;
+}

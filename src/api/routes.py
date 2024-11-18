@@ -583,7 +583,7 @@ def generate_cart(cart_id):
 def get_carts_items():
     buyer_id = get_jwt_identity()
 
-    carts = Cart.query.filter(Cart.comprador_id == buyer_id, Cart.state.in_(['generated', 'sent', 'finalized'])).all()
+    carts = Cart.query.filter(Cart.comprador_id == buyer_id, Cart.state.in_(['generated', 'sent', 'finalized'])).order_by(Cart.id.desc()).all()
     
     if not carts:
         return jsonify({"message": "No carts found for the buyer."}), 404
@@ -602,11 +602,13 @@ def get_carts_items():
                 "product": item.product.serialize()
             }
             items.append(item_data)
+
+        formatted_date = cart.created_at.strftime('%Y-%m-%d')
         
         cart_data = {
             "cart_id": cart.id,
             "state": cart.state,
-            "created_at": cart.created_at,
+            "created_at": formatted_date,
             "total_price": cart.total_price,
             "items": items
         }

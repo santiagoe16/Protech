@@ -26,7 +26,6 @@ import { ProductsBuyers } from "./pages/productsbuyers";
 import { Cart } from "./pages/cart";
 import { SellersProducts } from "./pages/sellersProducts";
 import { Orders } from "./pages/ordersSeller";
-import { OrdersPlaced } from "./pages/ordersplaced";
 import { UploadProductImage } from "./pages/productimagen";
 import { SellerAddress } from "./pages/selleraddress";
 import { ProductsSeller } from "./pages/productseller";
@@ -44,6 +43,7 @@ import { OrderList } from "./pages/orderlist";
 import { OrderSingle } from "./pages/ordersingle";
 import { DetailProduct } from "./pages/detailProduct";
 import { BuyerAddress } from "./pages/buyeraddress";
+import { OrdersPlaced } from "./pages/ordersplaced";
 
 
 
@@ -89,7 +89,6 @@ const Layout = () => {
                         <Route element={<ProductsBuyers/>} path="/productsbuyers" />
                         <Route element={<Cart/>} path="/cart" />
                         <Route element={<Orders/>} path="/orders" />
-                        <Route element={<OrdersPlaced/>} path="/ordersplaced" />
                         <Route element={<UploadProductImage/>} path="/product/image" />
                         <Route element={<BuyerAddress/>} path="/buyeraddress" />
                         <Route element={<SellerAddress/>} path="/selleraddress" />
@@ -107,6 +106,7 @@ const Layout = () => {
                         <Route element={<OrderList/>} path="/dashboard/order-list" />
                         <Route element={<OrderSingle/>} path="/dashboard/order-single/:cartId" />
                         <Route element={<OrderSingle/>} path="/dashboard/order-single" />
+                        <Route element={<OrdersPlaced/>} path="/order-placed" />
 
                         
                         <Route element={<DetailProduct/>} path="/detail/:id" />

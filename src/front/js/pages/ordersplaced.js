@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
+import "/workspaces/lt34-protech/src/front/styles/addproduct.css";
 
 export const OrdersPlaced = () => {
     const { store, actions } = useContext(Context);
-    const [cartItems, setCartItems] = useState([]);
+    const [errorMessage, setErrorMessage] = useState("");
     const [carts, setCarts] = useState([])
+    const navigate = useNavigate();
 
     const getCartItems = () => {
         const token = actions.verifyTokenBuyer(); 
@@ -24,6 +26,7 @@ export const OrdersPlaced = () => {
         })
         .then((data) => {
             setCarts(data);
+            
         })
         .catch((error) => {
             console.error("Error fetching cart items:", error);
@@ -35,43 +38,70 @@ export const OrdersPlaced = () => {
     }, []);
 
     return (
-        <div className="container mt-5">
-            <h2>Your Orders</h2>
-            {carts.length > 0 ? (
-                carts.map((cart) => (
-                    <div key={cart.cart_id} className="mb-5">
-                        <h4>Cart Date: {new Date(cart.created_at).toLocaleDateString()}</h4>
-                        <table className="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Product Name</th>
-                                    <th>Price</th>
-                                    <th>Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {cart.items.length > 0 ? (
-                                    cart.items.map((item) => (
-                                        <tr key={item.item_id}>
-                                            <td>{item.product.name}</td>
-                                            <td>${item.product.price.toFixed(2)}</td>
-                                            <td>{item.amount}</td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="3">No items in this cart.</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                        <h5>Total Price: ${cart.total_price.toFixed(2)}</h5>
-                        <h5 className="mb-5">State: {cart.state}</h5>
+        <div className="container">
+            <div className="row mb-4 mt-5">
+                <div className="col-12 d-flex">
+                    <h2>Orders Placed</h2>
+                </div>
+            </div>
+            {carts ? (carts.map((cart)=>(
+                <div key={cart.cart_id} className="mb-5">
+                    <div className="row">
+                        <div className="col-12">
+                            <div className="card-black">
+                                <div className="body-card">
+                                    <div className="row">
+                                        <div className="col-12">
+                                            <div className="d-flex justify-content-between">
+                                                <h3 className="mb-4 ">Order ID: {cart.cart_id}</h3>
+                                            </div>
+                                            <div className="mt-2 order-placed-header">
+                                                <div className="d-flex">
+                                                    <h5>Date: </h5><h5 className="text-gray">{cart.created_at}</h5>
+                                                </div>
+                                                <div className="d-flex">
+                                                    <h5 className="align-items-center">Status: </h5><h5 className="status-placed">{cart.state}</h5>
+                                                </div>
+                                                <div className="d-flex">
+                                                    <h5>Total Price:</h5><h5 className="text-gray">${cart.total_price}</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className=" table-responsive px-0 mt-2">
+                                    <table className="table-centered text-nowrap table table-borderless table-hover mb-5">
+                                        <thead>
+                                            <tr className="bg-purple">
+                                                <th>Products</th>
+                                                <th>price</th>
+                                                <th>Quantity</th>
+                                                <th>Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {cart?.items.map((item, index) => (
+                                                <tr className="order-single" key={index}>
+                                                    <td>{item.product.name}</td>
+                                                    <td>${item.product.price}</td>
+                                                    <td>{item.amount}</td>
+                                                    <td>${(item.product.price * item.amount).toFixed(2)}</td>
+                                                </tr>
+                                            ))}
+                                            <tr className="order-single">
+                                                <td></td>
+                                                <td></td>
+                                                <td className="fs-5">Total:</td>
+                                                <td className="fs-5">${cart.total_price}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                ))
-            ) : (
-                <h2>No carts found.</h2>
-            )}
+                </div>
+            ))):(<></>)}
         </div>
     );
-}
+};

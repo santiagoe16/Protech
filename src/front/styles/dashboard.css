@@ -20,6 +20,9 @@ span{
 .text-gray{
     color: rgb(255 255 255 / 75%);
 }
+.text-blue{
+    color: #6366f1;
+}
 h5{
     font-weight: 500;
     font-size: 18.5px;
@@ -169,7 +172,25 @@ h6{
     border-radius: 16px;
     color: white;
 }
+.status-placed{
+    background-color: rgb(86, 88, 221);
+    padding: 4px 10px 4px;
+    margin-left: 8px;
+    margin-bottom: 0px;
+    font-size: 17px;
+    border-radius: 16px;
+    color: white;
+}
 .order-single td{
     border-bottom: 1px solid rgba(255, 255, 255, 0.192);
     padding: 20px 24px !important; 
+}
+.order-placed-header h5{
+    display: flex;
+    font-weight: 400;    
+    margin-bottom: 8px;
+}
+.order-placed-header .text-gray{
+    color: rgba(255, 255, 255, 0.904);
+    margin-bottom: 0px;
 }
