@@ -62,7 +62,7 @@ export const DetailProduct = () => {
                                 className="form-control mb-3"
                             />
                             <button
-                                className="btn btn-outline-warning"
+                                className="btn btn-outline-primary"
                                 onClick={() => actions.addToCartFlux(product.id)}
                             >
                                 Add to Cart
@@ -71,7 +71,7 @@ export const DetailProduct = () => {
                             <ul className="product-info">
                                 <li><strong>Product Code:</strong> FBB00255</li>
                                 <li><strong>Availability:</strong> In Stock</li>
-                                <li><strong>Type:</strong> Fruits</li>
+                                <li><strong>Type:</strong> technologies</li>
                                 <li><strong>Shipping:</strong> 01 day shipping. (Free pickup today)</li>
                             </ul>
 
@@ -186,7 +186,7 @@ export const DetailProduct = () => {
                                 <div className="card-footer d-flex justify-content-between">
                                     <button
                                         type="button"
-                                        className="btn btn-outline-warning"
+                                        className="btn btn-outline-primary"
                                         onClick={() => actions.addToCartFlux(product.id)}
                                     >
                                         Add to Cart
