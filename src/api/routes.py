@@ -6,7 +6,7 @@ from api.models import db, User, Products, Seller , Comprador,Categoria, ItemCar
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
-from sqlalchemy import desc
+from sqlalchemy import desc, asc
 import cloudinary 
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
@@ -621,18 +621,26 @@ def update_item_quantity(item_id):
 
     if "amount" not in body:
         return jsonify({"msg": "Amount is required"}), 400
-
+    
     new_amount = body["amount"]
 
     if new_amount <= 0:
         new_amount = 1
 
     item_cart = ItemCart.query.get(item_id)
+
     
     if not item_cart:
         return jsonify({"msg": "Item not found"}), 404
+    
+    cart = Cart.query.filter_by(id=item_cart.cart_id).first()
+
 
     item_cart.amount = new_amount
+
+    if "total_price" in body and body["total_price"] is not None:
+        cart.total_price = body["total_price"]
+
     db.session.commit()
 
     return jsonify({"msg": "Quantity updated successfully", "item": item_cart.serialize()}), 200
@@ -716,29 +724,36 @@ def update_cart(cart_id):
 
 @api.route("/buyer/cart/products", methods=["GET"])
 @jwt_required()
-def GetBuyerCartProducts():
-    buyer_id = get_jwt_identity()
+def get_buyer_cart_products():
+    try:
+        buyer_id = get_jwt_identity()
 
-    cart = Cart.query.filter_by(comprador_id=buyer_id, state='open').first()
+        cart = Cart.query.filter_by(comprador_id=buyer_id, state='open').first()
+        if not cart:
+            cart = Cart(comprador_id=buyer_id, total_price=0, state='open')
+            db.session.add(cart)
+            db.session.commit()
 
-    if not cart:
-        cart = Cart(comprador_id=buyer_id, total_price=0, state='open')
-        db.session.add(cart)
-        db.session.commit()
+        items = [
+            {
+                "item_id": item.id,
+                "amount": item.amount,
+                "product": item.product.serialize(),
+            }
+            for item in cart.items_cart.order_by(ItemCart.id.asc()) 
+        ]
 
-    cart_items = cart.items_cart.all()
-
-    items = []
-    for item in cart_items:
-        item_data = {
+        response = {
             "cart_id": cart.id,
-            "item_id": item.id,
-            "amount": item.amount,
-            "product": item.product.serialize()
+            "total_price": cart.total_price,
+            "state": cart.state,
+            "items": items,
         }
-        items.append(item_data)
 
-    return jsonify(items), 200
+        return jsonify(response), 200
+
+    except Exception as e:
+        return jsonify({"error": "An error occurred while fetching the cart", "details": str(e)}), 500
 
 @api.route("/buyer/cart/products/<int:item_id>", methods=["DELETE"])
 @jwt_required()
@@ -754,6 +769,8 @@ def RemoveBuyerCartProducts(item_id):
 
     if not cart_item:
         return jsonify({"error": "No item found in the cart."}), 404
+    
+    cart.total_price -= cart_item.product.price * cart_item.amount
 
     db.session.delete(cart_item)
     db.session.commit()
@@ -1103,7 +1120,7 @@ def get_seller_orders():
     orders = Cart.query.join(ItemCart).join(Products).filter(
         Cart.state == 'generated',
         Products.seller_id == seller_id
-    ).order_by(Cart.created_at.asc()).all()
+    ).order_by(Cart.created_at.desc()).all()
 
     if not orders:
         return jsonify({"error": "No orders found for this seller."}), 404

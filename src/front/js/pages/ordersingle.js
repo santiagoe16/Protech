@@ -102,16 +102,16 @@ export const OrderSingle = () => {
                         <div className="body-card">
                             <div className="row">
                                 <div className="col-12">
-                                    <div className="d-flex justify-content-between justify-content-center align-content-center">
-                                        <h3 className="mb-4">Order ID: {order.id} <span className="status">{order.state}</span></h3>
+                                    <div className="d-flex justify-content-between">
+                                        <h3 className="mb-4 ">Order ID: {order.id} <span className="status align-middle">{order.state}</span></h3>
                                         <div className="d-flex wrap">
                                             <div className="me-3">
-                                            <select value={stateOrder} onChange={(e)=> setStateOrder(e.target.value)} className="form-select" id="opciones" name="opciones">
-                                                <option value="" disabled>state</option>
-                                                <option value="sent">Sent</option>
-                                                <option value="cancel">Cancel</option>
-                                            </select>
-                                            {errorMessage && <p className="error-message text-danger">{errorMessage}</p>}
+                                                <select value={stateOrder} style={{width: "100px"}} onChange={(e)=> setStateOrder(e.target.value)} className="form-select ms-auto" id="opciones" name="opciones">
+                                                    <option value="" disabled>state</option>
+                                                    <option value="sent">Sent</option>
+                                                    <option value="cancel">Cancel</option>
+                                                </select>
+                                                {errorMessage && <p className="error-message text-danger">{errorMessage}</p>}
                                             </div>
                                             <div>
                                                 <button className="purple-button" onClick={()=> {
@@ -125,21 +125,21 @@ export const OrderSingle = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="row">
+                                    <div className="row mt-2">
                                         <div className="col-4">
-                                            <h6>Customer Details</h6>
+                                            <h6 className="px-0">Customer Details:</h6>
                                             <p>Name: {order.comprador?.name}</p>
                                             <p>Email: {order.comprador?.email}</p>
                                             <p>Phone: {order.comprador?.telefono}</p>
                                         </div>
                                         <div className="col-4">
-                                            <h6>Shipping Address</h6>
+                                            <h6 className="px-0">Shipping Address:</h6>
                                             <p>Name: {order.comprador?.address?.[0]?.name || "N/A"}</p>
                                             <p>Address: {order.comprador?.address?.[0]?.address || "N/A"}</p>
                                             <p>Details: {order.comprador?.address?.[0]?.description || "N/A"}</p>
                                         </div>
                                         <div className="col-4">
-                                            <h6>Order Info</h6>
+                                            <h6 className="px-0">Order Info:</h6>
                                             <p>Order ID: {order.id}</p>
                                             <p>Date: {order.created_at}</p>
                                             <p>Total price: {order.total_price}</p>
@@ -149,7 +149,7 @@ export const OrderSingle = () => {
                             </div>
                         </div>
                         <div className=" table-responsive px-0 mt-5">
-                            <table className="table-centered text-nowrap table table-borderless table-hover">
+                            <table className="table-centered text-nowrap table table-borderless table-hover mb-5">
                                 <thead>
                                     <tr className="bg-purple">
                                         <th>Products</th>
@@ -162,16 +162,16 @@ export const OrderSingle = () => {
                                     {order?.items.map((item, index) => (
                                         <tr className="order-single" key={index}>
                                             <td>{item.product.name}</td>
-                                            <td>{item.product.price}</td>
+                                            <td>${item.product.price}</td>
                                             <td>{item.amount}</td>
-                                            <td>{(item.product.price * item.amount).toFixed(2)}</td>
+                                            <td>${(item.product.price * item.amount).toFixed(2)}</td>
                                         </tr>
                                     ))}
                                     <tr className="order-single">
                                         <td></td>
                                         <td></td>
-                                        <td>Total</td>
-                                        <td>{order.total_price}</td>
+                                        <td className="fs-6">Total:</td>
+                                        <td className="fs-6">${order.total_price}</td>
                                     </tr>
                                 </tbody>
                             </table>

@@ -2,12 +2,16 @@
 .purple-button{
     padding: 9px 16px;
     border: none;
-    background-color: #6366f1;
+    background-color: rgb(86, 88, 221);
     color: white;
     border-radius: 6px;
+    transition: background-color 270ms;
+}
+.purple-button:hover{
+    background-color: #4044EE;
 }
 .card-black{
-    background-color: #1E212B;
+    background-color: #161a25;
     color: white;
     border-radius: 10px;
 }
@@ -62,4 +66,21 @@ input[type="number"]::-webkit-inner-spin-button {
     border-color: rgba(255, 255, 255, 0.356);
     box-shadow: none;
     border-radius: 9px;
+}
+input[type="file"]::file-selector-button {
+    border-radius: 4px;
+    padding: 0 16px;
+    height: 40px;
+    cursor: pointer;
+    background-color: rgb(86, 88, 221);
+    color: white;
+    border: 1px solid rgba(0, 0, 0, 0.16);
+    box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05);
+    margin-right: 16px;
+    transition: background-color 200ms;
+}
+  
+  /* file upload button hover state */
+input[type="file"]::file-selector-button:hover {
+    background-color: #4044EE;
 }

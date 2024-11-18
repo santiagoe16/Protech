@@ -112,6 +112,7 @@ export const ProductsBuyers = () => {
             .then((result) => {
                 getProducts();
                 setActiveTab("list-tab");
+                actions.getCart();
             })
             .catch((error) => {
                 console.error(error)

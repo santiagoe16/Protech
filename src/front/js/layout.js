@@ -23,7 +23,7 @@ import { SignupSeller } from "./pages/singupseller";
 import { LoginSeller } from "./pages/loginseller";
 import { CardProduct } from "./component/cardproduct";
 import { ProductsBuyers } from "./pages/productsbuyers";
-import { CartView } from "./pages/cartview";
+import { Cart } from "./pages/cart";
 import { SellersProducts } from "./pages/sellersProducts";
 import { Orders } from "./pages/ordersSeller";
 import { OrdersPlaced } from "./pages/ordersplaced";
@@ -87,7 +87,7 @@ const Layout = () => {
                         <Route element={<SellersProducts />} path="/sellers/products" />                      
                         <Route element={<CardProduct/>} path="/cardproduct" />
                         <Route element={<ProductsBuyers/>} path="/productsbuyers" />
-                        <Route element={<CartView/>} path="/cartview" />
+                        <Route element={<Cart/>} path="/cart" />
                         <Route element={<Orders/>} path="/orders" />
                         <Route element={<OrdersPlaced/>} path="/ordersplaced" />
                         <Route element={<UploadProductImage/>} path="/product/image" />
