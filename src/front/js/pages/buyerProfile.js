@@ -166,7 +166,7 @@ export const BuyerProfile = () => {
                                         <label className="form-label">Name</label>
                                         <input
                                             type="text"
-                                            className="form-control"
+                                            className="form-control-input"
                                             name="name"
                                             value={editData.name}
                                             onChange={handleChange}
