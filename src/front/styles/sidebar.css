@@ -81,7 +81,7 @@
 
 .dropdownn-menu li:hover {
     color: white;
-    background-color: #6366f1;
+    background-color: rgb(86, 88, 221);
     border-radius: 8px;
 }
 
@@ -106,17 +106,17 @@
 /* Estilos de hover y estados activos */
 .sidebar ul li:hover {
     background-color: rgba(99, 101, 241, 0.158);
-    color: #6366f1;
+    color: rgb(86, 88, 221);
 }
 
 .active {
-    background-color: #6366f1;
+    background-color: rgb(86, 88, 221);
     box-shadow: 0 0.5rem 1.125rem -0.5rem rgba(99, 102, 241, 0.9);
     color: white;
 }
 
 .sidebar ul li a:not(.active):hover {
-    color: #6366f1;
+    color: rgb(86, 88, 221);
 }
 li .item-dropdown{
     padding: 5px 12px;
@@ -130,10 +130,10 @@ li .item-dropdown{
     text-justify:inherit;
 }
 .log-out{
-    color: #6366f1 !important;
+    color: rgb(86, 88, 221) !important;
 }
 hr{
-    background-color: #6366f1;
+    background-color: rgb(86, 88, 221);
 }
 .avatar{
     width: 40px;

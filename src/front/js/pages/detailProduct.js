@@ -40,10 +40,10 @@ export const DetailProduct = () => {
                     <div className="row">
                         <div className="col-md-6">
                         <img 
-    src={product.image || "https://res.cloudinary.com/dqs1ls601/image/upload/v1731200142/qjox25ajspnkngowrjpk.jpg"} 
-    className="card-img-top" 
-    alt={product.name || "Default product"} 
-/>
+                            src={product.image || "https://res.cloudinary.com/dqs1ls601/image/upload/v1731200142/qjox25ajspnkngowrjpk.jpg"} 
+                            className="card-img-top" 
+                            alt={product.name || "Default product"} 
+                        />
 
                         </div>
                         <div className="col-md-6">
@@ -172,10 +172,10 @@ export const DetailProduct = () => {
                         <Link to={`/detail/${product.id}`} key={product.id || index} style={{ textDecoration: 'none', color: 'inherit' }}>
                             <div key={product.id || index} className="card mb-4" style={{ minWidth: "18rem", maxWidth: "300px" }}>
                             <img 
-    src={product.image || "https://res.cloudinary.com/dqs1ls601/image/upload/v1731200142/qjox25ajspnkngowrjpk.jpg"} 
-    className="card-img-top" 
-    alt={product.name || "Default product"} 
-/>
+                                src={product.image || "https://res.cloudinary.com/dqs1ls601/image/upload/v1731200142/qjox25ajspnkngowrjpk.jpg"} 
+                                className="card-img-top" 
+                                alt={product.name || "Default product"} 
+                            />
 
                                 <div className="card-body">
                                     <h5 className="card-title">{product.name}</h5>

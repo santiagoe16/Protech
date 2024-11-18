@@ -22,6 +22,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			selectedProduct: {} ,
 			amounts: {},
+			cart: {}
 		},
 		actions: {
 			verifyTokenBuyer: () => {
@@ -37,7 +38,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			verifyTokenSeller: () => {
 				const token = localStorage.getItem('jwt-token-seller');
-			
+				
+				
 				if (token != null) {
 					setStore({ authenticatedSeller: true });
 					return(token)
@@ -68,18 +70,86 @@ const getState = ({ getStore, getActions, setStore }) => {
 						throw error; 
 					});
 			},
-			
+			getCart: async () => {
+				const token = localStorage.getItem("jwt-token-buyer");
+				try {
+					const response = await fetch(process.env.BACKEND_URL + "/api/buyer/cart/products", {
+						headers: { Authorization: `Bearer ${token}` }
+					});
+					const data = await (response.ok ? response.json() : Promise.reject(response.statusText));
+					console.log("obenido");
+					console.log(data);
+					
+					return setStore({ 
+						cart: data,
+						items: data.items,
+						total_price: data.total_price
+					});
+				} catch (error) {
+					return console.error("Error fetching cart items:", error);
+				}
+			},
 			handleAmountChangeflux: (productId, value) => {
-                const store = getStore();
-                const newAmount = value === "" ? "" : Math.max(1, parseInt(value));
+				const store = getStore();
+				const newAmount = value === "" ? "" : Math.max(1, parseInt(value));
 
-                setStore({
-                    amounts: {
-                        ...store.amounts,
-                        [productId]: newAmount
-                    }
-                });
-            },
+				setStore({
+					amounts: {
+						...store.amounts,
+						[productId]: newAmount
+					}
+				});
+			},
+			updateCartItemAmount: (itemId, newAmount) => {
+				const store = getStore();
+			
+				// Actualizar la cantidad de items en el carrito
+				const updatedItems = store.cart.items.map(item => {
+					if (item.item_id === itemId) {
+						return { ...item, amount: newAmount };
+					}
+					return item;
+				});
+			
+				// Calcular el nuevo precio total
+				const total_price = updatedItems.reduce((acc, item) => acc + (item.product.price * item.amount), 0);
+			
+				// Actualizar el store con los items y el nuevo total_price
+				setStore({
+					cart: {
+						...store.cart,
+						items: updatedItems,
+						total_price: total_price
+					}
+				});
+			
+				// Realizar la petición PUT para actualizar el carrito en el backend
+				const token = localStorage.getItem("jwt-token-buyer");
+				fetch(`${process.env.BACKEND_URL}/api/buyer/cart/products/${itemId}`, {
+					method: "PUT",
+					headers: {
+						Authorization: `Bearer ${token}`,
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ 
+						amount: newAmount,
+						total_price: total_price // Mandar el nuevo total al backend
+					}),
+				})
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error("Error updating item quantity: " + response.statusText);
+					}
+					return response.json();
+				})
+				.then((result) => {
+					console.log("Carrito actualizado correctamente");
+				})
+				.catch((error) => {
+					console.error("Error updating item quantity:", error);
+				});
+			},
+			
 
             addToCartFlux: (productId) => {
                 const store = getStore();

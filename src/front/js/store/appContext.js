@@ -31,6 +31,7 @@ const injectContext = PassedComponent => {
 			state.actions.getProductsFlux();
 			state.actions.verifyTokenBuyer();
 			state.actions.verifyTokenSeller();
+			state.actions.getCart();
 			state.actions.getMessage(); // <---- calling this function from the flux.js actions
 		}, []);
 

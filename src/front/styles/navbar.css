@@ -1,0 +1,45 @@
+.offcanvas{
+    width: 560px;
+    background-color: #191b24;
+    color: white;
+}
+.offcanvas li{
+    width: auto;
+    background-color: #191b24;
+    color: white;
+}
+.item-cart{
+    height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+a{
+    font-size: 13px;
+    text-decoration: none;
+    cursor: pointer;
+}
+p{
+    margin: 0px !important;
+}
+.input-amount{
+    margin-left: 0px !important;
+    height: 33px;
+    max-width: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.158);
+    background-color: #10141E;
+    border-radius: 0px;
+    color: white;
+}
+.input-amount:focus{
+    border: 1px solid rgba(255, 255, 255, 0.158);
+    outline: none;
+}
+.button-input{
+    border: 1px solid rgba(255, 255, 255, 0.178);
+    width: 28px;
+    height: 33px;
+    padding: 0px 0px 2px 0px;
+    background-color: #10141E;
+    color: white;
+} 

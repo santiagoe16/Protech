@@ -165,7 +165,7 @@ export const AddProduct = () => {
 									<div className="mb-3">
 										<label htmlFor="formFile" className="form-label">Product Image</label>
 										<input 
-											className="form-control" type="file"
+											type="file"
 											accept="image/*" id="formFile"
 											onChange={(e)=>handleFileChange(e)}  />
 									</div>

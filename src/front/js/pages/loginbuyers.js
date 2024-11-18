@@ -36,6 +36,7 @@ export const LoginBuyer = () => {
             .then((result) =>  {
                 localStorage.setItem("jwt-token-buyer", result.access_token);
                 actions.changeAuthenticatedBuyer(true)
+                actions.getCart()
                 navigate("/productsbuyers");
             })
             .catch((error) => {

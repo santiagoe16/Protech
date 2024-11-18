@@ -73,6 +73,7 @@ export const OrderList = () => {
 						<div className="pt-4 ps-4 pe-4 pb-3 d-flex justify-content-between">
 							<div>
 								<input
+								style={{width: "320px"}}
 								placeholder="Search Orders"
 								className="form-control"
 								type="search"

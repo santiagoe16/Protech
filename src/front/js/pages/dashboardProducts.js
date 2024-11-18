@@ -211,19 +211,13 @@ export const DashboardProducts = () => {
 						<div className="pt-4 ps-4 pe-4 pb-3 d-flex justify-content-between">
 							<div>
 								<input
+								style={{width: "320px"}}
 								placeholder="Search Products"
 								className="form-control"
 								type="search"
 								value={searchTerm}
 								onChange={(e) => setSearchTerm(e.target.value)}
 								/>
-							</div>
-							<div>
-								<select className="form-select" id="opciones" name="opciones">
-									<option value="opcion1">2024</option>
-									<option value="opcion2">2023</option>
-									<option value="opcion3">2022</option>
-								</select>
 							</div>
 						</div>
 						<div className=" table-responsive">
@@ -262,7 +256,7 @@ export const DashboardProducts = () => {
 						</div>
 						<div className="d-flex justify-content-between p-3 pt-2 align-content-center" style={{borderTop: "1px solid rgb(255 255 255 / 34%)"}}>
 							<div className="ms-2 align-content-center">
-								<span className="footer-table">total of items: {products.length}</span>
+								<span className="footer-table">total of products: {products.length}</span>
 							</div>
 							<div className="pt-3 pb-2 pe-2 d-flex align-content-center">
 								<div className="pagination d-flex justify-content-center">
