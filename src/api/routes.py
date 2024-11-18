@@ -1505,3 +1505,26 @@ def modify_profile_image():
         return jsonify({"message": "Imagen de perfil actualizada exitosamente", "image": comprador.image}), 200
 
     return jsonify({"error": "No se proporcionó la URL de la imagen"}), 400
+
+
+@api.route('/buyer/profile/edit', methods=['PUT'])
+@jwt_required()
+def edit_buyer_profile():
+    comprador_id = get_jwt_identity()
+    comprador = Comprador.query.get(comprador_id)
+    if not comprador:
+        return jsonify({"message": "Seller not found"}), 404
+
+    data = request.get_json()
+
+    if 'name' in data:
+        comprador.name = data['name']
+    if 'email' in data:
+        comprador.email = data['email']
+    if 'phone' in data:
+        comprador.phone = data['phone']
+   
+
+    db.session.commit()
+
+    return jsonify({"message": "Profile updated successfully", "seller": comprador.serialize()}), 200

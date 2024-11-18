@@ -71,7 +71,7 @@ export const DetailProduct = () => {
                             <ul className="product-info">
                                 <li><strong>Product Code:</strong> FBB00255</li>
                                 <li><strong>Availability:</strong> In Stock</li>
-                                <li><strong>Type:</strong> Fruits</li>
+                                <li><strong>Type:</strong> technologies</li>
                                 <li><strong>Shipping:</strong> 01 day shipping. (Free pickup today)</li>
                             </ul>
 
