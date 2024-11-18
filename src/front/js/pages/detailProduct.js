@@ -62,7 +62,7 @@ export const DetailProduct = () => {
                                 className="form-control mb-3"
                             />
                             <button
-                                className="btn btn-outline-warning"
+                                className="btn btn-outline-primary"
                                 onClick={() => actions.addToCartFlux(product.id)}
                             >
                                 Add to Cart
@@ -186,7 +186,7 @@ export const DetailProduct = () => {
                                 <div className="card-footer d-flex justify-content-between">
                                     <button
                                         type="button"
-                                        className="btn btn-outline-warning"
+                                        className="btn btn-outline-primary"
                                         onClick={() => actions.addToCartFlux(product.id)}
                                     >
                                         Add to Cart
