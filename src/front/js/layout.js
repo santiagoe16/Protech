@@ -106,7 +106,7 @@ const Layout = () => {
                         <Route element={<OrderList/>} path="/dashboard/order-list" />
                         <Route element={<OrderSingle/>} path="/dashboard/order-single/:cartId" />
                         <Route element={<OrderSingle/>} path="/dashboard/order-single" />
-                        <Route element={<OrdersPlaced/>} path="/order-placed" />
+                        <Route element={<OrdersPlaced/>} path="/orders-placed" />
 
                         
                         <Route element={<DetailProduct/>} path="/detail/:id" />
