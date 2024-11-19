@@ -6,7 +6,6 @@ export const SignupBuyer = () => {
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
-    const [error, setError] = useState("");  
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
@@ -51,65 +50,70 @@ export const SignupBuyer = () => {
     };
 
     return (
-        <div className="d-flex justify-content-center align-items-center h-75">
-            <div className="p-5 rounded-3 shadow">
-                <form onSubmit={handleSubmit}>
-                    <h2 className="text-center mb-3">Sign up buyer</h2>
-                    {error && <div className="alert alert-danger">{error}</div>}
-                    <div className="mb-4">
-                        <label htmlFor="name">Name</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="Enter name"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="email">Email</label>
-                        <input
-                            type="email"
-                            className="form-control"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter email"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            className="form-control"
-                            id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter password"
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label htmlFor="phone">Phone number</label>
-                        <input
-                            type="text"
-                            className="form-control"
-                            id="phone"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            placeholder="Enter phone number"
-                        />
-                    </div>
-                    <div className="text-center">
-                        <button type="submit" className="btn btn-primary w-100">
-                            Sign up
-                        </button>
-                    </div>
-                    <p>
-                        already have an account?{" "}
-                        <Link to="/buyer/login">log in buyer</Link>
-                    </p>
-                </form>
+        <div className="row h-75 mt-5 w-100 d-flex justify-content-center">
+            <div className="col-3 align-content-center">
+                <div style={{width: "550px"}} className="card-black body-signup">
+                    <form onSubmit={handleSubmit}>
+                        <div>
+                            <h2 className="text-center mb-5">Sign Up</h2>
+                            <div className="row mb-4">
+                                <div className="col-6">
+                                    <label htmlFor = "name">Full Name</label>
+                                    <input 
+                                        type = "text" 
+                                        className="form-control" id = "name" 
+                                        value={name} 
+                                        onChange ={(e)=>setName(e.target.value)} 
+                                        placeholder="Enter your full name"
+                                        required
+                                    >
+                                    </input>
+                                </div>
+                                <div className="col-6">
+                                    <label htmlFor = "email">Email</label>
+                                    <input 
+                                        type = "email" 
+                                        className="form-control" id = "email" 
+                                        value={email} 
+                                        onChange ={(e)=>setEmail(e.target.value)} 
+                                        placeholder="Enter email"
+                                        required
+                                    >
+                                    </input>
+                                </div>
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor = "password">Password</label>
+                                <input 
+                                    type = "password" 
+                                    className="form-control" id = "password" 
+                                    value={password} 
+                                    onChange ={(e)=>setPassword(e.target.value)}
+                                    placeholder="Enter password"
+                                    required
+                                >
+                                </input>
+                            </div>
+                            <div className="mb-4">
+                                <label htmlFor = "phone">Phone number</label>
+                                <input 
+                                    type = "text" 
+                                    className="form-control" id = "phone" 
+                                    value={password} 
+                                    onChange ={(e)=>setPhone(e.target.value)}
+                                    placeholder="Enter phone number"
+                                    required
+                                >
+                                </input>
+                            </div>
+                            <p className="text-danger"></p>
+                            <div className="text-center mb-3">
+                                <button type="submit" className="purple-button w-100">Sign Up</button>
+                            </div>
+                            <p>Already have account? <Link className="text-purple" to="/buyer/login">Log in buyer</Link></p>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     );

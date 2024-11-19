@@ -10,11 +10,6 @@
 .purple-button:hover{
     background-color: #4044EE;
 }
-.card-black{
-    background-color: #161a25;
-    color: white;
-    border-radius: 10px;
-}
 h1 p{
     margin-bottom: 12px;
 }
@@ -24,9 +19,6 @@ label{
 }
 h2{
     color: white;
-}
-.body-card{
-    padding: 26px;
 }
 h5{
     font-weight: 500;

@@ -979,6 +979,7 @@ def signupSeller():
         phone=new_seller_data["phone"],
         bank_account=new_seller_data["bank_account"],
         password=new_seller_data["password"],
+        image="https://res.cloudinary.com/dqs1ls601/image/upload/v1731730210/xa8acblb9cpriguyblcv.png",
         is_active=True)
     
 
