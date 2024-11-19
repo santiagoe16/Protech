@@ -39,11 +39,11 @@ export const DetailProduct = () => {
                 {product ? (
                     <div className="row">
                         <div className="col-md-6">
-                        <img 
-    src={product.image || "https://res.cloudinary.com/dqs1ls601/image/upload/v1731200142/qjox25ajspnkngowrjpk.jpg"} 
-    className="card-img-top" 
-    alt={product.name || "Default product"} 
-/>
+                            <img
+                                src={product.image || "https://res.cloudinary.com/dqs1ls601/image/upload/v1731200142/qjox25ajspnkngowrjpk.jpg"}
+                                className="card-img-top"
+                                alt={product.name || "Default product"}
+                            />
 
                         </div>
                         <div className="col-md-6">
@@ -62,7 +62,7 @@ export const DetailProduct = () => {
                                 className="form-control mb-3"
                             />
                             <button
-                                className="btn btn-outline-primary"
+                                className="purple-button"
                                 onClick={() => actions.addToCartFlux(product.id)}
                             >
                                 Add to Cart
@@ -169,13 +169,13 @@ export const DetailProduct = () => {
 
                 <div className="card-container">
                     {store.products.map((product, index) => (
-                        <Link to={`/detail/${product.id}`} key={product.id || index} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <Link to={`/detail/${product.id}`} key={product.id || index} style={{ textDecoration: 'none', color: 'inherit' }}   onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
                             <div key={product.id || index} className="card mb-4" style={{ minWidth: "18rem", maxWidth: "300px" }}>
-                            <img 
-    src={product.image || "https://res.cloudinary.com/dqs1ls601/image/upload/v1731200142/qjox25ajspnkngowrjpk.jpg"} 
-    className="card-img-top" 
-    alt={product.name || "Default product"} 
-/>
+                                <img
+                                    src={product.image || "https://res.cloudinary.com/dqs1ls601/image/upload/v1731200142/qjox25ajspnkngowrjpk.jpg"}
+                                    className="card-img-top"
+                                    alt={product.name || "Default product"}
+                                />
 
                                 <div className="card-body">
                                     <h5 className="card-title">{product.name}</h5>
@@ -186,7 +186,7 @@ export const DetailProduct = () => {
                                 <div className="card-footer d-flex justify-content-between">
                                     <button
                                         type="button"
-                                        className="btn btn-outline-primary"
+                                        className="purple-button"
                                         onClick={() => actions.addToCartFlux(product.id)}
                                     >
                                         Add to Cart
