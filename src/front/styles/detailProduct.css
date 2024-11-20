@@ -1,8 +1,8 @@
 
 .ProductDetail {
-    margin-top: 20px;
+    margin-top: 30px;
     padding: 20px;
-    background-color: #fff;
+    background-color: #1E212B;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -18,13 +18,13 @@
 .ProductDetail h2 {
     font-size: 24px;
     font-weight: bold;
-    color: #010002;
+    color:  #fff;
     margin-top: 0;
 }
 
 .ProductDetail p {
     font-size: 16px;
-    color: #000;
+    color:  #fff;
     line-height: 1.6;
     margin: 5px 0;
 }
@@ -32,7 +32,7 @@
 .ProductDetail p:nth-child(3) {
     font-size: 18px;
     font-weight: bold;
-    color: #1c1f1d;
+    color: #e2e4e2;
 }
 
 .ProductDetail input {
@@ -80,14 +80,20 @@
 
 .card {
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #2E313D; 
+    color: #fff; 
     flex-shrink: 0;
+}
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
 
 .card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
 }
 
 .card-img-top {
@@ -99,25 +105,39 @@
 }
 
 .card-body {
-    background-color: #f8f9fa;
     padding: 1rem;
-    color: #343a40;
+    color: #fff;
 }
+
 
 .card-title {
     font-size: 1.25rem;
     font-weight: bold;
-    color: #007bff;
+    color:  #fff;
 }
 
+
 .card-footer {
-    background-color: #fff;
-    border-top: 1px solid #ddd;
-    padding: 0.75rem 1rem;
+background-color: #1E212B;
+border-top: 1px solid #555;
+padding: 0.75rem 1rem;
 }
 
 .card-footer button {
-    font-size: 1rem;
+font-size: 1rem;
+background-color: #6a0dad;
+color: #fff;
+border: none;
+padding: 10px;
+border-radius: 5px;
+transition: all 0.3s ease;
+cursor: pointer;
+}
+
+.card-footer button:hover {
+background-color: #4e0a91;
+transform: scale(1.05);
+box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 
@@ -154,7 +174,7 @@
 
 .nav-link.active {
     font-weight: bold;
-    color: #000;
+    color: #fff;
     border-bottom: 2px solid #007bff;
 }
 
@@ -200,8 +220,26 @@
     margin-bottom: 15px;
 }
 
-.form-control-input {
+.form-control {
     max-width: 150px;
     display: inline-block;
     margin-right: 10px;
+}
+
+.purple-button {
+    background-color: #6a0dad;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.purple-button:hover {
+    background-color: #4e0a91;
+    transform: scale(1.05);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
