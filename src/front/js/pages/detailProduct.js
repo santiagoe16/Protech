@@ -35,7 +35,7 @@ export const DetailProduct = () => {
 
     return (
         <div className="container">
-            <div className="ProductDetail container">
+            <div className="ProductDetail container mt-5">
                 {product ? (
                     <div className="row">
                         <div className="col-md-6">

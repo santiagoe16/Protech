@@ -68,7 +68,13 @@ const Layout = () => {
         <div className="h-100 w-100">
             <ScrollToTop>
                 {showSidebar ? <Sidebar /> : <Navbar />}
-                <div className="h-100" style={{ marginLeft: showSidebar ? "448px" : "", marginRight: showSidebar ? "167px" : "", marginTop: showSidebar ? "100px" : ""}}>
+                
+                <div className="flex-grow-1"
+              style={{ 
+                marginLeft: showSidebar ? "448px" : "", 
+                marginRight: showSidebar ? "167px" : "", 
+                marginTop: showSidebar ? "100px" : ""
+               }} >
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
@@ -114,7 +120,8 @@ const Layout = () => {
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                 </div>
-                {/* <Footer /> */}
+                
+                { <Footer />}
             </ScrollToTop>
         </div>
     );
