@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useContext } from "react";
 import { LoadScript, GoogleMap, Marker, InfoWindow } from "@react-google-maps/api";
 import { Context } from "../store/appContext";
-
+import "/workspaces/lt34-protech/src/front/styles/selleraddress.css";
 const libraries = ["places"];
 const defaultCenter = { lat: 4.570868, lng: -74.297333 };
 
@@ -159,60 +159,91 @@ export const SellerAddress = () => {
     };
 
     return (
-        <div>
-            <div className="mt-5 mb-4 p-3 bg-light text-center">
-                <h5>Name: {currentAddress.name}</h5>
-                <h5>Address: {currentAddress.address}</h5>
-                <h5>Description: {currentAddress.description}</h5>
-            </div>
-            <LoadScript googleMapsApiKey={process.env.GOOGLE_API_KEY} libraries={libraries}>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                <div id="pac-card" className="container" style={{width: "40%"}}>
-                        <input
-                            id="pac-input" ref={inputRef}
-                            type="text" placeholder="Enter a location"
-                            className="me-3"
-                            style={{ width: "400px", padding: "8px"}}
-                        />
-                        <input 
-                            type="text" placeholder="Name of address"
-                            style={{ maxWidth: "327px", minWidth:"310px", width: "100%", padding: "8px", marginBottom: "12px"}}
-                            value={nameArticle}
-                            onChange={(e)=> setNameArticle(e.target.value)}
-                        ></input>
-                    </div>
-                    <div className="container" style={{width: "40%"}}>
-                        <textarea className="mb-2"
-                        maxLength="200" rows="4" 
-                        style={{maxHeight: "60px", width: "100%", resize: "none"}} 
-                        placeholder="Escribe aquí (máximo 200 caracteres)"
-                        value={description}
-                        onChange={(e)=> setDescription(e.target.value)}
-                        ></textarea>
-                        <button className=" btn btn-primary w-100 mb-4" onClick={updateSellerAddress}>
-                            Update Address
-                        </button>
-                    </div>
-                    <GoogleMap
-                        id="map"
-                        mapContainerStyle={{ height: "500px", width: "60%" }}
-                        center={markerPosition}
-                        zoom={13}
-                        onLoad={(mapInstance) => setMap(mapInstance)}
-                    >
-                        <Marker position={markerPosition} />
-
-                        {selectedPlace && (
-                            <InfoWindow position={markerPosition} onCloseClick={() => setSelectedPlace(null)}>
-                                <div>
-                                    <h2>{selectedPlace.name}</h2>
-                                    <p>{selectedPlace.formatted_address}</p>
-                                </div>
-                            </InfoWindow>
-                        )}
-                    </GoogleMap>
-                </div>
-            </LoadScript>
+      <div className="address-update-container">
+  <div className="address-update-card">
+    <div className="address-update-content">
+      <div className="row mb-4">
+        <div className="col-12">
+          <h2 className="address-update-title">Update Address</h2>
         </div>
-    );
-};
+      </div>
+
+      <div className="row mb-4">
+        <div className="col-12">
+          <div className="current-address-section">
+            <h3 className="current-address-title">Current Address</h3>
+            <p className="current-address-text">Name: {currentAddress.name}</p>
+            <p className="current-address-text">Address: {currentAddress.address}</p>
+            <p className="current-address-text">Description: {currentAddress.description}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-nowrap row mb-4">
+        <div className="col-6">
+          <input
+            type="text"
+            placeholder="Name of address"
+            value={nameArticle}
+            onChange={(e) => setNameArticle(e.target.value)}
+            className="address-input"
+          />
+        </div>
+    
+        <div className="col-6">
+          <input
+            id="pac-input"
+            ref={inputRef}
+            type="text"
+            placeholder="Enter a location"
+            className="address-input"
+          />
+        </div>
+      </div>
+      
+      <div className="row">
+        <div className="col-12">
+          <LoadScript googleMapsApiKey={process.env.GOOGLE_API_KEY} libraries={libraries}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div id="pac-card" className="container" style={{ width: "100%" }}>
+              </div>
+              <div className="container" style={{ width: "100%" }}>
+                <button 
+                  className="update-button" 
+                  onClick={updateSellerAddress}
+                >
+                  Update Address
+                </button>
+              </div>
+              <GoogleMap
+                id="map"
+                mapContainerClassName="map-container"
+                center={markerPosition}
+                zoom={13}
+                onLoad={(mapInstance) => setMap(mapInstance)}
+              >
+                <Marker position={markerPosition} />
+  
+                {selectedPlace && (
+                  <InfoWindow
+                    position={markerPosition}
+                    onCloseClick={() => setSelectedPlace(null)}
+                  >
+                    <div>
+                      <h2>{selectedPlace.name}</h2>
+                      <p>{selectedPlace.formatted_address}</p>
+                    </div>
+                  </InfoWindow>
+                )}
+              </GoogleMap>
+            </div>
+          </LoadScript>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+       
+
+      );
+    }      
