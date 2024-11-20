@@ -50,14 +50,12 @@ export const Categories = () => {
 		item.name.toLowerCase().includes(searchTerm.toLowerCase())
 	);
 
-	// Cálculo de la paginación
 	const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 	const paginatedData = filteredData.slice(
 		(currentPage - 1) * itemsPerPage,
 		currentPage * itemsPerPage
 	);
 
-	// Función para cambiar la página
 	const handlePageChange = (pageNumber) => {
 		setCurrentPage(pageNumber);
 	};

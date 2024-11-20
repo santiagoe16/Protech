@@ -46,8 +46,8 @@ export const AddCategory = () => {
 					</div>
 				</div>
 			</div>
-			<div className="row">
-				<div className="col-12">
+			<div className="row d-flex justify-content-center">
+				<div className="col-10">
 					<div className="card-black body-card">
 						<h5 className="mb-4">Category Name</h5>
 						<form onSubmit={(e)=>createCategory(e)}>
