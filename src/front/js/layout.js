@@ -4,6 +4,7 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Navbar } from "./component/navbar";
+import { Navbar2 } from "./component/navbar2";
 import { Footer } from "./component/footer";
 import { Sidebar } from "./component/sidebar";
 import { Home } from "./pages/home";
@@ -57,17 +58,21 @@ const Layout = () => {
     
     const location = useLocation();
 
+    const routesNavbar = ["/seller/signup", "/seller/login", "/buyer/login", "/buyer/signup"]
+    const showNabar =  routesNavbar.some(route => location.pathname.startsWith(route))
+
+
     const routesSidebar = ["/dashboard", "/dashboard/products", "/add-product", "/edit-product", "/dashboard/categories", "/add-category",
         "/edit-category", "/dashboard/order-list", "/dashboard/order-single"]
-
     const showSidebar =  routesSidebar.some(route => location.pathname.startsWith(route))
+    
 
     if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/>;
 
     return (
         <div className="h-100 w-100">
             <ScrollToTop>
-                {showSidebar ? <Sidebar /> : <Navbar />}
+                {showSidebar ? <Sidebar /> : showNabar ? (<Navbar2/>):(<Navbar/>)}
                 <div className="h-100" style={{ marginLeft: showSidebar ? "448px" : "", marginRight: showSidebar ? "167px" : "", marginTop: showSidebar ? "100px" : ""}}>
                     <Routes>
                         <Route element={<Home />} path="/" />
@@ -94,7 +99,7 @@ const Layout = () => {
                         <Route element={<SellerAddress/>} path="/selleraddress" />
                         <Route element={<ProductsSeller/>} path="/product/seller" />
                         <Route element={<ProfileSeller/>} path= "/profile/seller" />
-                        <Route element={<BuyerProfile/>} path="/buyer/profile" />
+                        <Route element={<BuyerProfile/>} path="/profile/buyer" />
                         <Route element={<Blog/>} path="/blog" />
                         <Route element={<Dashboard/>} path="/dashboard" />
                         <Route element={<DashboardProducts/>} path="/dashboard/products" />

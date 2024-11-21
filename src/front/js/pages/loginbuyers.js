@@ -39,7 +39,7 @@ export const LoginBuyer = () => {
                 localStorage.setItem("jwt-token-buyer", result.access_token);
                 actions.changeAuthenticatedBuyer(true)
                 actions.getCart()
-                navigate("/productsbuyers");
+                navigate("/");
             })
             .catch((error) => {
                 console.error('Fetch error:', error)
@@ -90,24 +90,3 @@ export const LoginBuyer = () => {
         </div>
 	);
 };
-
-// <div className="d-flex justify-content-center align-items-center h-75 w-100">
-// 	<div className= " p-5 rounded-3 shadow">
-//         <form onSubmit = {handleSubmit}>
-//             <h2 className="text-center mb-3">Log in buyer</h2>
-//             <div className="mb-4">
-//                 <label htmlFor = "email">Email</label>
-//                 <input type = "email" className="form-control" id = "email" value={email} onChange ={(e)=>setEmail(e.target.value)} placeholder="Enter email"></input>
-//             </div>
-//             <div className="mb-4">
-//                 <label htmlFor = "password">Password</label>
-//                 <input type = "password" className="form-control" id= "password" value={password} onChange ={(e)=>setPassword(e.target.value)} placeholder="Enter          password"></input>
-//                 <p className="text-danger">{msgError ? msgError:null}</p>
-//             </div>
-//             <div className="text-center">
-//                 <button type="submit" className="btn btn-primary w-100">Login</button>
-//             </div>
-//             <p>don't have an account? <Link to="/buyer/signup">sign up buyer</Link></p>
-//         </form>
-//     </div>
-// </div>

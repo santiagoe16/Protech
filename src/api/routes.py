@@ -145,25 +145,19 @@ def remove_product(product_id):
 def get_top_seller_products():
     seller_id = get_jwt_identity()
 
-    # Obtener todos los productos de un vendedor específico
     products = Products.query.filter_by(seller_id=seller_id).all()
 
-    # Diccionario para almacenar la cantidad vendida por producto
     product_sales = {}
 
     for product in products:
-        # Obtener todos los items que correspondan a este producto
         items_sold = ItemCart.query.filter_by(product_id=product.id).all()
 
-        # Contabilizar el total vendido de este producto
         total_sold = sum(item.amount for item in items_sold)
 
         product_sales[product] = total_sold
 
-    # Ordenar los productos por cantidad vendida en orden descendente
     top_products = sorted(product_sales.items(), key=lambda x: x[1], reverse=True)[:4]
 
-    # Serializar la información para devolverla como JSON
     top_products_data = [
         {
             "product_name": product.name,
@@ -175,15 +169,13 @@ def get_top_seller_products():
     return jsonify(top_products_data), 200
 
 @api.route('/categorias', methods=['GET'])
-@jwt_required()
 def get_categorias():
-    # Obtener todas las categorías
+
     categorias = Categoria.query.all()
 
-    # Crear la respuesta con una consulta por categoría
     result = []
     for categoria in categorias:
-        product_count = Products.query.filter_by(category_id=categoria.id).count()  # Contar productos
+        product_count = Products.query.filter_by(category_id=categoria.id).count()
         result.append({
             "id": categoria.id,
             "name": categoria.name,
@@ -336,18 +328,6 @@ def get_seller(seller_id):
         return jsonify({"msg": "Vendedor no encontrado"}), 404
     return jsonify(seller.serialize()), 200
 
-@api.route('/seller/info', methods=['GET'])
-@jwt_required()
-def get_seller_info():
-    seller_id = get_jwt_identity()
-    seller = Seller.query.get(seller_id)
-
-    if not seller:
-        return jsonify({"msg": "Vendedor no encontrado"}), 404
-    
-    return jsonify(seller.serialize()), 200
-
-
 @api.route('/seller/signup', methods=['POST'])
 def signup():
     body = request.get_json()
@@ -469,6 +449,10 @@ def add_itemcart():
     new_item_cart = request.get_json()
 
     comprador_id = get_jwt_identity()
+
+    if not comprador_id:
+        return jsonify({"error": "buyer not found"}), 401
+        
 
     cart = Cart.query.filter_by(comprador_id=comprador_id, state='open').first()
 
@@ -1481,6 +1465,7 @@ def get_buyer_profile():
     comprador = Comprador.query.get(comprador_id)
     if not comprador:
         return jsonify({"message": "Comprador no encontrado"}), 404  
+    
     return jsonify(comprador.serialize()), 200
 
 

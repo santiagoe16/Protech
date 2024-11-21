@@ -8,15 +8,9 @@ import "/workspaces/lt34-protech/src/front/styles/sidebar.css"
 
 export const Sidebar = () => {
     const { store, actions } = useContext(Context);
-    const [cartItems, setCartItems] = useState([]);
-    const [totalPrice, setTotalPrice] = useState(0);
-    const [cartId, setCartId] = useState(null);
     const [infoProfile, setInfoProfile] = useState({});
     const navigate = useNavigate();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-    const cloudName = "dqs1ls601";
-    const presetName = "Protech";
 
     const logOut = () => {
 		localStorage.removeItem("jwt-token-seller");
@@ -29,7 +23,7 @@ export const Sidebar = () => {
     const getProfileImage = () => {
 		const token = actions.verifyTokenSeller();
 
-        fetch(process.env.BACKEND_URL + "/api/seller/info", {
+        fetch(process.env.BACKEND_URL + "/api/seller/profile", {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -71,7 +65,8 @@ export const Sidebar = () => {
                                     <small>{infoProfile.email}</small>
                                 </div>
                                 <hr className="dropdown-divider"/>
-                                <li><NavLink to="/productsbuyers" className="item-dropdown" >Home</NavLink></li>
+                                <li><NavLink to="/" className="item-dropdown" >Home</NavLink></li>
+                                <li><NavLink to="/blog" className="item-dropdown" >Blog</NavLink></li>
                                 <li><NavLink to="/profile/seller" className="item-dropdown" >Profile</NavLink></li>
                                 <hr className="dropdown-divider"/>
                                 <li><a onClick={logOut} className="item-dropdown log-out" >Log Out</a></li>
