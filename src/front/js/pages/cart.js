@@ -91,7 +91,7 @@ export const Cart = () => {
                             <h2>Cart</h2>
                             <button
                                 className="purple-button ms-auto mt-2"
-                                onClick={() => navigate("/productsbuyers")}
+                                onClick={() => navigate("/")}
                             >
                                 Back to shopping
                             </button>

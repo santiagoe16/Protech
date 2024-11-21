@@ -52,10 +52,8 @@ export const Sidebar = () => {
         <>
             <div className="sidebar">
                 <div className="navbar-dashboard">
-                    <div className="container d-flex">
-                        <div>
-                        </div> 
-                        <div className="ms-auto nav-item">
+                    <div className="container text-end">
+                        <div className="nav-item">
                             <div className="dropdown-toggle "  role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <img src={infoProfile.image} alt="" className="rounded-circle avatar cover"/>
                             </div>
