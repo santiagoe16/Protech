@@ -21,7 +21,7 @@ export const Navbar2 = () => {
                         <div className="d-flex justify-content-between w-100">
                             <h3 className="text-white ms-3" style={{cursor: "pointer"}} onClick={()=>navigate("/")}>Protech</h3>
 							<div>
-								<button className={showButton ? "purple-button": "d-none"} style={{cursor: "pointer"}} onClick={()=>navigate("/buyer/signup")}>Login buyer</button>
+								<button className={showButton ? "purple-button me-3": "d-none"} style={{cursor: "pointer"}} onClick={()=>navigate("/buyer/signup")}>Login buyer</button>
 								<button className="purple-button" style={{cursor: "pointer"}} onClick={()=>navigate("/seller/signup")}>Start Selling</button>
 							</div>
                         </div>

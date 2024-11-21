@@ -192,7 +192,7 @@ export const Navbar = () => {
 										<ul className="list-group list-group-flush ">
 											{cart.items?.length > 0 ? (cart.items.map((item, index) =>(
 												<li key={index} className="px-0 border-bottom border-secondary list-group-item item-cart justify-content center">
-													<div className="align-items-center row text-white">
+													<div className="row text-white text-start">
 														<div className="col-6">
 															<div className="ms-3">
 																<p>{item.product.name}</p>
