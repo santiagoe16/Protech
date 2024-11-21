@@ -151,7 +151,7 @@ export const Home = () => {
                             <div>
                                 <h3 className="fw-bold mb-1" style={{color: "rgb(0 26 38)"}}>Fruits & Vegetables</h3>
                                 <span>Get Upto 30% Off</span>
-                                <div className="mt-5">
+                                <div className="mt-2">
                                     <button className="purple-button">Shop Now</button>
                                 </div>
                             </div>
