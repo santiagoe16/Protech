@@ -13,19 +13,8 @@ export const Categories = () => {
 	const itemsPerPage = 3;
 
 	const getCategories = () => {
-		const token = actions.verifyTokenSeller();
 
-		if (!token) {
-		console.error("No valid token found. User might need to log in.");
-		navigate("/login");
-		return;
-		}
-
-		fetch(`${process.env.BACKEND_URL}/api/categorias`, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		})
+		fetch(`${process.env.BACKEND_URL}/api/categorias`)
 			.then((response) => {
 				if (!response.ok) {
 					throw new Error("Error fetching products: " + response.statusText);

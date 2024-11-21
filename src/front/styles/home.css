@@ -1,7 +1,94 @@
-/*
-    home.css: This website contains selectors only used in home.css
+.caption-carousel {
+    position: absolute;
+    bottom: 29%;
+    left: 43%;
+    transform: translateX(-98%);
+    color: white;  
+    text-align: start;
+    padding: 10px 20px; 
+    border-radius: 5px; 
+    width: 530px;
+    height: 247px;
+}
 
-    All pages share the styles on index.css but you should create 
-    one more css for each page that will contain the selected used 
-    on that page only (the ones not reused in other pages).
-*/
+.carousel-item img{
+    width: 100%;
+    height: 546px;
+}
+
+.carousel-item h1{
+    font-size: 48px;
+    color: #151822;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.carousel-item p{
+    font-size: 19.5px;
+    color: #151822;
+    font-weight: 500;
+}
+
+.card-product{
+    background-color: #151822;
+    width: 100%; 
+    max-width: 246px;
+    height: 329px;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.89);
+    border: 1px solid rgb(255 255 255 / 14%);
+    transition: border 0.3s ease; 
+    padding: 0px;
+}
+.card-product:hover{
+    box-shadow: 0px 1px 8px 3px rgb(255 255 255 / 9%);
+    border: 1px solid rgb(255 255 255 / 20%);
+}
+.card-product .body-card{
+    padding: 0px 20px 16px 20px;
+}
+.card-product img{
+    margin: 0px 0px 12px;
+    width: 100%;
+    height: 208px;
+    object-fit: cover;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+.card-product small{
+    padding: 0px;
+    margin-bottom: 4px;
+    color: rgba(255, 255, 255, 0.623);
+    font-size: 12.76px;
+}
+.card-product h6{
+    padding: 0px;
+    font-size: 14.6px;
+    margin: 1px 0px 19px 0px;
+    color: #ffffffd3;
+    font-weight: 600;
+}
+.card-product h6:hover{
+    color: rgb(86, 88, 221);
+}
+.card-product span{
+    font-weight: 600;
+    font-size: 14.6px;
+    color: #ffffffd3;
+}
+.card-product button{
+    font-size: 13.2px !important;
+    padding: 4px 8px 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+.card-shop {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    padding: 45px 32px;
+    height: 210px;
+}
+.card-shop span{
+    color: rgba(12, 11, 11, 0.596);
+}

@@ -1,15 +1,16 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, NavLink } from "react-router-dom";
 import { Context } from "../store/appContext";
 import "/workspaces/lt34-protech/src/front/styles/navbar.css";
-import { Trash } from 'react-bootstrap-icons';
+import { Trash, Bag, Person, Motherboard, GeoAlt, Search } from 'react-bootstrap-icons';
 
 export const Navbar = () => {
 	const { store, actions } = useContext(Context);
 	const navigate = useNavigate();
 	const [cart, setCart] = useState({});
-	const [cartEmpty, setCartEmpty] = useState(true);
+	const search = useRef();
+	const [infoProfile,setInfoProfile] = useState({})
 	
 	const logOut = () => {
 		localStorage.removeItem("jwt-token-seller");
@@ -21,14 +22,15 @@ export const Navbar = () => {
 
 
 	useEffect(() => {
-        if (store.cart) {
-            setCart(store.cart);
-			if(store.cart?.items?.length > 0 ){
-				setCartEmpty(false)
-			}
-			else setCartEmpty(true)
-        }
-    }, [store.cart]);
+		setCart(store.cart);
+
+		if(store.authenticatedSeller){
+			getInfoSellerProfile()
+		}
+		if(store.authenticatedBuyer){
+			getInfoBuyerProfile()
+		}
+    }, [store.cart, store.authenticatedBuyer, store.authenticatedSeller]);
 
 	const removeItem = (itemId) => {
         const token = actions.verifyTokenBuyer();
@@ -54,132 +56,248 @@ export const Navbar = () => {
             });
     };
 
+	const getInfoSellerProfile = () => {
+		const token = actions.verifyTokenSeller();
+		
+        fetch(process.env.BACKEND_URL + "/api/seller/profile", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+				if (response.status === 401) {
+                    actions.changeAuthenticatedSeller(false);
+                }
+                if (!response.ok) {
+                    throw new Error("Error deleting item: " + response.statusText);
+                }
+                return response.json();
+            })
+            .then((data) => {
+				setInfoProfile(data)
+            })
+            .catch((error) => {
+                console.error("no seller found:", error);
+            });
+	};
+	const getInfoBuyerProfile = () => {
+		const token = actions.verifyTokenBuyer();
+
+        fetch(process.env.BACKEND_URL + "/api/buyer/profile", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+                if (response.status === 401) {
+                    actions.changeAuthenticatedBuyer(false);
+                }
+                if (!response.ok) {
+                    throw new Error("no buyer found: " + response.statusText);
+                }
+                return response.json();
+            })
+            .then((data) => {
+				console.log(data);
+				
+				setInfoProfile(data)
+            })
+	};
+
+	const searchProducts = () => {
+		actions.setSearch(search.current.value);
+	};
 
 	return (
-		<nav className="navbar navbar-light bg-light" style={{height: "50px", marginLeft: "0"}}>
-			<div className="container">
-				<Link to="/">
-					<span className="navbar-brand mb-0 h1">React Boilerplate</span>
-				</Link>
-				
-				<div className="ml-auto">
-					{store.authenticatedBuyer && (
-						<>
-							<Link to="/buyer/profile">
-								<button className="btn btn-primary">Profile</button>
+		<>	
+			<div className="bgd-black" style={{padding: "20px 0px 20px 0px"}}>
+				<div className="container">
+					<div className="w-100 align-items-center gx-lg-2 gx-0 row">
+						<div className="col-xxl-2 col-lg-3 col-md-6 col-5">
+							<div>
+								<h3 className="text-white ms-3" style={{cursor: "pointer"}} onClick={()=>navigate("/")}>Protech</h3>
+							</div>
+						</div>
+						<div className="d-lg-block col-xxl-5 col-lg-5 position-relative">
+							<input 
+								type = "text"
+								style={{height: "41px"}}
+								className="form-control ps-3"
+								ref={search}
+								onKeyDown ={
+									(e)=>{
+										if(e.key == "Enter"){
+											searchProducts()
+										}
+									}
+								} 
+								placeholder="Search for products"
+							>
+							</input>
+							<Search onClick={()=>searchProducts()} className="icon-search"/>
+						</div>
+						<div className="d-lg-block col-xxl-3 col-md-2">
+							<Link to={store.authenticatedBuyer ? ("/buyeraddress"):(
+								store.authenticatedSeller ? ("/selleraddress"):("/buyer/login")
+							)}>
+								<button className="purple-button" style={{fontSize: "14.5px"}}><GeoAlt className="me-1"/> Location</button>
 							</Link>
-							<Link to="/cart">
-								<button className="btn btn-primary">Cart</button>
-							</Link>
-							<Link to="/productsbuyers">
-								<button className="btn btn-primary">Products</button>
-							</Link>
-							<Link to="/orders-placed">
-								<button className="btn btn-primary">Orders Placed</button>
-							</Link>
-							<Link to="/buyeraddress">
-								<button className="btn btn-primary">Add Address</button>
-							</Link>
-							<button className="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">cartsito</button>
+						</div>
+						<div className="text-end text-white col-xxl-2 col-lg-2 col-md-6 col-7">
+							<Person className="dropdown-toggle icon-nav fs-5 me-3" role="button" data-bs-toggle="dropdown" aria-expanded="false"></Person>
 
-							<div className="offcanvas offcanvas-end text-white" data-bs-scroll="true" data-bs-backdrop="false" tabIndex="-1" 
-								id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
-								<div className="offcanvas-header border-bottom border-secondary">
-									<h4 className="offcanvas-title" id="offcanvasScrollingLabel">Shop Cart</h4>
-									<button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-								</div>
-								<div className="offcanvas-body">
-									<ul className="list-group list-group-flush ">
-										{cart.items?.length > 0 ? (cart.items.map((item, index) =>(
-											<li key={index} className="px-0 border-bottom border-secondary list-group-item item-cart justify-content center">
-												<div className="align-items-center row text-white">
-													<div className="col-6">
-														<div className="ms-3">
-															<p>{item.product.name}</p>
-															<a className="text-secondary" onClick={()=>removeItem(item.item_id)} ><Trash/> Remove</a>
+							<ul className="dropdown-menu dropdown-menu-end hover-li p-2">
+								{store.authenticatedSeller ? (<>
+									<div className="py-1 px-2 mb-2">
+										<span className="name">{infoProfile.name}</span>
+										<small>{infoProfile.email}</small>
+									</div>
+									<hr className="dropdown-divider"/>
+									<li><NavLink to="/dashboard" className="item-dropdown hover-li" >Dashboard</NavLink></li>
+									<li><NavLink to="/profile/seller" className="item-dropdown" >Profile</NavLink></li>
+									<hr className="dropdown-divider"/>
+									<li><a onClick={()=>logOut()} className="item-dropdown log-out" >Log Out</a></li>
+								</>):(
+									store.authenticatedBuyer ? (<>
+										<div className="py-0 px-2 mb-2">
+											<span className="name">{infoProfile.name}</span>
+											<small>{infoProfile.email}</small>
+										</div>
+										<hr className="dropdown-divider"/>
+										<li><NavLink to="/profile/buyer" className="item-dropdown" >Profile</NavLink></li>
+										<hr className="dropdown-divider"/>
+										<li><a onClick={()=>logOut()} className="item-dropdown log-out" >Log Out</a></li>	
+									</>):(<>
+										<div className="py-1 px-1">
+											<li><Link to="/buyer/login" className="item-dropdown" >Log in</Link></li>
+											<li><Link to="/buyer/signup" className="item-dropdown" >Sign up</Link></li>
+										</div>
+									</>)
+								)}
+							</ul>
+							{store.authenticatedBuyer ? (<>
+								<Bag className="fs-5 me-3 icon-nav" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling"></Bag>
+								
+								<div className="offcanvas offcanvas-end text-white" data-bs-scroll="true" data-bs-backdrop="false" tabIndex="-1" 
+									id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+									<div className="offcanvas-header border-bottom border-secondary">
+										<h4 className="offcanvas-title" id="offcanvasScrollingLabel">Shop Cart</h4>
+										<button type="button" className="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+									</div>
+									<div className="offcanvas-body">
+										<ul className="list-group list-group-flush ">
+											{cart.items?.length > 0 ? (cart.items.map((item, index) =>(
+												<li key={index} className="px-0 border-bottom border-secondary list-group-item item-cart justify-content center">
+													<div className="row text-white text-start">
+														<div className="col-6">
+															<div className="ms-3">
+																<p>{item.product.name}</p>
+																<a className="text-secondary" onClick={()=>removeItem(item.item_id)} ><Trash/> Remove</a>
+															</div>
+														</div>
+														<div className="col-3">
+															<div className="input-group">
+																<button style={{borderTopLeftRadius: "5px", borderBottomLeftRadius: "5px"}}
+																	className="button-input"
+																	onClick={() =>
+																		actions.updateCartItemAmount(item.item_id, item.amount - 1)
+																	}
+																>
+																	-
+																</button>
+																<input
+																	type="number"
+																	value={item.amount || 1}
+																	className="input-amount text-center"
+																	onChange={(e) =>
+																		actions.updateCartItemAmount(item.item_id, parseInt(e.target.value) || 1)
+																	}
+																	min="1"
+																/>
+																<button style={{borderEndEndRadius: "5px", borderTopRightRadius: "5px"}}
+																	className="button-input"
+																	onClick={() =>
+																		actions.updateCartItemAmount(item.item_id, item.amount + 1)
+																	}
+																>
+																	+
+																</button>
+															</div>
+														</div>
+														<div className="col-3">
+															<div>
+																<p className="text-center">${(item.product.price * item.amount).toFixed(2)}</p>
+															</div>
 														</div>
 													</div>
-													<div className="col-3">
-														<div className="input-group">
-															<button style={{borderTopLeftRadius: "5px", borderBottomLeftRadius: "5px"}}
-																className="button-input"
-																onClick={() =>
-																	actions.updateCartItemAmount(item.item_id, item.amount - 1)
-																}
-															>
-																-
-															</button>
-															<input
-																type="number"
-																value={item.amount || 1}
-																className="input-amount text-center"
-																onChange={(e) =>
-																	actions.updateCartItemAmount(item.item_id, parseInt(e.target.value) || 1)
-																}
-																min="1"
-															/>
-															<button style={{borderEndEndRadius: "5px", borderTopRightRadius: "5px"}}
-																className="button-input"
-																onClick={() =>
-																	actions.updateCartItemAmount(item.item_id, item.amount + 1)
-																}
-															>
-																+
-															</button>
-														</div>
-													</div>
-													<div className="col-3">
-														<div>
-															<p className="text-center">${(item.product.price * item.amount).toFixed(2)}</p>
-														</div>
+												</li>
+											))):(<>
+												<div className="row d-flex justify-content-center mt-5">
+													<div className="col-12">
+														<h3 className="text-center">the cart is empty</h3>
 													</div>
 												</div>
-											</li>
-										))):(<>
-											<div className="row d-flex justify-content-center mt-5">
-												<div className="col-12">
-													<h3 className="text-center">the cart is empty</h3>
-												</div>
-											</div>
-										</>)}
-									</ul>
-									{cartEmpty ? (<></>):(
-										<div className="ms-auto d-flex mt-4">
+											</>)}
+										</ul>
+										{store.cart?.items?.length > 0 ? (
+											<div className="ms-auto d-flex mt-4">
 											<button onClick={() => navigate("/cart")} data-bs-dismiss="offcanvas" aria-label="Close" 
 												className="purple-button ms-auto">
 												Proceed To Checkout
 											</button>
 										</div>
-									)}
+										):(<></>)}
+									</div>
 								</div>
-							</div>
-						</>
-					)}
-
-					{store.authenticatedSeller && (
-						<>
-							<Link to="/orders">
-								<button className="btn btn-primary">Orders</button>
-							</Link>
-							<button className="btn btn-primary" onClick={() => navigate("/selleraddress")}>Update Address</button>
-							<button className="btn btn-primary" onClick={() => navigate("/product/seller")}>My Products</button>
-							<button className="btn btn-primary" onClick={() => navigate("/dashboard")}>dashboard</button>
-							<button className="btn btn-primary" onClick={() => navigate("/profile/seller")}>Profile</button>
-						</>
-					)}
-
-					{(store.authenticatedBuyer || store.authenticatedSeller) ? (
-						<button className="btn btn-danger" onClick={logOut}>Log Out</button>
-					) : (
-						<>
-							<button className="btn btn-primary" onClick={() => navigate("/buyer/login")}>Log In</button>
-							{!store.authenticatedSeller && (
-								<button className="btn btn-primary" onClick={() => navigate("/seller/login")}>Start Selling</button>
-							)}
-						</>
-					)}
+							</>):(<></>)}
+						</div>
+					</div>
 				</div>
 			</div>
-		</nav>
+			<nav className="navbar bg-dark navbar-expand-lg bgd-black" style={{padding: "0px 5px 20px"}}>
+				<div className="container">
+					<div className="container-fluid">
+						<button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+						<span className="navbar-toggler-icon"></span>
+						</button>
+						<div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+							<div className="navbar-nav">
+								{store.authenticatedBuyer ? (
+									<>
+										<Link to="/" >
+											<button className="main-button"><Motherboard/> Products</button>
+										</Link>
+										<Link className="nav-link ms-3" to="/orders-placed">Orders</Link>
+										<Link className="nav-link ms-3" to="/blog">Blog</Link>
+										<Link className="nav-link ms-3" to="/cart">Cart</Link>
+										<Link className="nav-link ms-3" to="/profile/buyer">Profile</Link>
+									</>
+								):(
+									store.authenticatedSeller ? (
+									<>
+										<Link to="/" >
+											<button className="main-button"><Motherboard/> Products</button>
+										</Link>
+										<Link className="nav-link ms-3" to="/blog">Blog</Link>
+										<Link className="nav-link ms-3" to="/profile/seller">Profile</Link>
+										<Link className="nav-link ms-3" to="/dashboard">Dashboard</Link>
+									</>
+									):(<>
+										<Link to="/" >
+											<button className="main-button"><Motherboard/> Products</button>
+										</Link>
+										<Link className="nav-link ms-3" to="/blog">Blog</Link>
+									</>)
+								)}
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</>
 	);
 };

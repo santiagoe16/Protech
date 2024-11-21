@@ -44,5 +44,44 @@ p{
     color: white;
 } 
 .navbar{
-    background-color: #100F19;
+    border-bottom: 1px solid rgba(204, 204, 204, 0.16)
+}
+.bgd-black{
+    background-color: #100F19 !important;
+}
+.main-button{
+    padding: 10px 24px 10px 24px;
+    border: none;
+    color: white;
+    background-color: rgb(86, 88, 221);
+    border-radius: 6px;
+    font-size: 15px;
+}
+.main-button:hover{
+    background-color: #4044EE;
+}
+.navbar-nav .nav-link{
+    color: rgba(255, 255, 255, 0.925);
+    font-size: 14.7px;
+}
+.navbar-nav .nav-link:hover{
+    color: rgb(86, 88, 221);
+}
+.hover-li li:hover{
+    background-color: rgb(86, 88, 221);
+    border-radius: 9px;
+}
+.icon-nav{
+    cursor: pointer;
+}
+.icon-nav:hover{
+    color:rgb(86, 88, 221) !important;    
+}
+.icon-search{
+    position:absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    color: #ffffffbd;
+    cursor: pointer;
 }

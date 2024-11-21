@@ -42,7 +42,7 @@ export const SignupSeller = () => {
 
     return (
         <div className="row h-75 mt-5 w-100 d-flex justify-content-center">
-            <div className="col-3 align-content-center">
+            <div className="col-4 align-content-center justify-content-center d-flex">
                 <div style={{width: "550px"}} className="card-black body-signup">
                     <form onSubmit={handleSubmit}>
                         <div>

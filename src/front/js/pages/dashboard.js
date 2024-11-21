@@ -125,7 +125,7 @@ export const Dashboard = () => {
 						<div style={{padding: "55px 77px"}}>
 							<h1>Welcome to the dashboard</h1>
 							<p style={{fontSize: "16px", marginBottom: "15px"}}>Here you can see all about yours products</p>
-							<button className="purple-button" onClick={()=>navigate("/add-product")}>Create product</button>
+							<button className="purple-button mt-4" onClick={()=>navigate("/add-product")}>Create product</button>
 						</div>
 					</div>
 				</div>
@@ -135,7 +135,7 @@ export const Dashboard = () => {
 					<div className="body-card card-black">
 						<div className="d-flex justify-content-between align-items-center mb-4">
 							<div>
-								<h5>Earnings</h5>
+								<h5 className="px-0">Earnings</h5>
 							</div>
 							<div className="container-icon">
 								<h5><CurrencyDollar className="card-icon"/></h5>
@@ -151,7 +151,7 @@ export const Dashboard = () => {
 					<div className="body-card card-black">
 						<div className="d-flex justify-content-between align-items-center mb-4">
 							<div>
-								<h5>Orders</h5>
+								<h5 className="px-0">Orders</h5>
 							</div>
 							<div className="container-icon">
 								<h5><Cart className="card-icon"/></h5>
@@ -167,7 +167,7 @@ export const Dashboard = () => {
 					<div className="body-card card-black">
 						<div className="d-flex justify-content-between align-items-center mb-4">
 							<div>
-								<h5>Customer</h5>
+								<h5 className="px-0">Customer</h5>
 							</div>
 							<div className="container-icon">
 								<h5><People className="card-icon"/></h5>

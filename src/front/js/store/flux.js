@@ -17,12 +17,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			authenticatedBuyer: false,
 			authenticatedSeller:false,
 			sellerId: null,
-			products:[
-
-			],
 			selectedProduct: {} ,
 			amounts: {},
-			cart: {}
+			cart: {},
+			search: "",
 		},
 		actions: {
 			verifyTokenBuyer: () => {
@@ -46,30 +44,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			
-			
 			changeAuthenticatedSeller: (bool) => {
 				setStore({authenticatedSeller: bool})
 			},
 
-			getProductsFlux: () => {
-				return fetch(process.env.BACKEND_URL + "/api/products", { method: "GET" })
-					.then((response) => response.json())
-					.then((data) => {
-						setStore({ products: data });
-			
-						const initialAmounts = {};
-						data.forEach(product => {
-							initialAmounts[product.id] = 1;
-						});
-						setStore({ amounts: initialAmounts });
-			
-						return data; 
-					})
-					.catch((error) => {
-						console.error(error);
-						throw error; 
-					});
-			},
 			getCart: async () => {
 				const token = localStorage.getItem("jwt-token-buyer");
 				try {
@@ -77,7 +55,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						headers: { Authorization: `Bearer ${token}` }
 					});
 					const data = await (response.ok ? response.json() : Promise.reject(response.statusText));
-					console.log("obenido");
+					console.log("get-cart");
 					console.log(data);
 					
 					return setStore({ 
@@ -89,21 +67,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return console.error("Error fetching cart items:", error);
 				}
 			},
-			handleAmountChangeflux: (productId, value) => {
-				const store = getStore();
-				const newAmount = value === "" ? "" : Math.max(1, parseInt(value));
 
-				setStore({
-					amounts: {
-						...store.amounts,
-						[productId]: newAmount
-					}
-				});
-			},
 			updateCartItemAmount: (itemId, newAmount) => {
 				const store = getStore();
 			
-				// Actualizar la cantidad de items en el carrito
 				const updatedItems = store.cart.items.map(item => {
 					if (item.item_id === itemId) {
 						return { ...item, amount: newAmount };
@@ -111,10 +78,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return item;
 				});
 			
-				// Calcular el nuevo precio total
 				const total_price = updatedItems.reduce((acc, item) => acc + (item.product.price * item.amount), 0);
 			
-				// Actualizar el store con los items y el nuevo total_price
 				setStore({
 					cart: {
 						...store.cart,
@@ -123,7 +88,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				});
 			
-				// Realizar la petición PUT para actualizar el carrito en el backend
 				const token = localStorage.getItem("jwt-token-buyer");
 				fetch(`${process.env.BACKEND_URL}/api/buyer/cart/products/${itemId}`, {
 					method: "PUT",
@@ -150,31 +114,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 			},
 			
-
-            addToCartFlux: (productId) => {
-                const store = getStore();
-                const token = localStorage.getItem("jwt-token-buyer");
-                const amount = store.amounts[productId] || 1; 
-
-                const raw = JSON.stringify({
-                    amount: amount,
-                    product_id: productId
-                });
-
-                return fetch(process.env.BACKEND_URL + "/api/itemscarts", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: raw
-                })
-                    .then((response) => response.json())
-                    .then((result) => {
-                        getActions().getProductsFlux(); 
-                    })
-                    .catch((error) => console.error("Error al agregar al carrito:", error));
-            },
+			setSearch: (searchTerm) => {
+				setStore({search: searchTerm});
+			},
 
 			getMessage: async () => {
 				try{

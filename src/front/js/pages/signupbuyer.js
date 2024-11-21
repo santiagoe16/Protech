@@ -51,11 +51,11 @@ export const SignupBuyer = () => {
 
     return (
         <div className="row h-75 mt-5 w-100 d-flex justify-content-center">
-            <div className="col-3 align-content-center">
+            <div className="col-4 align-content-center justify-content-center d-flex">
                 <div style={{width: "550px"}} className="card-black body-signup">
                     <form onSubmit={handleSubmit}>
                         <div>
-                            <h2 className="text-center mb-5">Sign Up</h2>
+                            <h2 className="text-center mb-5">Sign up</h2>
                             <div className="row mb-4">
                                 <div className="col-6">
                                     <label htmlFor = "name">Full Name</label>
@@ -99,7 +99,7 @@ export const SignupBuyer = () => {
                                 <input 
                                     type = "text" 
                                     className="form-control" id = "phone" 
-                                    value={password} 
+                                    value={phone} 
                                     onChange ={(e)=>setPhone(e.target.value)}
                                     placeholder="Enter phone number"
                                     required
