@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
-import "../../styles/buyerProfile.css";
+
+import "/workspaces/lt34-protech/src/front/styles/profile.css";
+
 
 export const BuyerProfile = () => {
     const { store, actions } = useContext(Context);
@@ -39,7 +41,7 @@ export const BuyerProfile = () => {
                 setEditData({
                     name: data.name || "",
                     email: data.email || "",
-                    phone: data.phone || "",
+                    telefono: data.telefono || "",
                 });
             })
             .catch((error) => console.error("Error:", error));
@@ -118,7 +120,6 @@ export const BuyerProfile = () => {
         })
             .then((response) => {
                 if (!response.ok) throw new Error("Failed to update profile");
-                console.log("Profile updated");
                 setIsEditing(false);
                 getBuyerProfile();
             })
@@ -138,24 +139,26 @@ export const BuyerProfile = () => {
     }, []);
 
     return (
-        <div className="containerbuyerprofile py-5">
+        <div className="container profile py-5">
             <div className="row justify-content-center">
                 <div className="col-md-8">
-                    <div className="card shadow">
-                        <div className="card-header bg-primary text-white">
-                            <h3 className="mb-0">Buyer Profile</h3>
+                    <div className="card-black body-card">
+                    <div className="row">
+                            <div className="col-12">
+                                <h3 className="mb-0 t">Profile</h3>
+                            </div>
                         </div>
                         <div className="card-body">
                             <div className="btn-group w-100 mb-4">
                                 <button
                                     onClick={() => setIsEditing(false)}
-                                    className={`btn ${!isEditing ? "btn-primary" : "btn-outline-primary"}`}
+                                    className={`btn ${!isEditing ? "btn-purple" : "btn-none"}`}
                                 >
                                     View Profile
                                 </button>
                                 <button
                                     onClick={() => setIsEditing(true)}
-                                    className={`btn ${isEditing ? "btn-primary" : "btn-outline-primary"}`}
+                                    className={`btn ${isEditing ? "btn-purple" : "btn-none"}`}
                                 >
                                     Edit Profile
                                 </button>
@@ -167,7 +170,7 @@ export const BuyerProfile = () => {
                                         <label className="form-label">Name</label>
                                         <input
                                             type="text"
-                                            className="form-control-input"
+                                            className="form-control"
                                             name="name"
                                             value={editData.name}
                                             onChange={handleChange}
@@ -189,13 +192,13 @@ export const BuyerProfile = () => {
                                             type="tel"
                                             className="form-control"
                                             name="phone"
-                                            value={editData.phone}
+                                            value={editData.telefono}
                                             onChange={handleChange}
                                         />
                                     </div>
                                     <button
                                         type="button"
-                                        className="btn btn-primary w-100"
+                                        className="purple-button w-100"
                                         onClick={handleProfileUpdate}
                                     >
                                         Save Changes
@@ -248,13 +251,17 @@ export const BuyerProfile = () => {
                                                 </div>
                                             </div>
                                             <div className="text-start mt-4">
-                                                <h4>{buyerProfile.name}</h4>
-                                                <p>
-                                                    <strong>Email:</strong> {buyerProfile.email}
-                                                </p>
-                                                <p>
-                                                    <strong>Phone:</strong> {buyerProfile.phone}
-                                                </p>
+                                                <div className="card">
+                                                    <div className="card-body">
+                                                        <h4>{buyerProfile.name}</h4>
+                                                        <p>
+                                                            Email: {buyerProfile.email}
+                                                        </p>
+                                                        <p>
+                                                            Phone: {buyerProfile.telefono}
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </>
                                     ) : (

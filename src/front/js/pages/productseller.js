@@ -81,7 +81,6 @@ export const ProductsSeller = () => {
 			})
 			.then((data) => {
 				setCategories(data)
-                console.log(categories);
                 
 			})
 			.catch((error) => {
@@ -221,7 +220,6 @@ export const ProductsSeller = () => {
       }
 
       const data = await response.json();
-      console.log("Product image updated in database:", data);
     } catch (error) {
       console.error("Error updating product image in DB:", error);
     }
@@ -241,7 +239,6 @@ const handleFileChange = async (e, productId) => {
             const data = await response.json();
             const imageUrl = data.secure_url;
 
-            console.log("hola" + JSON.stringify(data));
             
 
             await modifyProductImage(productId, imageUrl);
@@ -279,7 +276,6 @@ const handleFileChange = async (e, productId) => {
             }
     
             const data = await response.json();
-            console.log("Product image updated successfully:", data.message);
         } catch (error) {
             console.error("Error modifying product image:", error);
         }
@@ -331,17 +327,14 @@ const handleFileChange = async (e, productId) => {
       });
 
       const data = await response.json();
-      console.log('Respuesta de OpenAI:', data);
 
       let content = data.choices[0].message.content;
       content = content.replace(/\\n/g, ''); 
       content = content.replace(/`/g, '');
-      console.log("contenido=" + content);
       
       const dataArticle = JSON.parse(content)
       
       setArticle(dataArticle);
-      console.log(dataArticle);
 
     } catch (error) {
       console.error('Error generando el artículo:', error);
@@ -352,8 +345,6 @@ const handleFileChange = async (e, productId) => {
     const endpointSearch = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(productName)}&cx=${cx}&searchType=image&key=${apiKeySearch}&num=1&imgType=photo`;
 
     try {
-      console.log("API Key:", apiKeySearch); 
-      console.log("CX ID:", cx);
       const response = await fetch(endpointSearch);
       if (!response.ok) throw new Error('Error al obtener la imagen');
       const data = await response.json();
@@ -365,7 +356,6 @@ const handleFileChange = async (e, productId) => {
   }
 
   const publishArticle = () => {
-    console.log(article.title,"imagen: " + imageArticle)
     
     const raw = {
       title: article.title, 

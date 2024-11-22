@@ -24,6 +24,11 @@ h5{
     font-weight: 500;
     font-size: 18.5px;
 }
+.dashboard h5{
+    font-weight: 500;
+    font-size: 22px;
+    padding-left: 0px;
+}
 .container-icon h5{
     font-size: 20px;
     border-radius: 50%;
@@ -156,7 +161,7 @@ h5{
     color: white;
     border-radius: 7px;
 }
-p{
+.sidebar p{
     font-size: 14px;
     margin-bottom: 5px;
 }
@@ -190,4 +195,8 @@ h6{
 .order-placed-header .text-gray{
     color: rgba(255, 255, 255, 0.904);
     margin-bottom: 0px;
+}
+.modal-content{
+    background-color: #161a25;
+    color:rgba(255, 255, 255, 0.884)
 }

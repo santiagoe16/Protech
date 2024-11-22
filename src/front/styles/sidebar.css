@@ -21,7 +21,11 @@
 }
 
 .sidebar h3 {
-    padding: 0 14px 23px;
+    padding: 14px 14px 23px;
+}
+.sidebar a {
+    color: inherit;
+    text-decoration: none;
 }
 
 .sidebar ul {

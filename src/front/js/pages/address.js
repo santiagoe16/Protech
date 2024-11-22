@@ -41,7 +41,6 @@ export const Address = () => {
 
     const handleSubmitCreate = (e) => {
         e.preventDefault();
-        console.log(buyerId)
         const newAddress = JSON.stringify({
             "address": address,
             "lat": parseFloat(lat),

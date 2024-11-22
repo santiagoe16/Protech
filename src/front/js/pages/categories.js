@@ -10,7 +10,7 @@ export const Categories = () => {
 	const [categories, setCategories] = useState([])
 	const [searchTerm, setSearchTerm] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 3;
+	const itemsPerPage = 5;
 
 	const getCategories = () => {
 
@@ -23,7 +23,6 @@ export const Categories = () => {
 			})
 			.then((data) => {
 				setCategories(data)
-                console.log(categories);
                 
 			})
 			.catch((error) => {

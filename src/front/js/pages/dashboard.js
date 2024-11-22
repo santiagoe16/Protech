@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "/workspaces/lt34-protech/src/front/styles/dashboard.css";
 import { Cart, CurrencyDollar, People, CaretDown } from 'react-bootstrap-icons';
 import TopSellerProductsChart from "../component/topsellerproducts";
+import TopCategoriesChart from "../component/topcategorieschart";
 
 export const Dashboard = () => {
 	const { store, actions } = useContext(Context);
@@ -118,7 +119,7 @@ export const Dashboard = () => {
 	}, []);
 
 	return (
-		<div style={{paddingBottom: "100px"}}>
+		<div className="dashboard pb-5">
             <div className="row mb-4">
 				<div className="col-12">
 					<div className="card-black">
@@ -181,43 +182,26 @@ export const Dashboard = () => {
 				</div>
 				
 			</div>
-			<div className="flex-nowrap row mb-4">
-				<div className="col-8">
-					<div className="card-black body-card">
+			<div className="row gx-4 gy-4 mb-4">
+				<div className="col-xl-8 col-lg-12">
+					<div className="card-black body-card h-100">
 						<div className="d-flex justify-content-between">
 							<div>
-								<h5>Revenue</h5>
+								<h5>Best Selling Categories</h5>
 							</div>
 						</div>
 						<div className="grafic">
-							
+							<TopCategoriesChart></TopCategoriesChart>
 						</div>
 					</div>
 				</div>
-				<div className="col-4">
-					<div className="card-black body-card h-100">
-						<div className="mb-4"><h5>Top Products</h5></div>
+				<div className="col-xl-4 col-lg-12">
+					<div className="card-black h-100" style={{ paddingTop: "15px" }}>
+						<div className="mb-3 ps-3 pt-2">
+							<h5>Top Products</h5>
+						</div>
 						<div className="grafic">
 							<TopSellerProductsChart></TopSellerProductsChart>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div className="flex-nowrap row mb-4">
-				<div className="col-6">
-					<div className="card-black body-card" style={{height: "225px"}}>
-						<div><h5>Sales Overview</h5></div>
-					</div>
-				</div>
-				<div className="col-6">
-					<div >
-						<div className="card-black body-card mb-3">
-							<h5>Start your day with New Notification.</h5>
-							<span>You have 2 new notification</span>
-						</div>
-						<div className="card-black body-card">
-							<h5>Monitor your Sales and Profitability</h5>
-							<span>You have View Performance</span>
 						</div>
 					</div>
 				</div>

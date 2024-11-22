@@ -10,7 +10,7 @@ export const CardProduct = ({
     onAddToCart 
 }) => (
     <div className="card-product">
-        <Link to="/">
+        <Link to={link}>
             <img 
                 src={image}
                 alt={title} 

@@ -28,7 +28,6 @@ export const Orders = () => {
             })
             .then((data) => {
                 setOrders(data);
-                console.log(data);
             })
             .catch((error) => {
                 console.error("Error:", error);
@@ -61,7 +60,6 @@ export const Orders = () => {
             return response.json();
         })
         .then(data => {
-            console.log(data);
             getOrders();
         })
         .catch(error => console.error("Error updating order status:", error));

@@ -6,7 +6,7 @@ from api.models import db, User, Products, Seller , Comprador,Categoria, ItemCar
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, create_access_token
-from sqlalchemy import desc, asc
+from sqlalchemy import desc, asc, func
 import cloudinary 
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
@@ -36,6 +36,22 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+@api.route('/top-categories', methods=['GET'])
+def get_top_categories():
+    
+    results = db.session.query(
+        Categoria.name,
+        func.sum(ItemCart.amount).label('total_sold')
+    ).join(Products, Products.category_id == Categoria.id) \
+     .join(ItemCart, ItemCart.product_id == Products.id) \
+     .group_by(Categoria.id) \
+     .order_by(func.sum(ItemCart.amount).desc()) \
+     .all()
+    
+    top_categories = [{"category": name, "total_sold": total_sold} for name, total_sold in results]
+
+    return jsonify(top_categories), 200
 
 #---------products-----------
 @api.route('/products', methods=['GET'])
@@ -870,8 +886,9 @@ def delete_address(id):
 # Ruta para obtener todos los artículos
 @api.route('/articles', methods=['GET'])
 def get_articles():
-    articles = Article.query.all()
+    articles = Article.query.order_by(Article.id.desc()).all()
     return jsonify([article.serialize() for article in articles]), 200
+
 
 # Ruta para obtener un artículo por su ID
 @api.route('/articles/<int:id>', methods=['GET'])
@@ -1027,6 +1044,8 @@ def get_address_seller():
 def add_address_buyer():
     buyer_id = get_jwt_identity()
 
+    address_buyer = Address.query.filter_by(comprador_id=buyer_id).first()
+
     data = request.get_json()
     name = data.get("name")
     description = data.get("description")
@@ -1041,9 +1060,16 @@ def add_address_buyer():
         return jsonify({"error": "Latitude and Longitude must be numbers"}), 400
 
     
-    new_address_buyer = Address(address=address,name = name, description = description, lat= float(lat), lon=float(lon), comprador_id=buyer_id)
+    if not address_buyer:
+        new_address_buyer = Address(address=address, name = name, description = description, lat= float(lat), lon=float(lon), comprador_id=buyer_id)
+        db.session.add(new_address_buyer)
+    else:
+        address_buyer.name = name
+        address_buyer.description = description
+        address_buyer.address = address
+        address_buyer.lat = float(lat)
+        address_buyer.lon = float(lon)
 
-    db.session.add(new_address_buyer)
     db.session.commit()
 
     return jsonify({"message": "address added successfully"}), 200
@@ -1053,14 +1079,13 @@ def add_address_buyer():
 def get_address_buyer():
     buyer_id = get_jwt_identity()
     
-    get_buyer_address = Address.query.filter_by(comprador_id=buyer_id).all()
+    get_buyer_address = Address.query.filter_by(comprador_id=buyer_id).first()
 
     if not get_buyer_address:
-        return jsonify({"error": "No address assigned to this seller"}), 404
+        return jsonify({"error": "No address assigned to this buyer"}), 404
 
-    buyer_address = list(map(lambda address: address.serialize(),get_buyer_address))
 
-    return jsonify(buyer_address), 200
+    return jsonify(get_buyer_address.serialize()), 200
 
 @api.route('/address/buyer/<int:address_id>', methods=['DELETE'])
 @jwt_required()
@@ -1140,7 +1165,7 @@ def get_last_order():
     order = Cart.query.join(ItemCart).join(Products).filter(
         Cart.state == 'generated',
         Products.seller_id == seller_id
-    ).order_by(Cart.id.desc()).first()
+    ).order_by(Cart.id.asc()).first()
 
     if not order:
         return jsonify({"error": "No orders found."}), 404

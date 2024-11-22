@@ -50,9 +50,9 @@ export const SignupBuyer = () => {
     };
 
     return (
-        <div className="row h-75 mt-5 w-100 d-flex justify-content-center">
+        <div className="row mt-5 w-100 d-flex justify-content-center">
             <div className="col-4 align-content-center justify-content-center d-flex">
-                <div style={{width: "550px"}} className="card-black body-signup">
+                <div style={{width: "550px", marginTop: "50px"}} className="card-black body-signup">
                     <form onSubmit={handleSubmit}>
                         <div>
                             <h2 className="text-center mb-5">Sign up</h2>

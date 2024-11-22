@@ -38,7 +38,6 @@ export const Sidebar = () => {
             })
             .then((data) => {
 				setInfoProfile(data)
-                console.log(infoProfile)
             })
             .catch((error) => {
                 console.error("Error removing item from cart:", error);
@@ -72,7 +71,7 @@ export const Sidebar = () => {
                         </div>
                     </div>
                 </div>
-                <h3>Protech</h3>
+                <NavLink to="/"><h3>Protech</h3></NavLink>
                 <ul>
                     <li>
                         <NavLink to="/dashboard" end className={({ isActive }) => (isActive ? "active sidebar-item" : "sidebar-item")}>

@@ -40,7 +40,7 @@ export const Blog = () => {
 
 	if (articles.length === 0) {
 		return (
-			<div className="container mt-5">
+			<div className="container mt-5 d-flex justify-content-center">
 				<h2>No hay artículos disponibles</h2>
 			</div>
 		);
@@ -48,13 +48,12 @@ export const Blog = () => {
 
 	return (
         <div className="container mt-5 d-flex flex-column justify-content-center align-items-center">
-            <h1 className="text-center mb-5">Lista de Artículos</h1>
+            <h1 className="text-center text-white mb-5">Articles</h1>
             <div style={{ width: "70%", display: "flex", flexDirection: "column", alignItems: "center" }}>
                 {articles.map((article) => (
-                    <div key={article.id} className="p-5 rounded-3 shadow mb-5 w-100">
+                    <div key={article.id} className="card-black body-card shadow mb-5 w-100" style={{padding: "40px"}}>
                         <div className="d-flex">
                             <div><h2 className="text-center">{article.title}</h2></div>
-                            <div><i className="fas fa-trash me-auto" style={{ cursor: "pointer" }} onClick={() => deleteArticle(article.id)}></i></div>
                         </div>
                         <div style={{ width: "100%", height: "500px", display: "flex", justifyContent: "center" }}>
                             <img

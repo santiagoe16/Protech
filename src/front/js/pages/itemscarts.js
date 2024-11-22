@@ -45,8 +45,6 @@ export const Itemscarts = () => {
         fetch(process.env.BACKEND_URL + "/api/itemscarts", requestOptions)
         .then((response) => response.json())
         .then((result) => {
-            console.log(result.message);
-            
             getItemsCarts()
             setActiveTab("list-tab");
             setAmount(0)

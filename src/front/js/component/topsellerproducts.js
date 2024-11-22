@@ -22,7 +22,6 @@ const TopSellerProductsChart = () => {
                 }); 
                 const data = await response.json();
                 setTopProducts(data); 
-                console.log(data);
                 
             } catch (error) {
                 console.error('Error fetching top products:', error);

@@ -102,8 +102,6 @@ export const Navbar = () => {
                 return response.json();
             })
             .then((data) => {
-				console.log(data);
-				
 				setInfoProfile(data)
             })
 	};
@@ -119,7 +117,14 @@ export const Navbar = () => {
 					<div className="w-100 align-items-center gx-lg-2 gx-0 row">
 						<div className="col-xxl-2 col-lg-3 col-md-6 col-5">
 							<div>
-								<h3 className="text-white ms-3" style={{cursor: "pointer"}} onClick={()=>navigate("/")}>Protech</h3>
+								<h3 className="text-white ms-3 title"
+								onClick={()=>{
+									actions.setSearch("")
+									navigate("/")
+								}}
+								>
+									<Motherboard className="icon-board"/>Protech
+								</h3>
 							</div>
 						</div>
 						<div className="d-lg-block col-xxl-5 col-lg-5 position-relative">
@@ -206,6 +211,7 @@ export const Navbar = () => {
 																	onClick={() =>
 																		actions.updateCartItemAmount(item.item_id, item.amount - 1)
 																	}
+																	disabled={item.amount === 1}
 																>
 																	-
 																</button>
@@ -243,14 +249,17 @@ export const Navbar = () => {
 												</div>
 											</>)}
 										</ul>
-										{store.cart?.items?.length > 0 ? (
+										{store.cart?.items?.length > 0 ? (<>
+											<div className="border-div list-group-item item-cart">
+												<h6 className="d-inline ms-2"><span className="me-4">Total: </span>{cart?.total_price?.toFixed(2)}</h6>
+											</div>
 											<div className="ms-auto d-flex mt-4">
-											<button onClick={() => navigate("/cart")} data-bs-dismiss="offcanvas" aria-label="Close" 
-												className="purple-button ms-auto">
-												Proceed To Checkout
-											</button>
-										</div>
-										):(<></>)}
+												<button onClick={() => navigate("/cart")} data-bs-dismiss="offcanvas" aria-label="Close" 
+													className="purple-button ms-auto">
+													Proceed To Checkout
+												</button>
+											</div>
+										</>):(<></>)}
 									</div>
 								</div>
 							</>):(<></>)}
@@ -269,7 +278,10 @@ export const Navbar = () => {
 								{store.authenticatedBuyer ? (
 									<>
 										<Link to="/" >
-											<button className="main-button"><Motherboard/> Products</button>
+											<button className="main-button" onClick={()=>{
+											actions.setSearch("")
+											navigate("/")
+										}}><Motherboard style={{fontSize: "17px"}}/> Products</button>
 										</Link>
 										<Link className="nav-link ms-3" to="/orders-placed">Orders</Link>
 										<Link className="nav-link ms-3" to="/blog">Blog</Link>
@@ -280,7 +292,10 @@ export const Navbar = () => {
 									store.authenticatedSeller ? (
 									<>
 										<Link to="/" >
-											<button className="main-button"><Motherboard/> Products</button>
+											<button className="main-button" onClick={()=>{
+												actions.setSearch("")
+												navigate("/")
+											}}><Motherboard style={{fontSize: "17px"}}/> Products</button>
 										</Link>
 										<Link className="nav-link ms-3" to="/blog">Blog</Link>
 										<Link className="nav-link ms-3" to="/profile/seller">Profile</Link>
@@ -288,7 +303,10 @@ export const Navbar = () => {
 									</>
 									):(<>
 										<Link to="/" >
-											<button className="main-button"><Motherboard/> Products</button>
+											<button className="main-button" onClick={()=>{
+												actions.setSearch("")
+												navigate("/")
+											}}><Motherboard style={{fontSize: "17px"}}/> Products</button>
 										</Link>
 										<Link className="nav-link ms-3" to="/blog">Blog</Link>
 									</>)

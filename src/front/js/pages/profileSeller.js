@@ -34,6 +34,7 @@ export const ProfileSeller = () => {
                 return response.json();
             })
             .then((data) => {
+                
                 setSellerProfile(data);
                 setEditData({
                     name: data.name || '',
@@ -117,7 +118,6 @@ export const ProfileSeller = () => {
         })
             .then((response) => {
                 if (!response.ok) throw new Error("Failed to update profile");
-                console.log("Profile updated");
                 setIsEditing(false);
                 getSellerProfile();
             })
@@ -137,24 +137,26 @@ export const ProfileSeller = () => {
     }, []); 
 
     return (
-        <div className="container py-5">
+        <div className="container profile py-5">
             <div className="row justify-content-center">
                 <div className="col-md-8">
-                    <div className="card shadow">
-                        <div className="card-header bg-primary text-white">
-                            <h3 className="mb-0">Seller Profile</h3>
+                    <div className="card-black body-card">
+                        <div className="row">
+                            <div className="col-12">
+                                <h3 className="mb-0 t">Seller Profile</h3>
+                            </div>
                         </div>
                         <div className="card-body">
                             <div className="btn-group w-100 mb-4">
                                 <button 
                                     onClick={() => setIsEditing(false)} 
-                                    className={`btn ${!isEditing ? 'btn-primary' : 'btn-outline-primary'}`}
+                                    className={`btn ${!isEditing ? 'btn-purple' : 'btn-none'}`}
                                 >
                                     View Profile
                                 </button>
                                 <button 
                                     onClick={() => setIsEditing(true)} 
-                                    className={`btn ${isEditing ? 'btn-primary' : 'btn-outline-primary'}`}
+                                    className={`btn ${isEditing ? 'btn-purple' : 'btn-none'}`}
                                 >
                                     Edit Profile
                                 </button>
@@ -163,49 +165,53 @@ export const ProfileSeller = () => {
                             {isEditing ? (
                                 <div className="mt-4">
                                     <form onSubmit={(e) => e.preventDefault()}>
-                                        <div className="mb-3">
-                                            <label className="form-label">Name</label>
-                                            <input 
-                                                type="text"
-                                                className="form-control"
-                                                name="name"
-                                                value={editData.name}
-                                                onChange={handleChange}
-                                            />
+                                        <div className="row mb-3">
+                                            <div className="col-6">
+                                                <label className="form-label">Name</label>
+                                                <input 
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="name"
+                                                    value={editData.name}
+                                                    onChange={handleChange}
+                                                />
+                                            </div>
+                                            <div className="col-6">
+                                                <label className="form-label">Email</label>
+                                                <input 
+                                                    type="email"
+                                                    className="form-control"
+                                                    name="email"
+                                                    value={editData.email}
+                                                    onChange={handleChange}
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">Email</label>
-                                            <input 
-                                                type="email"
-                                                className="form-control"
-                                                name="email"
-                                                value={editData.email}
-                                                onChange={handleChange}
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">Phone</label>
-                                            <input 
-                                                type="tel"
-                                                className="form-control"
-                                                name="phone"
-                                                value={editData.phone}
-                                                onChange={handleChange}
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label">Bank Account</label>
-                                            <input 
-                                                type="text"
-                                                className="form-control"
-                                                name="bank_account"
-                                                value={editData.bank_account}
-                                                onChange={handleChange}
-                                            />
+                                        <div className="row mb-4">
+                                            <div className="col-6">
+                                                <label className="form-label">Phone</label>
+                                                <input 
+                                                    type="tel"
+                                                    className="form-control"
+                                                    name="phone"
+                                                    value={editData.phone}
+                                                    onChange={handleChange}
+                                                />
+                                            </div>
+                                            <div className="col-6">
+                                                <label className="form-label">Bank Account</label>
+                                                <input 
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="bank_account"
+                                                    value={editData.bank_account}
+                                                    onChange={handleChange}
+                                                />
+                                            </div>
                                         </div>
                                         <button 
                                             type="button" 
-                                            className="btn btn-primary w-100"
+                                            className="purple-button w-100"
                                             onClick={handleProfileUpdate}
                                         >
                                             Save Changes
