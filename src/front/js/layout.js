@@ -120,6 +120,7 @@ const Layout = () => {
                 </div>
                 
                 {/* { <Footer />} */}
+
             </ScrollToTop>
         </div>
     );

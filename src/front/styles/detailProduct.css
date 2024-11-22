@@ -34,6 +34,7 @@
     margin-bottom: 20px;
 }
 
+
 .nav-link {
     cursor: pointer;
     color: rgba(255, 255, 255, 0.904);
@@ -106,6 +107,7 @@
     color: rgba(255, 255, 255, 0.904);
     margin-top: 10px;
 }
+
 
 .form-control-input {
     max-width: 150px;
