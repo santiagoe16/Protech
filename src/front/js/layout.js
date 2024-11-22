@@ -72,8 +72,10 @@ const Layout = () => {
     return (
         <div className="h-100 w-100">
             <ScrollToTop>
+
                 {showSidebar ? <Sidebar /> : showNabar ? (<Navbar2/>):(<Navbar/>)}
                 <div className="h-100" style={{ marginLeft: showSidebar ? "448px" : "", marginRight: showSidebar ? "167px" : "", marginTop: showSidebar ? "100px" : ""}}>
+
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
@@ -116,7 +118,8 @@ const Layout = () => {
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                 </div>
-                {/* <Footer /> */}
+                
+                {/* { <Footer />} */}
             </ScrollToTop>
         </div>
     );
