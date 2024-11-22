@@ -113,7 +113,7 @@ export const DetailProduct = () => {
                             </div>
                             <button
                                 className="add-cart"
-                                onClick={()=>actions?.addToCart(productId)}
+                                onClick={()=>{actions?.addToCart(productId,amount)}}
                                 >
                                     <Cart3 className="cart"/> Add to Cart
                             </button>

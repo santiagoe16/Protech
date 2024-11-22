@@ -115,11 +115,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({search: searchTerm});
 			},
 
-			addToCart: (productId) => {
+			addToCart: (productId,amountProduct) => {
 				const token = getActions().verifyTokenBuyer()
 		
 				const raw = JSON.stringify({
-					"amount": 1,
+					"amount": amountProduct || 1,
 					"product_id": parseInt(productId)
 				});
 		
