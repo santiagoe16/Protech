@@ -13,7 +13,7 @@ export const DashboardProducts = () => {
 	const [articleProduct, setArticleProduct] = useState("");
 	const [article, setArticle] = useState({});
 	const [imageArticle, setImageArticle] = useState("");
-	const itemsPerPage = 3;
+	const itemsPerPage = 5;
 
 	const topics = [
 		"Cómo elegir el (producto) perfecto según tus necesidades",
@@ -124,17 +124,14 @@ export const DashboardProducts = () => {
 			});
 	
 			const data = await response.json();
-			console.log('Respuesta de OpenAI:', data);
 		
 			let content = data.choices[0].message.content;
 			content = content.replace(/\\n/g, ''); 
 			content = content.replace(/`/g, '');
-			console.log("contenido=" + content);
 			
 			const dataArticle = JSON.parse(content)
 			
 			setArticle(dataArticle);
-			console.log(dataArticle);
 	
 		} catch (error) {
 		  	console.error('Error generando el artículo:', error);
@@ -145,8 +142,6 @@ export const DashboardProducts = () => {
 		const endpointSearch = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(productName)}&cx=${cx}&searchType=image&key=${apiKeySearch}&num=1&imgType=photo`;
 	
 		try {
-			console.log("API Key:", apiKeySearch); 
-			console.log("CX ID:", cx);
 			const response = await fetch(endpointSearch);
 			if (!response.ok) throw new Error('Error al obtener la imagen');
 			const data = await response.json();
@@ -158,7 +153,6 @@ export const DashboardProducts = () => {
 	}
 
 	const publishArticle = () => {
-		console.log(article.title,"imagen: " + imageArticle)
 		
 		const raw = {
 			title: article.title, 
@@ -294,31 +288,39 @@ export const DashboardProducts = () => {
                   	<div className="modal-content">
 						<div className="modal-header">
 							<h1 className="modal-title fs-5" id="exampleModalLabel">Article</h1>
-							<button type="button" onClick={() => cleanFieldsArticle()} className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							<button type="button" onClick={() => cleanFieldsArticle()} className="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
 						</div>
-						<div className="modal-body">
+						<div className="modal-body" style={{padding: "30px"}}>
 							<div>
 								<div>
 									<h2>{article.title}</h2>
 								</div>
 								<div style={{width: "100%", height: "500px"}}>
-									<img src={imageArticle} style={{width: "100%", height: "100%", objectFit: "contain"}}/>
+									{imageArticle ? (
+										<img src={imageArticle} style={{width: "100%", height: "100%", objectFit: "contain"}}/>
+									):(
+										<div className="d-flex justify-content-center align-items-center h-100">
+											<div className="spinner-border text-primary" style={{width: "3rem", height: "3rem"}} role="status">
+												<span class="visually-hidden">Loading...</span>
+											</div>
+										</div>
+									)}
 								</div>
-								<div>
+								<div className="mt-4">
 									<p>{article.content}</p>
 								</div>
 							</div>
 						</div>
 						<div className="modal-footer">
 							<button type="button" onClick={() => cleanFieldsArticle()} className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-							<button type="button" className="btn btn-primary" data-bs-dismiss="modal" 
+							<button type="button" className="purple-button" data-bs-dismiss="modal" 
 								onClick={()=> {
 									publishArticle() 
 									cleanFieldsArticle()
 								}}
 							>Save</button> 
 								
-							<button type="button" onClick={() => generateArticle(articleProduct)} className="btn btn-primary">regenerate</button>
+							<button type="button" onClick={() => generateArticle(articleProduct)} className="purple-button">regenerate</button>
 						</div>
 					</div>
                 </div>

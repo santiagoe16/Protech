@@ -10,7 +10,6 @@ export const UploadProductImage = () => {
         const file = event.target.files[0];
         if (file) {
             setSelectedFile(file);
-            console.log("File selected:", file.name);
         }
     };
 
@@ -42,7 +41,6 @@ export const UploadProductImage = () => {
             return response.json();
         })
         .then(data => {
-            console.log("Image uploaded successfully:", data);
             alert("Image uploaded successfully!");
         })
         .catch(error => {

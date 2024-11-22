@@ -23,7 +23,6 @@ export const OrderSingle = () => {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log("soyelultimo"+data);
                 setOrder(data);
 
             })
@@ -43,8 +42,6 @@ export const OrderSingle = () => {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
-                
                 setOrder(data);
 
             })
@@ -78,8 +75,6 @@ export const OrderSingle = () => {
     };
 
     useEffect(() => {
-        console.log(cartId);
-        
         cartId ? getOrder() : getLastOrder();
     }, [cartId]);
 
@@ -125,7 +120,7 @@ export const OrderSingle = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="row mt-2">
+                                    <div className="row mt-2 details-order">
                                         <div className="col-4">
                                             <h6 className="px-0">Customer Details:</h6>
                                             <p>Name: {order.comprador?.name}</p>
@@ -179,7 +174,7 @@ export const OrderSingle = () => {
                     </div>
                 </div>
             ) : (
-                <p>Loading order details...</p>
+                <></>
             )}
         </div>
     );

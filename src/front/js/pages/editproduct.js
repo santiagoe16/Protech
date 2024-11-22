@@ -50,6 +50,7 @@ export const EditProduct = () => {
             setDescription(data.description);
             setPrice(data.price);
             setStock(data.stock);
+            setImageProduct(data.image);
             setCategoryId(data.category.id);
         })
         .catch((error) => {
@@ -104,7 +105,6 @@ export const EditProduct = () => {
             const data = await response.json();
             const imageUrl = data.secure_url;
 
-            console.log("data cloudinary" + JSON.stringify(data));
 
             setImageProduct(imageUrl)
             
@@ -180,7 +180,8 @@ export const EditProduct = () => {
 										<input 
 											className="form-control" type="file"
 											accept="image/*" id="formFile"
-											onChange={(e)=>handleFileChange(e)}  />
+											onChange={(e)=>handleFileChange(e)}  
+										/>
 									</div>
 								</div>
 							</div>

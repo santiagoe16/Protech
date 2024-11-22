@@ -112,10 +112,7 @@ const Layout = () => {
                         <Route element={<OrderSingle/>} path="/dashboard/order-single/:cartId" />
                         <Route element={<OrderSingle/>} path="/dashboard/order-single" />
                         <Route element={<OrdersPlaced/>} path="/orders-placed" />
-
-                        
-                        <Route element={<DetailProduct/>} path="/detail/:id" />
-
+                        <Route element={<DetailProduct/>} path="/detail/:productId" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                 </div>

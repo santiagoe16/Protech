@@ -8,20 +8,40 @@
     background-color: #191b24;
     color: white;
 }
+.border-div{
+    width: auto;
+    background-color: #191b24;
+    color: white;
+    border-bottom:1px solid #6b6b6b;
+    display: flex !important;
+}
+.border-div span{
+    font-size: 16px;
+    color: white;
+}
 .item-cart{
     height: 90px;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
-a{
+.navbar-nav a{
     font-size: 13px;
     text-decoration: none;
     cursor: pointer;
 }
-p{
-    margin: 0px !important;
+.title{
+    font-size: 29px;
+    margin-bottom: 0px;
+    cursor: pointer;
 }
+.icon-board{
+    margin: 0px 5px 3px 0px;
+}
+.bgd-black p{
+    margin: 0px;
+}
+
 .input-amount{
     margin-left: 0px !important;
     height: 33px;
@@ -56,12 +76,13 @@ p{
     background-color: rgb(86, 88, 221);
     border-radius: 6px;
     font-size: 15px;
+    font-weight: 500;
 }
 .main-button:hover{
     background-color: #4044EE;
 }
 .navbar-nav .nav-link{
-    color: rgba(255, 255, 255, 0.925);
+    color: rgba(255, 255, 255, 0.904);;
     font-size: 14.7px;
 }
 .navbar-nav .nav-link:hover{
@@ -73,6 +94,7 @@ p{
 }
 .icon-nav{
     cursor: pointer;
+    font-size: 13px;
 }
 .icon-nav:hover{
     color:rgb(86, 88, 221) !important;    
@@ -84,4 +106,7 @@ p{
     transform: translateY(-50%);
     color: #ffffffbd;
     cursor: pointer;
+}
+.white-text{
+    color: rgba(255, 255, 255, 0.904);
 }

@@ -9,11 +9,11 @@ export const BuyerAddress = () => {
     const { store, actions } = useContext(Context);
     const [map, setMap] = useState(null);
     const inputRef = useRef(null);
-    const [currentAddress, setCurrentAddress] = useState([]);
+    const [currentAddress, setCurrentAddress] = useState("");
     const markerRef = useRef(null);
     const [markerPosition, setMarkerPosition] = useState(defaultCenter);
     const [selectedPlace, setSelectedPlace] = useState(null);
-    const [nameArticle, setNameArticle] = useState("")
+    const [name, setName] = useState("")
     const [description, setDescription] = useState("")
     const [buyerAddress, setBuyerAddress] = useState({
         address: "",
@@ -42,6 +42,10 @@ export const BuyerAddress = () => {
             .then((response) => response.json())
             .then((data) => {
                 setCurrentAddress(data);
+                setMarkerPosition({
+                    lat: parseFloat(data.lat),
+                    lng: parseFloat(data.lon),
+                })
             });
     };
     
@@ -61,10 +65,10 @@ export const BuyerAddress = () => {
 
     const updateBuyerAddress = () => {
         const token = actions.verifyTokenBuyer()
-        console.log(nameArticle,description,buyerAddress.address,buyerAddress.lat,buyerAddress.lon)
+        
         if (buyerAddress.address) {
             const raw = JSON.stringify({
-                name: nameArticle,
+                name: name,
                 description: description,
                 address: buyerAddress.address,
                 lat: buyerAddress.lat,
@@ -166,76 +170,96 @@ export const BuyerAddress = () => {
     };
 
     return (
-        <div>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }} className="mt-5 mb-4 container ">
-            {currentAddress.length > 0 ? (
-                currentAddress.map((address) => (
-                    <div key={address.id} style={{ width: "90%" }} className="p-3 bg-light d-flex flex-column mb-2 align-items-center">
-                        <i className="fas fa-trash ms-3" style={{ cursor: "pointer" }} onClick={() => deleteAddress(address.id)}></i>
-                        <h5 className="ms-4 mb-0">
-                            Name: {address.name}
-                        </h5>
-                        <h5 className="ms-4 mb-0">
-                            Address: {address.address}
-                        </h5>
-                        <h5 className="ms-4 mb-0">
-                            Description: {address.description}
-                        </h5>
+        <div className="container address">
+            <div className="row d-flex justify-content-center mt-5">
+                <div className="col-7">
+                    <div className="row mb-4">
+                        <div className="col-12">
+                            <h2 className="">Update Address</h2>
+                        </div>
                     </div>
-                ))
-            ) : (
-                <h5>Without addresses</h5>
-            )}
-                
-            </div>
-            <LoadScript googleMapsApiKey={process.env.GOOGLE_API_KEY} libraries={libraries}>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                    <div id="pac-card" className="container" style={{width: "40%"}}>
-                        <input
-                            id="pac-input" ref={inputRef}
-                            type="text" placeholder="Enter a location"
-                            className="me-3"
-                            style={{ width: "400px", padding: "8px"}}
-                        />
-                        <input 
-                            type="text" placeholder="Name of address"
-                            style={{ maxWidth: "327px", minWidth:"320px", width: "100%", padding: "8px", marginBottom: "12px"}}
-                            value={nameArticle}
-                            onChange={(e)=> setNameArticle(e.target.value)}
-                        ></input>
+                    <div className="row mb-4">
+                        <div className="col-12">
+                            <div className="card-black body-card">
+                                <h5 className="mb-2 px-0">Current Address:</h5>
+                                <p>Name: {currentAddress.name}</p>
+                                <p>Address: {currentAddress.address}</p>
+                                <p>Description: {currentAddress.description}</p>
+                            </div>
+                        </div>
                     </div>
-                    <div className="container" style={{width: "40%"}}>
-                        <textarea className="mb-2"
-                        maxLength="200" rows="4" 
-                        style={{maxHeight: "60px", width: "100%", resize: "none"}} 
-                        placeholder="Escribe aquí (máximo 200 caracteres)"
-                        value={description}
-                        onChange={(e)=> setDescription(e.target.value)}
-                        ></textarea>
-                        <button className=" btn btn-primary w-100 mb-4" onClick={updateBuyerAddress}>
-                            Add Address
-                        </button>
-                    </div>
-                    <GoogleMap
-                        id="map"
-                        mapContainerStyle={{ height: "500px", width: "60%" }}
-                        center={markerPosition}
-                        zoom={13}
-                        onLoad={(mapInstance) => setMap(mapInstance)}
-                    >
-                        <Marker position={markerPosition} />
 
-                        {selectedPlace && (
-                            <InfoWindow position={markerPosition} onCloseClick={() => setSelectedPlace(null)}>
-                                <div>
-                                    <h2>{selectedPlace.name}</h2>
-                                    <p>{selectedPlace.formatted_address}</p>
+                    <div className="row mb-4">
+                        <div className="col-6">
+                            <input
+                            type="text"
+                            placeholder="Name of address"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="address-input"
+                            />
+                        </div>
+                
+                        <div className="col-6">
+                            <input
+                            id="pac-input"
+                            ref={inputRef}
+                            type="text"
+                            placeholder="Enter a location"
+                            className="address-input"
+                            />
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-12">
+                            <textarea 
+                            className="form-control mb-3"
+                            style={{maxHeight: "70px", resize: "none"}} 
+                            placeholder="Type here (maximum 200 characters)"
+                            value={description}
+                            onChange={(e)=> setDescription(e.target.value)}
+                            rows="3" maxLength={900}
+                            ></textarea>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-12">
+                            <button 
+                                className="purple-button" 
+                                onClick={updateBuyerAddress}
+                            >
+                                Update Address
+                            </button>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-12">
+                            <LoadScript googleMapsApiKey={process.env.GOOGLE_API_KEY} libraries={libraries}>
+                                <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                    <GoogleMap
+                                        id="map"
+                                        mapContainerClassName="map-container"
+                                        center={markerPosition}
+                                        zoom={13}
+                                        onLoad={(mapInstance) => setMap(mapInstance)}
+                                    >
+                                        <Marker position={markerPosition} />
+
+                                        {selectedPlace && (
+                                            <InfoWindow position={markerPosition} onCloseClick={() => setSelectedPlace(null)}>
+                                                <div>
+                                                    <h2>{selectedPlace.name}</h2>
+                                                    <p>{selectedPlace.formatted_address}</p>
+                                                </div>
+                                            </InfoWindow>
+                                        )}
+                                    </GoogleMap>
                                 </div>
-                            </InfoWindow>
-                        )}
-                    </GoogleMap>
+                            </LoadScript>
+                        </div>
+                    </div>
                 </div>
-            </LoadScript>
+            </div>
         </div>
     );
 };

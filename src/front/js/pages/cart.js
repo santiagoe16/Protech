@@ -16,7 +16,6 @@ export const Cart = () => {
 
 	useEffect(() => {
         if (store.cart) {
-            console.log("totalprice");
             
             setCart(store.cart);
             totalPrice.current = store.cart.total_price
@@ -78,7 +77,7 @@ export const Cart = () => {
         })
         .then(() => {
             actions.getCart();
-            navigate("/productsbuyers")
+            navigate("/")
         })
     };
 
@@ -146,6 +145,7 @@ export const Cart = () => {
                                                             onClick={() =>
                                                                 actions.updateCartItemAmount(item.item_id, item.amount - 1)
                                                             }
+                                                            disabled={item.amount === 1}
                                                         >
                                                             -
                                                         </button>
@@ -187,7 +187,7 @@ export const Cart = () => {
                         </div>
 
                         <div className="col-4">
-                            <div className="card-black order-sumary mb-5">
+                            <div className="card-black order-sumary mb-3">
                                 <div className="body-card py-3">
                                    <h4>Order Summary</h4>
                                 </div>

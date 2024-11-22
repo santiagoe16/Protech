@@ -92,6 +92,7 @@ class Seller(db.Model):
             "name": self.name,
             "phone" : self.phone,
             "image": self.image,
+            "bank_account": self.bank_account,
         }
     
 class Comprador(db.Model):

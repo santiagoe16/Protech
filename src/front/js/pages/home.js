@@ -16,7 +16,7 @@ export const Home = () => {
     const [categorias, setCategorias] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 3;
+    const itemsPerPage = 5;
 
     
     useEffect(() => {
@@ -45,38 +45,7 @@ export const Home = () => {
             .catch((error) => console.error("Error fetching categorias:", error));
     };
 
-    const addToCart = (productId) => {
-        const token = actions.verifyTokenBuyer()
-
-        const raw = JSON.stringify({
-            "amount": 1,
-            "product_id": parseInt(productId)
-        });
-
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            },
-            body: raw,
-            redirect: "follow"
-        };
-
-        fetch(process.env.BACKEND_URL + "/api/itemscarts", requestOptions)
-            .then((response) => {
-                if (response.status === 401) {
-                    alert("you have to log in or sign in");
-                }
-                if (!response.ok) {
-                    return response.json().then(err => { throw err; });
-                }
-                return response.json();
-            })
-            .then(() => {
-                actions.getCart();
-            })
-    }
+    
 
 
 
@@ -101,31 +70,23 @@ export const Home = () => {
     return (
     	<div className="container">
             <section className={store.search.trim() == "" ? (""):("d-none")}>
-                <div id="carouselExampleDark" className="carousel slide mt-4 rounded mb-5"  data-bs-ride="{/*carousel*/}" data-bs-pause="false">
+                <div id="carouselExampleDark" className="carousel slide mt-4 rounded mb-5"  data-bs-ride="carousel" data-bs-pause="false">
                     <div className="carousel-indicators">
                         <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
                         <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
                     </div>
                     <div className="carousel-inner rounded-3">
                         <div className="carousel-item active">
-                            <img src="https://picsum.photos/1290/543" className="d-block" alt="..."/>
+                            <img src="https://images.pexels.com/photos/8721342/pexels-photo-8721342.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" className="d-block" alt="..."/>
                             <div className="caption-carousel d-none d-md-block">
-                                <h1>Protech</h1>
-                                <p>Tecnología al alcance de tus manos.</p>
+                                <h1>Your trusted technology store</h1>
+                                <p>Connect with trusted sellers and find quality products.</p>
                             </div>
                         </div>
                         <div className="carousel-item">
-                            <img src="https://picsum.photos/1280/543" className="d-block" alt="..."/>
+                            <img src="https://images.pexels.com/photos/1038916/pexels-photo-1038916.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" className="d-block" alt="..."/>
                             <div className="caption-carousel d-none d-md-block">
-                                <h1>First slide label</h1>
-                                <p>Some representative placeholder content for the first slide.</p>
-                            </div>
-                        </div>
-                        <div className="carousel-item">
-                            <img src="https://picsum.photos/1260/543" className="d-block" alt="..."/>
-                            <div className="caption-carousel d-none d-md-block">
-                                <h1>First slide label</h1>
+                                <h1>Create the setup of your dreams</h1>
                                 <p>Some representative placeholder content for the first slide.</p>
                             </div>
                         </div>
@@ -136,23 +97,22 @@ export const Home = () => {
             <section className={store.search.trim() == "" ? (""):("d-none")}>
                 <div className="row">
                     <div className="mb-3 mb-lg-0 col-md-6 col-12">
-                        <div className="card-shop" style={{backgroundImage:"url(https://picsum.photos/628/210)"}}>
+                        <div className="card-shop" style={{backgroundImage:"url(https://img.freepik.com/premium-photo/illuminated-keyboard-neon-keyboard-mechanical-gaming-keyboard-gaming-keyboard_569725-17090.jpg)"}}>
                             <div>
-                                <h3 className="fw-bold mb-1" style={{color: "rgb(0 26 38)"}}>Fruits & Vegetables</h3>
-                                <span>Get Upto 30% Off</span>
+                                <h3 className="fw-bold mb-4 text-white">Get a new keyboard</h3>
+                                <span></span>
                                 <div className="mt-2">
-                                    <button className="purple-button">Shop Now</button>
+                                    <button onClick={()=>actions.setSearch("keyboard")} className="purple-button">Shop Now</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="mb-3 mb-lg-0 col-md-6 col-12">
-                        <div className="card-shop" style={{backgroundImage:"url(https://picsum.photos/628/210)"}}>
+                        <div className="card-shop" style={{backgroundImage:"url(https://img.freepik.com/foto-gratis/vista-superior-conjunto-gadgets-luz-neon-purpura-azul_155003-19116.jpg?t=st=1732248889~exp=1732252489~hmac=8615119fb92652b923a36f42c6f366f0845055aaffe10cf22068c3727a4b86da&w=1380)"}}>
                             <div>
-                                <h3 className="fw-bold mb-1" style={{color: "rgb(0 26 38)"}}>Fruits & Vegetables</h3>
-                                <span>Get Upto 30% Off</span>
+                                <h3 className="fw-bold mb-4">Want to start selling?</h3>
                                 <div className="mt-2">
-                                    <button className="purple-button">Shop Now</button>
+                                   <Link to="/seller/signup"><button className="purple-button">Click here</button></Link> 
                                 </div>
                             </div>
                         </div>
@@ -174,8 +134,8 @@ export const Home = () => {
                                 category={product.category.name}
                                 title={product.name}
                                 price={product.price}
-                                link="/"
-                                onAddToCart={()=>addToCart(product.id)}
+                                link={`/detail/${product.id}`}
+                                onAddToCart={()=>actions.addToCart(product.id)}
                             />
                         </div>
                     ))):(<></>)}

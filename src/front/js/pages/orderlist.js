@@ -10,7 +10,7 @@ export const OrderList = () => {
 	const [orders, setOrders] = useState([])
 	const [searchTerm, setSearchTerm] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 3;
+	const itemsPerPage = 5;
 
 
 	const getOrders = () => {
@@ -29,7 +29,6 @@ export const OrderList = () => {
 		})
 		.then((data) => {
 			setOrders(data);
-			console.log(data);
 			
 		})
 		.catch((error) => {

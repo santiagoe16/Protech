@@ -55,9 +55,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						headers: { Authorization: `Bearer ${token}` }
 					});
 					const data = await (response.ok ? response.json() : Promise.reject(response.statusText));
-					console.log("get-cart");
-					console.log(data);
-					
+		
 					return setStore({ 
 						cart: data,
 						items: data.items,
@@ -97,7 +95,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					},
 					body: JSON.stringify({ 
 						amount: newAmount,
-						total_price: total_price // Mandar el nuevo total al backend
+						total_price: total_price 
 					}),
 				})
 				.then((response) => {
@@ -107,7 +105,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return response.json();
 				})
 				.then((result) => {
-					console.log("Carrito actualizado correctamente");
 				})
 				.catch((error) => {
 					console.error("Error updating item quantity:", error);
@@ -116,6 +113,39 @@ const getState = ({ getStore, getActions, setStore }) => {
 			
 			setSearch: (searchTerm) => {
 				setStore({search: searchTerm});
+			},
+
+			addToCart: (productId) => {
+				const token = getActions().verifyTokenBuyer()
+		
+				const raw = JSON.stringify({
+					"amount": 1,
+					"product_id": parseInt(productId)
+				});
+		
+				const requestOptions = {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"Authorization": `Bearer ${token}`,
+					},
+					body: raw,
+					redirect: "follow"
+				};
+		
+				fetch(process.env.BACKEND_URL + "/api/itemscarts", requestOptions)
+					.then((response) => {
+						if (response.status === 401) {
+							alert("you have to log in or sign in");
+						}
+						if (!response.ok) {
+							return response.json().then(err => { throw err; });
+						}
+						return response.json();
+					})
+					.then(() => {
+						getActions().getCart();
+					})
 			},
 
 			getMessage: async () => {
