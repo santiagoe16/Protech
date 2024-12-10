@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Context } from "../store/appContext";
 import { useNavigate } from "react-router-dom";
-import "/workspaces/Protech/src/front/styles/addproduct.css";
+import "../../styles/addproduct.css";
 
 export const AddCategory = () => {
 	const { store, actions } = useContext(Context);

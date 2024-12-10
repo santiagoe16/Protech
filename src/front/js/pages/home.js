@@ -3,7 +3,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 import { Categorias } from "./categoria";
-import "/workspaces/Protech/src/front/styles/home.css";
+import "../../styles/home.css";
 import { CardProduct } from "../component/cardproduct";
 
 export const Home = () => {
