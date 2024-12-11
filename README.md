@@ -1,6 +1,6 @@
 # Proyecto Final: Protech  
 
-![image]([https://github.com/user-attachments/assets/protech-placeholder-image](https://github.com/user-attachments/assets/c321aee5-f1a8-4b08-89b6-3ae0b80a70a6))  
+![image]((https://github.com/user-attachments/assets/c321aee5-f1a8-4b08-89b6-3ae0b80a70a6))  
 
 ## Descripción  
 
@@ -20,10 +20,10 @@
 3. **Seleccionar una ubicación.**  
 4. **Comprar algunos productos.**  
 5. **Pagar con los siguientes datos:**  
-   - **Correo:** test16@personal.example.com  
+   - **Correo:** `test16@personal.example.com`  
    - **Contraseña:** protech1  
 6. **Entrar como vendedor con los datos:**  
-   - **Correo:** santiago@vende.com  
+   - **Correo:** `santiago@vende.com` 
    - **Contraseña:** protech1  
 7. **Ir a la sección de órdenes y enviar el pedido.**  
 
