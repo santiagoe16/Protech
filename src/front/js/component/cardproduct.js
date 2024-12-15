@@ -21,7 +21,7 @@ export const CardProduct = ({
             <small>{category}</small>
             <Link to={link} ><h6>{title}</h6></Link>
 
-            <div className="d-flex justify-content-between">
+            <div className="d-flex justify-content-between h-100 align-items-end">
                 <div className="d-flex align-items-center">
                     <span>${price}</span>
                 </div>

@@ -1,18 +1,13 @@
 import { useState, useEffect, useContext } from "react";
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Context } from "../store/appContext";
-import { Categorias } from "./categoria";
 import "../../styles/home.css";
 import { CardProduct } from "../component/cardproduct";
 
 export const Home = () => {
     const { store, actions } = useContext(Context);
-    const navigate = useNavigate();
     const [products, setProducts] = useState([]);
-    const [filter, setFilter] = useState("");
-    const [minPrice, setMinPrice] = useState("");
-    const [maxPrice, setMaxPrice] = useState("");
     const [categorias, setCategorias] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -24,7 +19,6 @@ export const Home = () => {
     }, [store.search, products]);
 
     useEffect(() => {
-        actions.setSearch("")
         getProducts();
         getCategories();
     }, []);
@@ -65,6 +59,27 @@ export const Home = () => {
     const handlePageChange = (pageNumber) => {
 		setCurrentPage(pageNumber);
 	};
+
+    const getPaginationButtons = () => {
+        const buttons = [];
+        const maxVisibleButtons = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
+
+        if (endPage - startPage + 1 < maxVisibleButtons) {
+            if (startPage > 1) {
+                startPage = Math.max(1, startPage - (maxVisibleButtons - (endPage - startPage + 1)));
+            } else if (endPage < totalPages) {
+                endPage = Math.min(totalPages, endPage + (maxVisibleButtons - (endPage - startPage + 1)));
+            }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            buttons.push(i);
+        }
+
+        return buttons;
+    };
 
     return (
     	<div className="container">
@@ -143,28 +158,41 @@ export const Home = () => {
                     <div className="pagination d-flex justify-content-end w-100">
                         <button
                             className="pagination-buttons-notactive me-2"
+                            onClick={() => handlePageChange(1)}
+                            disabled={currentPage < 2}
+                        >
+                            First
+                        </button>
+                        <button
+                            className="pagination-buttons-notactive me-2"
                             onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
+                            disabled={currentPage < 2}
                         >
                             Previous
                         </button>
-                        {Array.from({ length: totalPages }, (_, i) => (
+                        {getPaginationButtons().map((page) => (
                             <button
-                                key={i}
+                                key={page}
                                 className={` ${
-                                    currentPage === i + 1 ? "pagination-buttons" : "pagination-buttons-notactive"
+                                    currentPage === page ? "pagination-buttons" : "pagination-buttons-notactive"
                                 } me-2`}
-                                onClick={() => handlePageChange(i + 1)}
+                                onClick={() => handlePageChange(page)}
                                 >
-                                {i + 1}
+                                {page}
                             </button>
                         ))}
                         <button
-                            className="pagination-buttons-notactive"
+                            className="pagination-buttons-notactive me-2"
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === totalPages}
                         >
                             Next
+                        </button>
+                        <button
+                            className="pagination-buttons-notactive"
+                            onClick={() => handlePageChange(totalPages)}
+                        >
+                            Last
                         </button>
                     </div>
                 </div>
