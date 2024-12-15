@@ -65,7 +65,7 @@ export const DetailProduct = () => {
 
 
     return (
-        <div className="container white-text">
+        <div className="container white-text mt-5">
             <div className="ProductDetail container">
                 {product ? (
                     <div className="row">
